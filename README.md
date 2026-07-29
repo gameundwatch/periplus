@@ -31,7 +31,11 @@ pending count is reported at every session start.
 ```
 
 Requires `node`. The discipline is injected at `SessionStart` and `SubagentStart`
-in every repository — the log file itself is created lazily, on the first entry.
+in every repository, with no opt-in: writing code is the trigger, so there is no
+flag to set and no per-repository enabling step. On first sight of a repository
+the hook creates `.periplus/` and adds it to `.gitignore` — an empty directory is
+how you can tell the discipline is live before anything has been captured into
+it. The files inside are created lazily, on the first note and the first entry.
 
 ## Commands
 
@@ -74,6 +78,12 @@ fall back to the defaults below.
 
 Each criterion takes `code`, `periplus`, or `drop`. `warnThreshold` is the
 pending count above which the session-start line turns into a warning.
+
+`.periplus/` is not tracked, `config.json` included: the directory holds working
+state, and a comment convention a team has agreed on is shared by copying the
+file in, the same way a local tool config is. The plugin never writes
+`config.json` itself, so a repository that has not set one always tracks the
+shipped defaults rather than a snapshot of them.
 
 Only the phase 1 rule is injected at session start, about 300 tokens. The
 criteria table and the filter steps are read when `/pp` is invoked for phase 2.
