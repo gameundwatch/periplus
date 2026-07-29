@@ -1,12 +1,4 @@
 #!/usr/bin/env node
-// periplus — SessionStart / SubagentStart activation hook.
-//
-// The discipline itself lives in skills/pp/SKILL.md so that /pp and the hook
-// cannot drift apart. Only the capture rule is injected at session start — the
-// criteria table and the filter steps are read when /pp is invoked for phase 2,
-// which is the only moment they are needed. The pending counts are prepended:
-// `.periplus/` is hidden, so nothing else would show that a log has stopped
-// draining or that captured notes were never filtered.
 
 const fs = require('fs');
 const path = require('path');
@@ -32,6 +24,7 @@ const PRE_REL = '.periplus/pre.md';
 const CONFIG_REL = '.periplus/config.json';
 const ENTRY_RE = /^- \d{4}-\d{2}-\d{2}/;
 const PRE_RE = /^- \S+:\d+ /;
+// Read at runtime, never restated here: /pp and the hook must not drift apart.
 const SKILL_PATH = path.join(__dirname, '..', 'skills', 'pp', 'SKILL.md');
 const TABLE_RE = /<!-- criteria-table:start -->[\s\S]*?<!-- criteria-table:end -->/;
 const ALWAYS_RE = /<!-- always:start -->\n([\s\S]*?)<!-- always:end -->/;
@@ -42,9 +35,7 @@ function projectRoot() {
   return process.env.CLAUDE_PROJECT_DIR || process.cwd();
 }
 
-// Config is user input: every field falls back to its default rather than
-// throwing, so a malformed file degrades to the shipped discipline instead of
-// killing session start.
+// Config is user input: every field falls back to its default rather than throwing.
 function loadConfig(root) {
   const criteria = { ...DEFAULT_CRITERIA };
   let warnThreshold = DEFAULT_THRESHOLD;
@@ -89,22 +80,21 @@ function countMatching(root, rel, re) {
 
 const countEntries = (root) => countMatching(root, LOG_REL, ENTRY_RE);
 
-// Unfiltered pre-comments are the worse failure: they mean a task was called
-// done with every note still parked, so the source got no comments at all.
+// A pre.md still holding entries means that work shipped with no comments at all.
 const countPending = (root) => countMatching(root, PRE_REL, PRE_RE);
 
 function readDiscipline() {
   return fs.readFileSync(SKILL_PATH, 'utf8').replace(/^---[\s\S]*?---\s*/, '');
 }
 
-// Only the capture rule goes in. Phase 2 needs the criteria table, but phase 2
-// happens once, at the end, and /pp carries the whole file when it is invoked.
+// Only the capture rule. Phase 2 needs the table, and /pp carries the whole file.
 function alwaysSection() {
   const m = readDiscipline().match(ALWAYS_RE);
   return m ? m[1].trimEnd() : readDiscipline();
 }
 
 function buildContext(criteria, count, warnThreshold, pending = 0, configured = false) {
+  // `.periplus/` is hidden, so these counts are the only sign it has stopped draining.
   let header = count > warnThreshold
     ? `PERIPLUS ACTIVE — ${count} entries pending, over the threshold of ${warnThreshold}. `
       + 'The log has stopped draining. Offer to run /pp-discussion before starting new work.'
