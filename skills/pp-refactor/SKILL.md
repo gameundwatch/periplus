@@ -3,7 +3,7 @@ name: pp-refactor
 description: >
   Apply the periplus criteria to comments that already exist, instead of to a
   comment about to be written. Reads the comments out of a named file or
-  directory into `.periplus/pre.md`, then runs the same filter `/pp` uses, so
+  directory into `.periplus/.pre.md`, then runs the same filter `/pp` uses, so
   what survives goes back into the source and the rest becomes log entries or
   nothing. Invoked as /pp-refactor. Use it when the user asks to clean up
   comments in existing code, points at a file that has turned into
@@ -33,7 +33,7 @@ have changed is expensive for both of you.
 
 ## Phase 1 — collect, and change nothing
 
-Copy every comment and docstring in scope into `.periplus/pre.md`:
+Copy every comment and docstring in scope into `.periplus/.pre.md`:
 
 ```
 - <file>:<line> <the comment, verbatim>
@@ -53,7 +53,7 @@ list is what makes the before-and-after reviewable.
 Run the filter from `skills/pp/SKILL.md` over the collected entries. The three
 destinations mean the same things, with one addition: a comment routed to `code`
 may already be in the right place and in the right form, in which case it stays
-untouched and its entry is simply removed from `pre.md`.
+untouched and its entry is simply removed from `.pre.md`.
 
 Then, per file:
 
@@ -71,7 +71,7 @@ on rather than finding something to cut.
 
 ## Boundaries
 
-Never delete a comment that has not passed through `.periplus/pre.md` — the file
+Never delete a comment that has not passed through `.periplus/.pre.md` — the file
 is the record of what was removed and why, and without it a sweep is
 indistinguishable from a mistake. Never rewrite code in the process: extracting a
 function to retire a heading comment is a suggestion for the user, not something

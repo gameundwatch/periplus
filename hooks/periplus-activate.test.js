@@ -67,7 +67,7 @@ test('malformed JSON degrades to defaults rather than throwing', () => {
 
 test('only entry lines are counted', () => {
   const root = repo({
-    '.periplus/log.md': [
+    '.periplus/.log.md': [
       '# periplus',
       '',
       '- 2026-07-29T11:03 `src/a.py:1` [why] first',
@@ -86,7 +86,7 @@ test('a missing log counts as zero, not an error', () => {
 
 test('unfiltered pre-comments are counted and warned about', () => {
   const root = repo({
-    '.periplus/pre.md': [
+    '.periplus/.pre.md': [
       '# pre',
       '- src/payments.py:38 Retry-After only handles seconds, and we should parse dates one day',
       '- src/ledger.py:4 the dict is per process, move to Redis later',
@@ -128,6 +128,10 @@ test('phase 2 is told to consult the config before routing', () => {
   assert.ok(readDiscipline().includes('If `.periplus/config.json` exists, read it first'));
 });
 
+test('phase 2 is told not to translate on the way out', () => {
+  assert.ok(readDiscipline().includes('Keep the language it was captured in'));
+});
+
 test('the injected capture rule is lifted verbatim from the skill', () => {
   const delivered = buildContext(DEFAULT_CRITERIA, 3, 10);
   assert.ok(delivered.includes(alwaysSection()));
@@ -136,7 +140,7 @@ test('the injected capture rule is lifted verbatim from the skill', () => {
 
 test('session start carries the capture rule only, not the filter machinery', () => {
   const delivered = buildContext(DEFAULT_CRITERIA, 0, 10);
-  assert.ok(delivered.includes('.periplus/pre.md'), 'the capture rule is present');
+  assert.ok(delivered.includes('.periplus/.pre.md'), 'the capture rule is present');
   assert.ok(delivered.includes('invoke `/pp`'), 'phase 2 is pointed at, not inlined');
   assert.ok(!TABLE_RE.test(delivered), 'the criteria table is not injected');
   assert.ok(!delivered.includes('rejected-alternatives'), 'no criterion names leak in');
@@ -159,7 +163,7 @@ test('the workspace exists before anything has been captured into it', () => {
 });
 
 test('an existing workspace is left alone, whatever the .gitignore says', () => {
-  const root = repo({ '.git/HEAD': 'x', '.gitignore': 'node_modules/\n', '.periplus/log.md': '' });
+  const root = repo({ '.git/HEAD': 'x', '.gitignore': 'node_modules/\n', '.periplus/.log.md': '' });
   ensureWorkspace(root);
   assert.strictEqual(ignoreOf(root), 'node_modules/\n', 'a deleted ignore line stays deleted');
 });

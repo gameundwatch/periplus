@@ -2,8 +2,8 @@
 name: pp
 description: >
   Keep implementation-time notes out of the source until the code is finished.
-  Comments are captured to `.periplus/pre.md` while you work, then filtered once
-  at the end into the source, into `.periplus/log.md`, or nowhere. Invoke as /pp.
+  Comments are captured to `.periplus/.pre.md` while you work, then filtered once
+  at the end into the source, into `.periplus/.log.md`, or nowhere. Invoke as /pp.
   Use it on any coding task where you would otherwise be writing comments — and
   whenever the user says "periplus", "stop commenting everything", "the code is
   turning into documentation", "keep a logbook", or complains about tautological
@@ -28,7 +28,7 @@ last is what lets the code answer for itself.
 ## Phase 1 — capture
 
 <!-- always:start -->
-Every time you are about to write a comment, append it to `.periplus/pre.md`
+Every time you are about to write a comment, append it to `.periplus/.pre.md`
 instead, creating the file on the first note. The directory is already there and
 already ignored — do not touch `.gitignore`.
 
@@ -44,11 +44,11 @@ punctuation, and they go here too.
 
 Nothing is written into the source in this phase. Not one line.
 
-**The task is not finished while `.periplus/pre.md` has entries in it.** Before
+**The task is not finished while `.periplus/.pre.md` has entries in it.** Before
 calling any piece of work done, invoke `/pp` and run phase 2 over what you
 captured. Skipping it leaves the code with no comments at all, which is a worse
 outcome than the noise this discipline exists to remove — treat an empty
-`pre.md` as part of what "done" means, alongside passing tests.
+`.pre.md` as part of what "done" means, alongside passing tests.
 <!-- always:end -->
 
 ## Phase 2 — filter
@@ -102,14 +102,14 @@ change how phase 1 collected the notes you are holding.
 than an account of how the code works. The reader can see the code; what they
 cannot see is the world outside it.
 
-**periplus** — move it to `.periplus/log.md` in the entry format below. `/pp-list`
+**periplus** — move it to `.periplus/.log.md` in the entry format below. `/pp-list`
 reports what is waiting there.
 
 **drop** — write it nowhere. Everything here is recoverable from the code, from
 `git log`, or from an existing ADR, so keeping it would create a second source
 that can go out of date on its own.
 
-Then delete the entry from `.periplus/pre.md`.
+Then delete the entry from `.periplus/.pre.md`.
 
 `current-limits` and `upgrade-triggers` are the pair that most often arrive as one
 note, and the split matters most there. A limit is a property of the code as it
@@ -119,7 +119,21 @@ code does and does not handle. Read the log alone and you should learn what to d
 about it one day. Sending the whole note to either destination costs you one of
 those two readings.
 
-## `.periplus/log.md` is a state, not an archive
+### Keep the language it was captured in
+
+A note reaches its destination in the language you wrote it in phase 1. Filtering
+routes a note and shortens it; it does not translate it. The note was written in
+whatever language you were thinking in at the moment the code raised the question,
+and that is the wording that holds the distinction the note was made to hold —
+translation is a rewrite performed with the original no longer in front of you,
+and once it is written nothing marks it as second-hand.
+
+This holds even when the surrounding file's comments are in another language. A
+note that arrives in a different language from the code around it is a mismatch
+worth naming to the user, who can then say which language the file should settle
+on. It is not licence to translate quietly.
+
+## `.periplus/.log.md` is a state, not an archive
 
 It holds notes that have not reached their destination. Every entry leaves it
 eventually, by one of three exits:

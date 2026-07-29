@@ -19,8 +19,8 @@ const DEFAULT_CRITERIA = {
 
 const DESTINATIONS = ['code', 'periplus', 'drop'];
 const DEFAULT_THRESHOLD = 10;
-const LOG_REL = '.periplus/log.md';
-const PRE_REL = '.periplus/pre.md';
+const LOG_REL = '.periplus/.log.md';
+const PRE_REL = '.periplus/.pre.md';
 const CONFIG_REL = '.periplus/config.json';
 const IGNORE_LINE = '/.periplus/';
 const IGNORE_RE = /^\/?\.periplus\/?$/;
@@ -105,7 +105,7 @@ function countMatching(root, rel, re) {
 
 const countEntries = (root) => countMatching(root, LOG_REL, ENTRY_RE);
 
-// A pre.md still holding entries means that work shipped with no comments at all.
+// A .pre.md still holding entries means that work shipped with no comments at all.
 const countPending = (root) => countMatching(root, PRE_REL, PRE_RE);
 
 function readDiscipline() {
@@ -126,7 +126,7 @@ function buildContext(criteria, count, warnThreshold, pending = 0, configured = 
     : `PERIPLUS ACTIVE — ${count} entries pending`;
 
   if (pending > 0) {
-    header += `\n${pending} pre-comment(s) in .periplus/pre.md were never filtered. `
+    header += `\n${pending} pre-comment(s) in .periplus/.pre.md were never filtered. `
       + 'Run phase 2 on them before writing new code, or that work shipped with no comments at all.';
   }
 

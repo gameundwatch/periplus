@@ -19,7 +19,7 @@ should be able to disagree with a proposed exit before anything moves.
 
 ## Read
 
-`.periplus/log.md`, one entry per line:
+`.periplus/.log.md`, one entry per line:
 
 ```
 - <ISO 8601 to the minute> `<file>:<line>` [<criterion>] <the note>

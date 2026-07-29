@@ -5,13 +5,17 @@ A ship's log for implementation-time decisions.
 Coding agents write comments faster than anyone reads them, and the codebase ends
 up documenting itself: tautologies, back-references to ADRs, migration stories,
 and plans for later all competing with the code. Periplus works in two phases —
-while the code is being written every comment is captured to `.periplus/pre.md`
+while the code is being written every comment is captured to `.periplus/.pre.md`
 untouched, and once the code is finished they are filtered in one pass into the
 source, into the log, or nowhere.
 
 Deciding mid-implementation is deciding without the evidence: a note explaining
 where `0.2` came from is obviously unnecessary once the constant ends up named,
 but at the moment you wanted to write it the constant did not exist yet.
+
+A note arrives at its destination in the language it was captured in. Filtering
+routes and shortens; translating would be a rewrite of someone else's wording,
+done with the original no longer in front of you.
 
 The effect is not fewer comments — measured against an undisciplined baseline the
 count comes out about the same. The effect is that the source carries only what is
@@ -46,7 +50,7 @@ it. The files inside are created lazily, on the first note and the first entry.
 - `/pp-list` — list pending entries with the exit each is heading for. Read-only.
 - `/pp-discussion` — work through them one at a time and carry out the exits.
 - `/pp-refactor` — the same two phases pointed at comments that already exist:
-  collect them into `pre.md`, filter, write each file back with agreement.
+  collect them into `.pre.md`, filter, write each file back with agreement.
 
 `skills/pp/SKILL.md` is the single source of the discipline. The hook reads that
 file, substitutes the repository's criteria, and injects it, so `/pp` and the
@@ -108,7 +112,7 @@ Measured across two coding tasks, against the same tasks run without it:
 the rest is the capture-and-filter work itself, which is what the discipline is.
 
 A cheaper variant was tried and removed — writing comments inline and sweeping
-them into `pre.md` before phase 2. It measured *more* expensive (1.35x and 1.62x),
+them into `.pre.md` before phase 2. It measured *more* expensive (1.35x and 1.62x),
 because reading comments back out of the source adds a round trip rather than
 removing one, and it produced fewer log entries: a sweep only finds what someone
 was willing to commit to the source.
