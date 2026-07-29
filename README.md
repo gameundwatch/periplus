@@ -26,7 +26,7 @@ pending count is reported at every session start.
 ## Install
 
 ```
-/plugin marketplace add /Users/airplayr/Develop/periplus
+/plugin marketplace add gameundwatch/periplus
 /plugin install periplus@periplus
 ```
 
