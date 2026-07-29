@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-// Run with: node --test hooks/periplus-activate.test.js
 
 const test = require('node:test');
 const assert = require('node:assert');
@@ -115,9 +114,6 @@ test('the threshold warning appears only above the threshold', () => {
   assert.ok(loud.includes('stopped draining'));
 });
 
-// The table is no longer injected, so a repository's overrides reach the model by
-// being read in phase 2 rather than by being rendered here. The session line is
-// the only thing that has to make sure nobody misses that the file exists.
 test('a repository with a config is told to read it', () => {
   const plain = buildContext(DEFAULT_CRITERIA, 0, 10, 0, false);
   assert.ok(!plain.includes('customises the criteria'));
@@ -131,17 +127,12 @@ test('phase 2 is told to consult the config before routing', () => {
   assert.ok(readDiscipline().includes('If `.periplus/config.json` exists, read it first'));
 });
 
-// The wording the hook injects is lifted from SKILL.md rather than restated, so
-// the always-on rule and the /pp text cannot drift into two different disciplines.
 test('the injected capture rule is lifted verbatim from the skill', () => {
   const delivered = buildContext(DEFAULT_CRITERIA, 3, 10);
   assert.ok(delivered.includes(alwaysSection()));
   assert.ok(readDiscipline().includes(alwaysSection()));
 });
 
-// Phase 2 happens once, at the end, and /pp carries the table then. Paying for it
-// at every session start — including sessions that never write a line — was the
-// bulk of the fixed cost.
 test('session start carries the capture rule only, not the filter machinery', () => {
   const delivered = buildContext(DEFAULT_CRITERIA, 0, 10);
   assert.ok(delivered.includes('.periplus/pre.md'), 'the capture rule is present');
