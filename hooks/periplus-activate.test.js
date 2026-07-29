@@ -13,6 +13,7 @@ const {
   buildContext,
   readDiscipline,
   alwaysSection,
+  ensureWorkspace,
   DEFAULT_CRITERIA,
   DEFAULT_THRESHOLD,
 } = require('./periplus-activate.js');
@@ -143,6 +144,39 @@ test('session start carries the capture rule only, not the filter machinery', ()
     delivered.length * 3 < readDiscipline().length,
     `injected ${delivered.length} chars against a ${readDiscipline().length} char skill`,
   );
+});
+
+const ignoreOf = (root) => fs.readFileSync(path.join(root, '.gitignore'), 'utf8');
+
+test('the workspace exists before anything has been captured into it', () => {
+  const root = repo({ '.git/HEAD': 'ref: refs/heads/main\n', '.gitignore': 'node_modules/' });
+  ensureWorkspace(root);
+
+  assert.ok(fs.existsSync(path.join(root, '.periplus')), 'the only visible sign the hook ran');
+  const ignored = ignoreOf(root);
+  assert.ok(ignored.includes('\n/.periplus/\n'));
+  assert.ok(ignored.startsWith('node_modules/\n'), 'a file with no trailing newline is not joined onto');
+});
+
+test('an existing workspace is left alone, whatever the .gitignore says', () => {
+  const root = repo({ '.git/HEAD': 'x', '.gitignore': 'node_modules/\n', '.periplus/log.md': '' });
+  ensureWorkspace(root);
+  assert.strictEqual(ignoreOf(root), 'node_modules/\n', 'a deleted ignore line stays deleted');
+});
+
+for (const existing of ['/.periplus/', '.periplus/', '.periplus']) {
+  test(`\`${existing}\` already in .gitignore is not added twice`, () => {
+    const root = repo({ '.git/HEAD': 'x', '.gitignore': `${existing}\n` });
+    ensureWorkspace(root);
+    assert.strictEqual(ignoreOf(root), `${existing}\n`);
+  });
+}
+
+test('a directory that is not a repository gets the workspace but no .gitignore', () => {
+  const root = repo({});
+  ensureWorkspace(root);
+  assert.ok(fs.existsSync(path.join(root, '.periplus')));
+  assert.ok(!fs.existsSync(path.join(root, '.gitignore')));
 });
 
 test('the shipped table in SKILL.md matches the defaults the hook falls back to', () => {

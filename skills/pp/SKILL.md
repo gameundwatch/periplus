@@ -29,8 +29,8 @@ last is what lets the code answer for itself.
 
 <!-- always:start -->
 Every time you are about to write a comment, append it to `.periplus/pre.md`
-instead. Create the file on the first note, and put `.periplus/` in `.gitignore`
-when you do.
+instead, creating the file on the first note. The directory is already there and
+already ignored — do not touch `.gitignore`.
 
 ```
 - <file>:<line> <the note, as it occurred to you>
@@ -155,4 +155,5 @@ any other and decided at the end.
 
 Configure per repository in `.periplus/config.json`: any criterion can be set to
 `code`, `periplus`, or `drop`, and `warnThreshold` sets the pending count that
-triggers the session-start warning.
+triggers the session-start warning. `.periplus/` is not tracked, so a shared
+config is copied in by hand.
