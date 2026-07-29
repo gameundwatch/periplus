@@ -1,0 +1,6 @@
+{
+  "name": "periplus",
+  "version": "0.1.0",
+  "description": "A ship's log for implementation-time decisions. Comments are routed through configurable criteria instead of being typed straight into the source.",
+  "hooks": "./hooks/hooks.json"
+}

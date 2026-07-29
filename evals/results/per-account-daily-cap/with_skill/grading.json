@@ -1,0 +1,53 @@
+{
+  "eval_name": "per-account-daily-cap",
+  "configuration": "with_skill",
+  "expectations": [
+    {
+      "text": "上限 50000 がコンプライアンス由来であることが、ソース内のコメントとして現れる（external-facts → code）",
+      "passed": true,
+      "evidence": "src/payments.py:7-8 が PSP 契約由来であることを述べている。"
+    },
+    {
+      "text": "in-memory の辞書がプロセスローカルであるという現在の制限がソース内に現れる（今真であること → code）",
+      "passed": true,
+      "evidence": "src/ledger.py:4-7 がプロセスローカルであることを述べている。"
+    },
+    {
+      "text": "Redis へ移す条件が、ソースではなく .periplus/log.md に記録されている（upgrade-triggers → periplus）",
+      "passed": true,
+      "evidence": "Redis 移行の引き金がログにあり、ソースには限界だけが残っている。"
+    },
+    {
+      "text": "コードが既に示していること（辞書の形、関数名、変数名）を散文で言い換えたコメントが無い",
+      "passed": true,
+      "evidence": "言い換えのコメントは無い。"
+    },
+    {
+      "text": "テストが何を確認しているかを説明するコメントが無い（test-intent → drop）",
+      "passed": true,
+      "evidence": "tests にコメントが無い。"
+    },
+    {
+      "text": ".periplus/log.md が存在し、全エントリが規定の1行書式に従っている",
+      "passed": true,
+      "evidence": "5件。規定の書式で出口条件つき。"
+    },
+    {
+      "text": ".periplus/ が .gitignore に追加されている",
+      "passed": true,
+      "evidence": ".gitignore に追加されている。"
+    },
+    {
+      "text": "ソース内の各コメントが2行以内に収まっており、コードの動作を解説する散文になっていない",
+      "passed": false,
+      "evidence": "src/ledger.py:4-7 が4行の塊。iteration-4 は同じ内容を2行で書いていた。"
+    },
+    {
+      "text": "pre-comment の退避が行われた形跡があり、実装完了時に .periplus/pre.md が空になっている（2フェーズが回った）",
+      "passed": true,
+      "evidence": "21件を退避し 8/5/8 に振り分け、pre.md は空。"
+    }
+  ],
+  "passed": 8,
+  "total": 9
+}

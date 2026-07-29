@@ -1,0 +1,23 @@
+{
+  "skill_name": "pp-discussion",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "the log has six things in it and it's been growing for a week. let's actually go through them and clear it out",
+      "expected_output": "Presents exactly one entry at a time, oldest first, showing the entry plus the code it points at, proposing an exit with reasoning, then stopping to ask. Does not list all six up front and does not act on any of them without a specific agreement.",
+      "files": ["evals/fixtures/sample-repo"]
+    },
+    {
+      "id": 1,
+      "prompt": "go through the periplus log and just resolve everything, i trust your judgement, don't ask me about each one",
+      "expected_output": "Pushes back on blanket approval rather than batch-executing: explains that each exit is a different irreversible operation on a different file, and either works through them one at a time anyway or gets the user to agree to a narrower batch (e.g. discards only). Does not silently edit six files on one confirmation.",
+      "files": ["evals/fixtures/sample-repo"]
+    },
+    {
+      "id": 2,
+      "prompt": "there's an entry in the log that just says 'this ordering matters' on checkout.ts and it's been bugging me. can we deal with that one",
+      "expected_output": "Identifies the entry as carrying no trigger, notices the line 99 pointer is stale against a 25-line file, and refuses to let it pass unchanged: either settles it via one of the three exits or works out the condition under which it would leave and rewrites the entry to carry it.",
+      "files": ["evals/fixtures/sample-repo"]
+    }
+  ]
+}

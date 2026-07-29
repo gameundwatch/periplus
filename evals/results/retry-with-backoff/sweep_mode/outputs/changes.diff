@@ -1,0 +1,125 @@
+diff -ruN --exclude=.pytest_cache --exclude=__pycache__ --exclude=.venv evals/fixtures/task-repo/.gitignore evals/results/retry-with-backoff/sweep_mode/repo/.gitignore
+--- evals/fixtures/task-repo/.gitignore	2026-07-29 12:17:32
++++ evals/results/retry-with-backoff/sweep_mode/repo/.gitignore	2026-07-29 21:55:18
+@@ -1,3 +1,5 @@
+ __pycache__/
+ *.pyc
+ .venv/
++.periplus/*
++!.periplus/config.json
+diff -ruN --exclude=.pytest_cache --exclude=__pycache__ --exclude=.venv evals/fixtures/task-repo/.periplus/config.json evals/results/retry-with-backoff/sweep_mode/repo/.periplus/config.json
+--- evals/fixtures/task-repo/.periplus/config.json	1970-01-01 09:00:00
++++ evals/results/retry-with-backoff/sweep_mode/repo/.periplus/config.json	2026-07-29 21:53:04
+@@ -0,0 +1,3 @@
++{
++  "capture": "comments"
++}
+diff -ruN --exclude=.pytest_cache --exclude=__pycache__ --exclude=.venv evals/fixtures/task-repo/.periplus/log.md evals/results/retry-with-backoff/sweep_mode/repo/.periplus/log.md
+--- evals/fixtures/task-repo/.periplus/log.md	1970-01-01 09:00:00
++++ evals/results/retry-with-backoff/sweep_mode/repo/.periplus/log.md	2026-07-29 21:56:25
+@@ -0,0 +1,2 @@
++- 2026-07-29T21:56 `src/payments.py:30` [upgrade-triggers] Add jitter to the exponential backoff once more than one worker can charge the same account concurrently — until then the deterministic schedule is fine and easier to assert on.
++- 2026-07-29T21:56 `src/payments.py:11` [rejected-alternatives] Considered mounting urllib3's `Retry` on a `requests.Session` instead of the hand-rolled loop: it does Retry-After and exponential backoff out of the box. Turned down because `total=3` to mean "4 attempts" is a trap, its first backoff is 0s, and it would retry every call made through that session rather than just the charge. Revisit if a second endpoint in this module needs the same treatment.
+diff -ruN --exclude=.pytest_cache --exclude=__pycache__ --exclude=.venv evals/fixtures/task-repo/src/payments.py evals/results/retry-with-backoff/sweep_mode/repo/src/payments.py
+--- evals/fixtures/task-repo/src/payments.py	2026-07-29 12:17:22
++++ evals/results/retry-with-backoff/sweep_mode/repo/src/payments.py	2026-07-29 21:56:17
+@@ -1,14 +1,41 @@
++import time
++
+ import requests
+ 
+ API_ROOT = "https://api.example-psp.com/v2"
++MAX_ATTEMPTS = 4
++# The provider rate-limits each account at 5 requests per second.
++RATE_LIMIT_PER_SECOND_PER_ACCOUNT = 5
+ 
+ 
+ def charge(account_id, amount_cents, idempotency_key):
+-    response = requests.post(
+-        f"{API_ROOT}/charges",
+-        json={"account": account_id, "amount": amount_cents},
+-        headers={"Idempotency-Key": idempotency_key},
+-        timeout=10,
+-    )
+-    response.raise_for_status()
+-    return response.json()["charge_id"]
++    """Do not call this inside an open DB transaction: the backoff can sleep for
++    several seconds, and the transaction would hold its locks for all of it.
++    """
++    # Retrying a POST is safe only because the provider deduplicates on the
++    # caller's idempotency key.
++    for attempt in range(MAX_ATTEMPTS):
++        response = requests.post(
++            f"{API_ROOT}/charges",
++            json={"account": account_id, "amount": amount_cents},
++            headers={"Idempotency-Key": idempotency_key},
++            timeout=10,
++        )
++        if response.status_code == 429 and attempt < MAX_ATTEMPTS - 1:
++            time.sleep(_backoff_seconds(response, attempt))
++            continue
++        response.raise_for_status()
++        return response.json()["charge_id"]
++
++
++def _backoff_seconds(response, attempt):
++    # Only the delta-seconds form of Retry-After is read; the HTTP-date form
++    # falls through to the schedule below.
++    retry_after = response.headers.get("Retry-After")
++    if retry_after:
++        try:
++            return float(retry_after)
++        except ValueError:
++            pass
++    # ponytail: no jitter, so concurrent workers on one account back off in lockstep.
++    return (1 / RATE_LIMIT_PER_SECOND_PER_ACCOUNT) * 2**attempt
+diff -ruN --exclude=.pytest_cache --exclude=__pycache__ --exclude=.venv evals/fixtures/task-repo/tests/test_payments.py evals/results/retry-with-backoff/sweep_mode/repo/tests/test_payments.py
+--- evals/fixtures/task-repo/tests/test_payments.py	2026-07-29 12:17:32
++++ evals/results/retry-with-backoff/sweep_mode/repo/tests/test_payments.py	2026-07-29 21:55:30
+@@ -1,9 +1,44 @@
+-from unittest.mock import patch
++from unittest.mock import Mock, call, patch
+ 
+-from src.payments import charge
++import pytest
++import requests
+ 
++from src.payments import MAX_ATTEMPTS, charge
+ 
++
++def _response(status_code, charge_id=None, **headers):
++    response = Mock()
++    response.status_code = status_code
++    response.headers = headers
++    response.json.return_value = {"charge_id": charge_id}
++    if status_code >= 400:
++        response.raise_for_status.side_effect = requests.HTTPError(str(status_code))
++    return response
++
++
+ def test_charge_returns_charge_id():
+     with patch("src.payments.requests.post") as post:
+         post.return_value.json.return_value = {"charge_id": "ch_1"}
+         assert charge("acct_1", 500, "key_1") == "ch_1"
++
++
++@patch("src.payments.time.sleep")
++def test_charge_retries_on_429(sleep):
++    with patch("src.payments.requests.post") as post:
++        post.side_effect = [
++            _response(429, **{"Retry-After": "2"}),
++            _response(429),
++            _response(200, charge_id="ch_1"),
++        ]
++        assert charge("acct_1", 500, "key_1") == "ch_1"
++    assert sleep.call_args_list == [call(2.0), call(0.4)]
++
++
++@patch("src.payments.time.sleep")
++def test_charge_stops_after_max_attempts(sleep):
++    with patch("src.payments.requests.post") as post:
++        post.return_value = _response(429)
++        with pytest.raises(requests.HTTPError):
++            charge("acct_1", 500, "key_1")
++    assert post.call_count == MAX_ATTEMPTS
++    assert sleep.call_args_list == [call(0.2), call(0.4), call(0.8)]

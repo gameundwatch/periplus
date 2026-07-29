@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.DS_Store
+
+# The viewer script lives in the skill-creator plugin; only the localised
+# template is ours. Symlink it back in when a round needs reviewing.
+evals/viewer/generate_review.py

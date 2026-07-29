@@ -1,0 +1,16 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "periplus",
+  "description": "A ship's log for implementation-time decisions.",
+  "owner": {
+    "name": "airplayr"
+  },
+  "plugins": [
+    {
+      "name": "periplus",
+      "description": "Routes comments through configurable criteria instead of letting them accumulate in the source.",
+      "source": "./",
+      "category": "productivity"
+    }
+  ]
+}

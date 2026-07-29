@@ -1,0 +1,73 @@
+{
+  "eval_name": "retry-with-backoff",
+  "configuration": "without_skill",
+  "expectations": [
+    {
+      "text": "5 requests/second という数字がソース内に現れる（コメントか定数名かは問わない。429 を扱うという事実はコードが示すので対象外）",
+      "passed": true,
+      "evidence": "src/payments.py が 5 req/s から backoff を導いている。"
+    },
+    {
+      "text": "Retry-After が秒形式しか解釈されず日付形式は未対応、という現在の制限がソース内に現れる（今真であること → code）",
+      "passed": true,
+      "evidence": "src/payments.py:42-44 が delta-seconds のみであることを述べている。"
+    },
+    {
+      "text": "「開いた DB トランザクション内で charge() を呼ぶな」という呼び出し側への義務がソース内に現れる（contracts → code）",
+      "passed": true,
+      "evidence": "docstring に義務がある。"
+    },
+    {
+      "text": "「呼び出し側の time.sleep ループを置き換えた」という経緯を語るコメントが無い（history → drop）",
+      "passed": true,
+      "evidence": "ソースには経緯コメントが無い。"
+    },
+    {
+      "text": "コードが既に示していること（受け付ける形式、関数名、変数名）を散文で言い換えたコメントが無い",
+      "passed": true,
+      "evidence": "言い換えのコメントは無い。"
+    },
+    {
+      "text": "テストが何を確認しているかを説明するコメントが無い（test-intent → drop）",
+      "passed": true,
+      "evidence": "tests にコメントが無い。"
+    },
+    {
+      "text": ".periplus/log.md が存在し、全エントリが規定の1行書式に従っている",
+      "passed": false,
+      "evidence": ".periplus/ が作られなかった。"
+    },
+    {
+      "text": "4回上限、もしくは別の見直し条件が、ソースではなく .periplus/log.md に記録されている（upgrade-triggers → periplus）",
+      "passed": false,
+      "evidence": "jitter の追加条件が `ponytail:` コメントとしてソースに残っている。"
+    },
+    {
+      "text": ".periplus/ が .gitignore に追加されている",
+      "passed": false,
+      "evidence": ".gitignore は未変更。"
+    },
+    {
+      "text": "backoff の初期値が、由来を説明するコメントではなく名前で表現されている（数値は名前を欲しがる）",
+      "passed": false,
+      "evidence": "0.5 が直値で、由来の説明が隣接している。"
+    },
+    {
+      "text": "ソース内の各コメントが2行以内に収まっており、コードの動作を解説する散文になっていない",
+      "passed": false,
+      "evidence": "src/payments.py:42-44 が3行の塊。"
+    },
+    {
+      "text": "pre-comment の退避が行われた形跡があり、実装完了時に .periplus/pre.md が空になっている（2フェーズが回った）",
+      "passed": false,
+      "evidence": "2フェーズを実行していない。"
+    },
+    {
+      "text": "docstring に関数の動作を言い換えた要約行が無い",
+      "passed": false,
+      "evidence": "docstring が関数の動作の要約から始まっている。"
+    }
+  ],
+  "passed": 6,
+  "total": 13
+}

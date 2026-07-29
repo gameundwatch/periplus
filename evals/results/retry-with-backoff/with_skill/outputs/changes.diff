@@ -1,0 +1,122 @@
+diff -ruN --exclude=.pytest_cache --exclude=__pycache__ --exclude=.venv evals/fixtures/task-repo/.gitignore evals/results/retry-with-backoff/with_skill/repo/.gitignore
+--- evals/fixtures/task-repo/.gitignore	2026-07-29 12:17:32
++++ evals/results/retry-with-backoff/with_skill/repo/.gitignore	2026-07-29 21:54:08
+@@ -1,3 +1,4 @@
++.periplus/
+ __pycache__/
+ *.pyc
+ .venv/
+diff -ruN --exclude=.pytest_cache --exclude=__pycache__ --exclude=.venv evals/fixtures/task-repo/.periplus/log.md evals/results/retry-with-backoff/with_skill/repo/.periplus/log.md
+--- evals/fixtures/task-repo/.periplus/log.md	1970-01-01 09:00:00
++++ evals/results/retry-with-backoff/with_skill/repo/.periplus/log.md	2026-07-29 21:55:25
+@@ -0,0 +1,3 @@
++- 2026-07-29T00:00 `src/payments.py:23` [upgrade-triggers] Only 429 is retried; connection errors and 5xx fall straight through. Widen the condition if the provider is observed to flap on 502s or reset connections mid-charge.
++- 2026-07-29T00:00 `src/payments.py:37` [rejected-alternatives] urllib3's `Retry` via a requests `HTTPAdapter` was considered instead of a hand-rolled loop. Turned down: it retries below the level where the idempotency header is set, it needs a `Session` threaded through the call, and the sleep cannot be asserted on without a real socket. Revisit if a Session is introduced for other reasons.
++- 2026-07-29T00:00 `src/payments.py:37` [upgrade-triggers] The backoff carries no jitter. Add it once more than one worker can charge the same account, since they would otherwise retry in lockstep and re-trip the per-account limit together.
+diff -ruN --exclude=.pytest_cache --exclude=__pycache__ --exclude=.venv evals/fixtures/task-repo/src/payments.py evals/results/retry-with-backoff/with_skill/repo/src/payments.py
+--- evals/fixtures/task-repo/src/payments.py	2026-07-29 12:17:22
++++ evals/results/retry-with-backoff/with_skill/repo/src/payments.py	2026-07-29 21:55:16
+@@ -1,14 +1,37 @@
++import time
++
+ import requests
+ 
+ API_ROOT = "https://api.example-psp.com/v2"
+ 
++# The provider rate-limits at 5 requests per second per account.
++RATE_LIMIT_WINDOW_SECONDS = 1 / 5
++MAX_ATTEMPTS = 4
+ 
++
+ def charge(account_id, amount_cents, idempotency_key):
+-    response = requests.post(
+-        f"{API_ROOT}/charges",
+-        json={"account": account_id, "amount": amount_cents},
+-        headers={"Idempotency-Key": idempotency_key},
+-        timeout=10,
+-    )
++    # Not to be called inside an open DB transaction: a Retry-After can be
++    # several seconds, and the sleep would hold the transaction's locks for it.
++    # Retrying is safe because the provider deduplicates on the idempotency key.
++    for attempt in range(MAX_ATTEMPTS):
++        response = requests.post(
++            f"{API_ROOT}/charges",
++            json={"account": account_id, "amount": amount_cents},
++            headers={"Idempotency-Key": idempotency_key},
++            timeout=10,
++        )
++        if response.status_code != 429 or attempt == MAX_ATTEMPTS - 1:
++            break
++        time.sleep(_backoff_seconds(response, attempt))
++
+     response.raise_for_status()
+     return response.json()["charge_id"]
++
++
++def _backoff_seconds(response, attempt):
++    # Retry-After is also allowed to be an HTTP-date; only the seconds form is
++    # read, and any other value falls back to the exponential schedule.
++    try:
++        return float(response.headers["Retry-After"])
++    except (KeyError, TypeError, ValueError):
++        return RATE_LIMIT_WINDOW_SECONDS * 2**attempt
+diff -ruN --exclude=.pytest_cache --exclude=__pycache__ --exclude=.venv evals/fixtures/task-repo/tests/test_payments.py evals/results/retry-with-backoff/with_skill/repo/tests/test_payments.py
+--- evals/fixtures/task-repo/tests/test_payments.py	2026-07-29 12:17:32
++++ evals/results/retry-with-backoff/with_skill/repo/tests/test_payments.py	2026-07-29 21:54:24
+@@ -1,9 +1,54 @@
+-from unittest.mock import patch
++from unittest.mock import Mock, patch
+ 
++import pytest
++import requests
++
+ from src.payments import charge
+ 
+ 
++def _response(status_code, headers=None):
++    response = Mock()
++    response.status_code = status_code
++    response.headers = headers or {}
++    response.json.return_value = {"charge_id": "ch_1"}
++    if status_code >= 400:
++        response.raise_for_status.side_effect = requests.HTTPError(response=response)
++    else:
++        response.raise_for_status.return_value = None
++    return response
++
++
+ def test_charge_returns_charge_id():
+     with patch("src.payments.requests.post") as post:
+-        post.return_value.json.return_value = {"charge_id": "ch_1"}
++        post.return_value = _response(200)
+         assert charge("acct_1", 500, "key_1") == "ch_1"
++
++
++def test_charge_honours_retry_after_header():
++    with patch("src.payments.requests.post") as post, patch("src.payments.time.sleep") as sleep:
++        post.side_effect = [_response(429, {"Retry-After": "3"}), _response(200)]
++        assert charge("acct_1", 500, "key_1") == "ch_1"
++        assert sleep.call_args_list == [((3.0,),)]
++
++
++def test_charge_backs_off_exponentially_without_the_header():
++    with patch("src.payments.requests.post") as post, patch("src.payments.time.sleep") as sleep:
++        post.side_effect = [_response(429), _response(429), _response(429), _response(200)]
++        assert charge("acct_1", 500, "key_1") == "ch_1"
++        assert [call.args[0] for call in sleep.call_args_list] == [0.2, 0.4, 0.8]
++
++
++def test_charge_gives_up_after_four_attempts():
++    with patch("src.payments.requests.post") as post, patch("src.payments.time.sleep"):
++        post.side_effect = [_response(429) for _ in range(5)]
++        with pytest.raises(requests.HTTPError):
++            charge("acct_1", 500, "key_1")
++        assert post.call_count == 4
++
++
++def test_charge_reuses_the_idempotency_key_across_retries():
++    with patch("src.payments.requests.post") as post, patch("src.payments.time.sleep"):
++        post.side_effect = [_response(429), _response(200)]
++        charge("acct_1", 500, "key_1")
++        keys = {call.kwargs["headers"]["Idempotency-Key"] for call in post.call_args_list}
++        assert keys == {"key_1"}

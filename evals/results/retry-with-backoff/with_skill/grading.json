@@ -1,0 +1,73 @@
+{
+  "eval_name": "retry-with-backoff",
+  "configuration": "with_skill",
+  "expectations": [
+    {
+      "text": "5 requests/second という数字がソース内に現れる（コメントか定数名かは問わない。429 を扱うという事実はコードが示すので対象外）",
+      "passed": true,
+      "evidence": "src/payments.py:7 'The provider rate-limits at 5 requests per second per account.'"
+    },
+    {
+      "text": "Retry-After が秒形式しか解釈されず日付形式は未対応、という現在の制限がソース内に現れる（今真であること → code）",
+      "passed": true,
+      "evidence": "src/payments.py:32-33 が delta-seconds 形式のみ対応であることを述べている。"
+    },
+    {
+      "text": "「開いた DB トランザクション内で charge() を呼ぶな」という呼び出し側への義務がソース内に現れる（contracts → code）",
+      "passed": true,
+      "evidence": "src/payments.py:13-14 に呼び出し側への義務がある。"
+    },
+    {
+      "text": "「呼び出し側の time.sleep ループを置き換えた」という経緯を語るコメントが無い（history → drop）",
+      "passed": true,
+      "evidence": "経緯コメントは無い。"
+    },
+    {
+      "text": "コードが既に示していること（受け付ける形式、関数名、変数名）を散文で言い換えたコメントが無い",
+      "passed": true,
+      "evidence": "コメントはいずれも事実で、言い換えではない。"
+    },
+    {
+      "text": "テストが何を確認しているかを説明するコメントが無い（test-intent → drop）",
+      "passed": true,
+      "evidence": "tests にコメントが無い。"
+    },
+    {
+      "text": ".periplus/log.md が存在し、全エントリが規定の1行書式に従っている",
+      "passed": true,
+      "evidence": "3件。いずれも規定の書式で出口条件つき。"
+    },
+    {
+      "text": "4回上限、もしくは別の見直し条件が、ソースではなく .periplus/log.md に記録されている（upgrade-triggers → periplus）",
+      "passed": true,
+      "evidence": "jitter と 5xx の2件が upgrade-triggers としてログにある。"
+    },
+    {
+      "text": ".periplus/ が .gitignore に追加されている",
+      "passed": true,
+      "evidence": ".gitignore に追加されている。"
+    },
+    {
+      "text": "backoff の初期値が、由来を説明するコメントではなく名前で表現されている（数値は名前を欲しがる）",
+      "passed": false,
+      "evidence": "0.2 は「1つのレート制限ウィンドウから」導出されているが定数名になっておらず、7行目のコメントが 5 req/s を説明している。iteration-4 と同じ後退。"
+    },
+    {
+      "text": "ソース内の各コメントが2行以内に収まっており、コードの動作を解説する散文になっていない",
+      "passed": true,
+      "evidence": "最長2行。"
+    },
+    {
+      "text": "pre-comment の退避が行われた形跡があり、実装完了時に .periplus/pre.md が空になっている（2フェーズが回った）",
+      "passed": true,
+      "evidence": "15件を退避し 4/3/8 に振り分け、pre.md は空。"
+    },
+    {
+      "text": "docstring に関数の動作を言い換えた要約行が無い",
+      "passed": true,
+      "evidence": "docstring 位置に自己紹介が無く、コメントが義務から始まっている。"
+    }
+  ],
+  "passed": 12,
+  "total": 13
+}

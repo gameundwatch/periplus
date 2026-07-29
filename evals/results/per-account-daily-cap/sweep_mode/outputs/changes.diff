@@ -1,0 +1,120 @@
+diff -ruN --exclude=.pytest_cache --exclude=__pycache__ --exclude=.venv evals/fixtures/task-repo/.gitignore evals/results/per-account-daily-cap/sweep_mode/repo/.gitignore
+--- evals/fixtures/task-repo/.gitignore	2026-07-29 12:17:32
++++ evals/results/per-account-daily-cap/sweep_mode/repo/.gitignore	2026-07-29 21:55:48
+@@ -1,3 +1,5 @@
+ __pycache__/
+ *.pyc
+ .venv/
++.periplus/
++!.periplus/config.json
+diff -ruN --exclude=.pytest_cache --exclude=__pycache__ --exclude=.venv evals/fixtures/task-repo/.periplus/config.json evals/results/per-account-daily-cap/sweep_mode/repo/.periplus/config.json
+--- evals/fixtures/task-repo/.periplus/config.json	1970-01-01 09:00:00
++++ evals/results/per-account-daily-cap/sweep_mode/repo/.periplus/config.json	2026-07-29 21:53:04
+@@ -0,0 +1,3 @@
++{
++  "capture": "comments"
++}
+diff -ruN --exclude=.pytest_cache --exclude=__pycache__ --exclude=.venv evals/fixtures/task-repo/.periplus/log.md evals/results/per-account-daily-cap/sweep_mode/repo/.periplus/log.md
+--- evals/fixtures/task-repo/.periplus/log.md	1970-01-01 09:00:00
++++ evals/results/per-account-daily-cap/sweep_mode/repo/.periplus/log.md	2026-07-29 21:57:11
+@@ -0,0 +1,4 @@
++- 2026-07-29T22:10 `src/ledger.py:8` [upgrade-triggers] Move the running totals to Redis (or any store the whole fleet shares) the moment this runs on more than one process — until then each process enforces its own private cap. Leaves when the deployment goes multi-process, or sooner if the per-process drift shows up in reconciliation.
++- 2026-07-29T22:10 `src/ledger.py:8` [rejected-alternatives] Considered one running total per account plus a job that zeroes them at midnight, instead of keying by day. Rejected: a cron that fails silently freezes every account at yesterday's total, and the failure is invisible until charges start bouncing. Leaves when the totals move to a shared store, where the key shape gets decided again.
++- 2026-07-29T22:10 `src/payments.py:16` [rejected-alternatives] Considered asking the PSP for the account's own daily total instead of keeping a local ledger, which would be correct across processes for free. Rejected: an extra API round trip on every charge, for state we can hold ourselves. Leaves when the multi-process move lands and the round trip has to be weighed against running Redis.
++- 2026-07-29T22:10 `src/ledger.py:12` [external-facts] The UTC day boundary is an assumption, not something read out of the PSP contract. Leaves when someone checks the contract text: confirmed, this entry is discarded; wrong, the boundary moves and the comment in `_today()` is corrected.
+diff -ruN --exclude=.pytest_cache --exclude=__pycache__ --exclude=.venv evals/fixtures/task-repo/src/ledger.py evals/results/per-account-daily-cap/sweep_mode/repo/src/ledger.py
+--- evals/fixtures/task-repo/src/ledger.py	1970-01-01 09:00:00
++++ evals/results/per-account-daily-cap/sweep_mode/repo/src/ledger.py	2026-07-29 21:56:48
+@@ -0,0 +1,27 @@
++from collections import defaultdict
++from datetime import datetime, timezone
++
++# ponytail: per-process dict. Totals reset when the process restarts, and N
++# processes enforce N independent caps, letting an account spend up to N times
++# the cap. A shared store is the fix. Keyed by day so nothing has to reset at
++# midnight; entries for past days are never evicted.
++_spent_cents = defaultdict(int)
++
++
++def _today():
++    # The PSP contract's day is assumed to roll over at UTC midnight, not the
++    # host's local midnight. Unconfirmed against the contract text.
++    return datetime.now(timezone.utc).date()
++
++
++def spent_today(account_id):
++    return _spent_cents[account_id, _today()]
++
++
++def record(account_id, amount_cents):
++    _spent_cents[account_id, _today()] += amount_cents
++
++
++def reset():
++    # For tests. Not a daily reset — the day rolls over via the key.
++    _spent_cents.clear()
+diff -ruN --exclude=.pytest_cache --exclude=__pycache__ --exclude=.venv evals/fixtures/task-repo/src/payments.py evals/results/per-account-daily-cap/sweep_mode/repo/src/payments.py
+--- evals/fixtures/task-repo/src/payments.py	2026-07-29 12:17:22
++++ evals/results/per-account-daily-cap/sweep_mode/repo/src/payments.py	2026-07-29 21:56:58
+@@ -1,9 +1,23 @@
+ import requests
+ 
++from src import ledger
++
+ API_ROOT = "https://api.example-psp.com/v2"
+ 
++# Compliance requirement from the PSP contract, not a product decision: there is
++# no per-account override and no kill switch.
++DAILY_CAP_CENTS = 50_000
+ 
++
++class DailyCapExceeded(Exception):
++    pass
++
++
+ def charge(account_id, amount_cents, idempotency_key):
++    # ponytail: check-then-record is not atomic. Concurrent charges for one
++    # account can both pass and put it over the cap by up to one charge.
++    if ledger.spent_today(account_id) + amount_cents > DAILY_CAP_CENTS:
++        raise DailyCapExceeded(account_id)
+     response = requests.post(
+         f"{API_ROOT}/charges",
+         json={"account": account_id, "amount": amount_cents},
+@@ -11,4 +25,6 @@
+         timeout=10,
+     )
+     response.raise_for_status()
++    # A charge the PSP rejected must not consume the cap.
++    ledger.record(account_id, amount_cents)
+     return response.json()["charge_id"]
+diff -ruN --exclude=.pytest_cache --exclude=__pycache__ --exclude=.venv evals/fixtures/task-repo/tests/test_payments.py evals/results/per-account-daily-cap/sweep_mode/repo/tests/test_payments.py
+--- evals/fixtures/task-repo/tests/test_payments.py	2026-07-29 12:17:32
++++ evals/results/per-account-daily-cap/sweep_mode/repo/tests/test_payments.py	2026-07-29 21:57:01
+@@ -1,9 +1,26 @@
+ from unittest.mock import patch
+ 
+-from src.payments import charge
++import pytest
+ 
++from src import ledger
++from src.payments import DAILY_CAP_CENTS, DailyCapExceeded, charge
+ 
++
+ def test_charge_returns_charge_id():
++    ledger.reset()  # ledger state is module-level and leaks between tests
+     with patch("src.payments.requests.post") as post:
+         post.return_value.json.return_value = {"charge_id": "ch_1"}
+         assert charge("acct_1", 500, "key_1") == "ch_1"
++
++
++def test_charge_is_capped_per_account_per_day():
++    ledger.reset()
++    with patch("src.payments.requests.post") as post:
++        post.return_value.json.return_value = {"charge_id": "ch_1"}
++        charge("acct_1", DAILY_CAP_CENTS - 500, "key_1")
++        charge("acct_1", 500, "key_2")
++        post.reset_mock()
++        with pytest.raises(DailyCapExceeded):
++            charge("acct_1", 1, "key_3")
++        post.assert_not_called()
++        assert charge("acct_2", 500, "key_4") == "ch_1"
