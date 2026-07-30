@@ -60,6 +60,12 @@ Then, per file:
 1. Show the diff — comments removed, comments rewritten shorter, comments left alone.
 2. Show the log entries that file produced.
 3. Ask, and wait before writing.
+4. Once the file is written, delete that file's entries from `.pre.md` before
+   moving to the next one.
+
+Draining per file is what keeps the invariant checkable: at every Ask, what is
+left in `.pre.md` is exactly the files not yet agreed. Drain only at the end and
+a run that stops halfway is indistinguishable from one that never started.
 
 One file per agreement. The `/pp-discussion` evaluation is the reason: told to
 resolve a batch on one confirmation, an agent will edit several files before the
@@ -77,5 +83,23 @@ indistinguishable from a mistake. Never rewrite code in the process: extracting 
 function to retire a heading comment is a suggestion for the user, not something
 to do while they are reviewing comment diffs.
 
-Stop when the scope is done or the user says stop. Report what moved:
-`<N> kept, <M> shortened, <K> removed, <L> logged, across <F> files.`
+**`.pre.md` must be empty before this is over.** Entries in it are comments in
+flight: lifted out of the source in phase 1 and not yet put anywhere. Unlike
+`/pp`, where an unfiltered entry only costs a note that was never written, here
+every entry is a comment that exists in a file and has had its fate left
+undecided, so the collection has to be accounted for even when the sweep is
+abandoned.
+
+Stopping early is allowed; stopping with entries left is not. When the user says
+stop, or declines a file, or the scope turns out to be too large, the remaining
+entries are resolved in one of two ways before you report done: route them
+through phase 2 as usual, or say plainly that they are being dropped uninspected
+and delete them once the user agrees. Nothing was removed from the source, so
+dropping them loses only the collection work — but it is the user's call, and it
+is not the same outcome as a finished sweep.
+
+Report what moved, and report the file's state so emptiness is a claim rather
+than an assumption:
+`<N> kept, <M> shortened, <K> removed, <L> logged, across <F> files. .pre.md empty.`
+If it is not empty, that count is the report: `<R> entries still in .pre.md` —
+and the sweep is not done.
