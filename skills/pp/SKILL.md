@@ -28,6 +28,15 @@ last is what lets the code answer for itself.
 ## Phase 1 — capture
 
 <!-- always:start -->
+ACTIVE EVERY RESPONSE, in every file, including tests and configuration. Still
+active if you are unsure — an uncertain note is captured like any other and
+decided at the end. Off only when the user says so.
+
+The trigger is writing code, not the arrival of a sentence. Before you create or
+edit a source file, this task's notes already have their destination: by the time
+a comment is forming in the line you are typing, the decision has been made, and
+made wrong.
+
 Every time you are about to write a comment, append it to `.periplus/.pre.md`
 instead, creating the file on the first note. The directory is already there and
 already ignored — do not touch `.gitignore`.
@@ -47,9 +56,17 @@ Nothing is written into the source in this phase. Not one line.
 **The task is not finished while `.periplus/.pre.md` has entries in it.** Before
 calling any piece of work done, invoke `/pp` and run phase 2 over what you
 captured. Skipping it leaves the code with no comments at all, which is a worse
-outcome than the noise this discipline exists to remove — treat an empty
-`.pre.md` as part of what "done" means, alongside passing tests.
+outcome than the noise this discipline exists to remove.
+
+An empty `.pre.md` is not evidence the discipline ran. It is equally what a task
+that never captured anything leaves behind, and that failure writes nothing into
+the diff for anyone to catch later. So emptiness is not the report: when you call
+a coding task done, say which of the two it was — `periplus: 3 filtered`, or
+`periplus: nothing captured`. Saying the second is not a confession. Leaving it
+indistinguishable from the first is how this discipline dies quietly.
 <!-- always:end -->
+<!-- A rule outside these markers reaches the model only when /pp is invoked,
+     which is phase 2. Anything phase 1 has to obey belongs inside them. -->
 
 ## Phase 2 — filter
 
@@ -160,12 +177,7 @@ temporary; `/pp-list` tags those `no-trigger`.
 - `/pp-discussion` — work through them one at a time and carry out the exits.
 - `/pp-refactor` — run these same two phases over comments that already exist.
 
-## Persistence
-
-ACTIVE EVERY RESPONSE. Phase 1 runs on every comment you are about to write, in
-every file, including tests and configuration. Phase 2 runs before you call the
-task done. Still active if you are unsure — an uncertain note is captured like
-any other and decided at the end.
+## Configuration
 
 Configure per repository in `.periplus/config.json`: any criterion can be set to
 `code`, `periplus`, or `drop`, and `warnThreshold` sets the pending count that
