@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const fs = require('fs');
+const os = require('os');
 const path = require('path');
 
 const DEFAULT_CRITERIA = {
@@ -118,6 +119,83 @@ function alwaysSection() {
   return m ? m[1].trimEnd() : readDiscipline();
 }
 
+// A plugin cannot install this itself: only `agent` and `subagentStatusLine` are
+// read out of a plugin's own settings.json, so the hook has to ask for it.
+// The glob and not a pinned path — the cache is versioned, so a path pinned to
+// this release stops resolving on the next update, and the check below would go
+// on reporting it as wired.
+const STATUSLINE_CMD =
+  'node "$(ls -t ~/.claude/plugins/cache/*/periplus/*/hooks/periplus-statusline.js | head -1)"';
+
+const settingsPath = () =>
+  path.join(process.env.CLAUDE_CONFIG_DIR || path.join(os.homedir(), '.claude'), 'settings.json');
+
+// A missing or half-edited file is not an error here: install has to be able to
+// create one from nothing.
+function readSettings(file) {
+  try {
+    const parsed = JSON.parse(fs.readFileSync(file, 'utf8').trim());
+    return parsed && typeof parsed === 'object' ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+const currentCommand = (settings) =>
+  (settings.statusLine && typeof settings.statusLine.command === 'string')
+    ? settings.statusLine.command
+    : '';
+
+// The command string, not whether a statusLine exists: most users of this plugin
+// already have one from somewhere else.
+const isWired = (command) => command.includes('periplus-statusline');
+
+// Adding one key rewrites the whole file, so everything else in it is carried
+// over — this is the user's global configuration. Formatting and key order do not
+// survive the round trip; the previous file is kept beside it.
+function installStatusline(file = settingsPath()) {
+  const settings = readSettings(file);
+  const command = currentCommand(settings);
+  if (isWired(command)) return 'already';
+
+  // periplus goes last: it is the one that takes the project directory from the
+  // status line JSON on stdin, and a command in front that ignores stdin leaves it.
+  settings.statusLine = {
+    type: 'command',
+    command: command ? `${command}; printf ' '; ${STATUSLINE_CMD}` : STATUSLINE_CMD,
+  };
+
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  if (fs.existsSync(file)) fs.copyFileSync(file, `${file}.periplus-bak`);
+  fs.writeFileSync(file, `${JSON.stringify(settings, null, 2)}\n`);
+  return command ? 'appended' : 'wired';
+}
+
+// The nudge quotes __filename into a command, and the install path is not ours.
+// Anything outside this set would need escaping for a shell we cannot identify here.
+const SHELL_SAFE = /^[A-Za-z0-9 _.\-:/\\~]+$/;
+
+function statuslineNudge(file = settingsPath()) {
+  if (isWired(currentCommand(readSettings(file)))) return '';
+
+  // Nothing to install on Windows: the glob in STATUSLINE_CMD is POSIX only.
+  const installable = process.platform !== 'win32' && SHELL_SAFE.test(__filename);
+  const how = installable
+    ? `run \`node "${__filename}" install\` — it adds the statusLine to your `
+      + 'settings.json, keeping any status line already there and appending periplus '
+      + 'after it, and it backs the file up first. Nothing else is changed. The tag appears on '
+      + 'the next session'
+    : 'add to ~/.claude/settings.json a statusLine of "type": "command" running '
+      + 'periplus-statusline.js from the plugin\'s hooks directory, newest cached version first. '
+      + 'If a statusLine is already configured, append to its command with `; printf \' \'; ` '
+      + 'instead of replacing it, and put periplus last — it reads the project directory from '
+      + 'the status line JSON on stdin';
+
+  return '\nSTATUSLINE SETUP NEEDED: periplus can keep both counts on the status line '
+    + '([PERIPLUS:3!2] for three log entries and two unfiltered pre-comments), and it is not '
+    + `wired up yet. To set it up, ${how}. Offer this to the user once.`;
+}
+
 function buildContext(criteria, count, warnThreshold, pending = 0, configured = false) {
   // `.periplus/` is hidden, so these counts are the only sign it has stopped draining.
   let header = count > warnThreshold
@@ -144,7 +222,19 @@ only capture; when it is finished you filter, once, with \`/pp\`.
 ${alwaysSection()}`;
 }
 
+const INSTALL_RESULT = {
+  already: 'The status line was already wired up. Nothing changed.',
+  appended: 'Added periplus after the status line that was already there.',
+  wired: 'Status line wired up.',
+};
+
 function main(event) {
+  if (event === 'install') {
+    const file = settingsPath();
+    process.stdout.write(`${INSTALL_RESULT[installStatusline(file)]} ${file}\n`);
+    return;
+  }
+
   const root = projectRoot();
   try {
     ensureWorkspace(root);
@@ -164,7 +254,8 @@ function main(event) {
     }));
     return;
   }
-  process.stdout.write(context);
+  // The nudge is on this branch only: a subagent has no status line to configure.
+  process.stdout.write(context + statuslineNudge());
 }
 
 if (require.main === module) {
@@ -177,5 +268,6 @@ if (require.main === module) {
 
 module.exports = {
   loadConfig, countEntries, countPending, buildContext, readDiscipline, hasConfig,
-  alwaysSection, ensureWorkspace, DEFAULT_CRITERIA, DEFAULT_THRESHOLD,
+  alwaysSection, ensureWorkspace, statuslineNudge, installStatusline,
+  DEFAULT_CRITERIA, DEFAULT_THRESHOLD,
 };

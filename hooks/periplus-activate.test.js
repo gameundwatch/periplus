@@ -14,6 +14,8 @@ const {
   readDiscipline,
   alwaysSection,
   ensureWorkspace,
+  statuslineNudge,
+  installStatusline,
   DEFAULT_CRITERIA,
   DEFAULT_THRESHOLD,
 } = require('./periplus-activate.js');
@@ -191,4 +193,82 @@ test('the shipped table in SKILL.md matches the defaults the hook falls back to'
       `${name} should be documented as ${dest}`,
     );
   }
+});
+
+function settings(body) {
+  const root = repo({ 'settings.json': body });
+  return path.join(root, 'settings.json');
+}
+
+test('no settings file at all asks for the status line', () => {
+  assert.match(statuslineNudge(path.join(os.tmpdir(), 'periplus-absent.json')), /STATUSLINE SETUP NEEDED/);
+});
+
+test('a statusLine belonging to something else still asks', () => {
+  const file = settings(JSON.stringify({
+    statusLine: { type: 'command', command: 'bash /x/ponytail-statusline.sh' },
+  }));
+  assert.match(statuslineNudge(file), /STATUSLINE SETUP NEEDED/);
+});
+
+test('a statusLine already running periplus stays quiet', () => {
+  const file = settings(JSON.stringify({
+    statusLine: { type: 'command', command: 'bash /x/ponytail-statusline.sh; node /y/periplus-statusline.js' },
+  }));
+  assert.strictEqual(statuslineNudge(file), '');
+});
+
+test('unreadable settings ask rather than throw', () => {
+  assert.match(statuslineNudge(settings('{ not json')), /STATUSLINE SETUP NEEDED/);
+});
+
+test('a byte order mark does not hide an existing periplus status line', () => {
+  const file = settings('﻿' + JSON.stringify({
+    statusLine: { type: 'command', command: 'node /y/periplus-statusline.js' },
+  }));
+  assert.strictEqual(statuslineNudge(file), '');
+});
+
+test('installing into a machine with no settings file at all creates one', () => {
+  const file = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'periplus-')), 'nested', 'settings.json');
+  assert.strictEqual(installStatusline(file), 'wired');
+  assert.match(JSON.parse(fs.readFileSync(file, 'utf8')).statusLine.command, /periplus-statusline/);
+  assert.strictEqual(statuslineNudge(file), '', 'and the nudge stops');
+});
+
+test('a status line that is already there is kept, with periplus after it', () => {
+  const file = settings(JSON.stringify({
+    model: 'opus',
+    statusLine: { type: 'command', command: 'bash /x/ponytail-statusline.sh' },
+  }));
+  assert.strictEqual(installStatusline(file), 'appended');
+
+  const written = JSON.parse(fs.readFileSync(file, 'utf8'));
+  assert.strictEqual(written.model, 'opus', 'unrelated settings survive the rewrite');
+  assert.match(written.statusLine.command, /^bash \/x\/ponytail-statusline\.sh; printf ' '; node /);
+  assert.ok(
+    written.statusLine.command.indexOf('ponytail') < written.statusLine.command.indexOf('periplus'),
+    'periplus goes last, it is the one that reads stdin',
+  );
+});
+
+test('the file it replaces is kept', () => {
+  const before = JSON.stringify({ model: 'opus' });
+  const file = settings(before);
+  installStatusline(file);
+  assert.strictEqual(fs.readFileSync(`${file}.periplus-bak`, 'utf8'), before);
+});
+
+test('installing twice does not stack the command', () => {
+  const file = settings(JSON.stringify({ statusLine: { type: 'command', command: 'bash /x/y.sh' } }));
+  installStatusline(file);
+  const once = fs.readFileSync(file, 'utf8');
+  assert.strictEqual(installStatusline(file), 'already');
+  assert.strictEqual(fs.readFileSync(file, 'utf8'), once);
+});
+
+test('malformed settings are backed up rather than parsed into the void', () => {
+  const file = settings('{ not json');
+  assert.strictEqual(installStatusline(file), 'wired');
+  assert.strictEqual(fs.readFileSync(`${file}.periplus-bak`, 'utf8'), '{ not json');
 });
