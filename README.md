@@ -104,24 +104,34 @@ screen: `[PERIPLUS]` while nothing is pending, `[PERIPLUS:3!2]` for three log
 entries and two unfiltered pre-comments, amber once the log is over the
 threshold. In a repository without `.periplus/` it prints nothing.
 
-The status line belongs to your settings rather than to a plugin, so add it to
-`~/.claude/settings.json`:
+Claude Code reads only the `agent` and `subagentStatusLine` keys out of a
+plugin's own `settings.json`, so the status line has to live in yours. The
+session-start hook asks for it until it is there, and one command sets it up:
+
+```
+node "$(ls -t ~/.claude/plugins/cache/*/periplus/*/hooks/periplus-activate.js | head -1)" install
+```
+
+That writes into `~/.claude/settings.json` (or `$CLAUDE_CONFIG_DIR`), copying
+what was there to `settings.json.periplus-bak` first and leaving every other
+setting alone. A status line you already have is kept and periplus is appended
+after it:
 
 ```json
 {
   "statusLine": {
     "type": "command",
-    "command": "node \"$(ls -t ~/.claude/plugins/cache/*/periplus/*/hooks/periplus-statusline.js | head -1)\""
+    "command": "bash \".../ponytail-statusline.sh\"; printf ' '; node \"$(ls -t ~/.claude/plugins/cache/*/periplus/*/hooks/periplus-statusline.js | head -1)\""
   }
 }
 ```
 
 The glob is there because the plugin cache is versioned, and a path pinned to one
-version stops working the next time you update. To keep a tag you already have,
-run both and separate them: `bash ".../ponytail-statusline.sh"; printf ' '; node
-"$(...)"`. Only one of them can read the status line JSON on stdin, and periplus
-is the one that needs it — it takes the project directory from there rather than
-assuming the command runs in it.
+version stops working the next time you update. periplus goes last because only
+one command can read the status line JSON on stdin and periplus is the one that
+needs it — it takes the project directory from there rather than assuming the
+command runs in it. The tag appears on the next session, and on Windows the
+`statusLine` has to be written by hand.
 
 ## Files
 
