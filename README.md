@@ -96,6 +96,33 @@ Everything routed to `drop` is recoverable from the code, from `git log`, or fro
 an existing ADR, so writing it anywhere would create a second source that can go
 out of date on its own.
 
+## Status line
+
+The session-start line reports the pending count once, and it is stale as soon as
+the first note is captured. `hooks/periplus-statusline.js` keeps both counts on
+screen: `[PERIPLUS]` while nothing is pending, `[PERIPLUS:3!2]` for three log
+entries and two unfiltered pre-comments, amber once the log is over the
+threshold. In a repository without `.periplus/` it prints nothing.
+
+The status line belongs to your settings rather than to a plugin, so add it to
+`~/.claude/settings.json`:
+
+```json
+{
+  "statusLine": {
+    "type": "command",
+    "command": "node \"$(ls -t ~/.claude/plugins/cache/*/periplus/*/hooks/periplus-statusline.js | head -1)\""
+  }
+}
+```
+
+The glob is there because the plugin cache is versioned, and a path pinned to one
+version stops working the next time you update. To keep a tag you already have,
+run both and separate them: `bash ".../ponytail-statusline.sh"; printf ' '; node
+"$(...)"`. Only one of them can read the status line JSON on stdin, and periplus
+is the one that needs it — it takes the project directory from there rather than
+assuming the command runs in it.
+
 ## Files
 
 - `CONTEXT.md` — the vocabulary: pre-comment, pick, promote, discard, and the
@@ -103,7 +130,6 @@ out of date on its own.
 - `docs/motivation.md` — the problem this was written for, as originally stated.
 - `docs/adr/` — why the plugin is shaped this way, including two decisions that
   were measured and reversed.
-- `evals/` — how the numbers above were measured, and what to re-run.
 
 ## Cost
 
@@ -120,5 +146,5 @@ was willing to commit to the source.
 ## Tests
 
 ```
-node --test hooks/periplus-activate.test.js
+node --test hooks/*.test.js
 ```
