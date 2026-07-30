@@ -5,12 +5,12 @@
   "assertions": [
     "上限 50000 がコンプライアンス由来であることが、ソース内のコメントとして現れる（external-facts → code）",
     "in-memory の辞書がプロセスローカルであるという現在の制限がソース内に現れる（今真であること → code）",
-    "Redis へ移す条件が、ソースではなく .periplus/log.md に記録されている（upgrade-triggers → periplus）",
+    "Redis へ移す条件が、ソースではなく .periplus/.log.md に記録されている（upgrade-triggers → periplus）",
     "コードが既に示していること（辞書の形、関数名、変数名）を散文で言い換えたコメントが無い",
     "テストが何を確認しているかを説明するコメントが無い（test-intent → drop）",
-    ".periplus/log.md が存在し、全エントリが規定の1行書式に従っている",
-    ".periplus/ が .gitignore に追加されている",
+    ".periplus/.log.md が存在し、全エントリが規定の1行書式に従っている",
+    "モデルが .gitignore を書き換えていない（ディレクトリ作成と ignore 行は hook の領分で、phase 1 は触るなと指示している）",
     "ソース内の各コメントが2行以内に収まっており、コードの動作を解説する散文になっていない",
-    "pre-comment の退避が行われた形跡があり、実装完了時に .periplus/pre.md が空になっている（2フェーズが回った）"
+    "pre-comment の退避が行われた形跡があり、実装完了時に .periplus/.pre.md が空になっている（2フェーズが回った）"
   ]
 }

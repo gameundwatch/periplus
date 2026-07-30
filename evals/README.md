@@ -26,6 +26,18 @@ is being tested. Save the user-facing text to `outputs/response.md` and the diff
 to `outputs/changes.diff`, then grade each assertion in `eval_metadata.json` into
 `grading.json`.
 
+Run the hook against the copy before handing it over, for the configurations that
+have the discipline:
+
+```
+CLAUDE_PROJECT_DIR=<copy> node hooks/periplus-activate.js SessionStart
+```
+
+Phase 1 tells the model the directory is already there, which is only true because
+the hook made it. Skipping this step gives the subagent an instruction that
+contradicts what it finds, and the fixture ships without `.periplus/` on purpose —
+running the hook over a bare copy is also what checks that it creates one.
+
 Token counts and durations arrive in the task-completion notification and are not
 recorded anywhere else — write them to `timing.json` as each run finishes or they
 are gone.
@@ -53,6 +65,14 @@ why, and its outputs are kept here as the evidence.
 ## Known weaknesses
 
 Both coding tasks have been iterated on for five rounds and are no longer unseen.
-Two assertions — that `.periplus/` gets created and added to `.gitignore` — have
-been 100% with the skill and 0% without in every round, so they confirm the
-mechanism fires but say nothing about judgement.
+
+The two assertions that used to check `.periplus/` was created and added to
+`.gitignore` were measuring the model's obedience to an instruction that has since
+moved into the hook, where `hooks/periplus-activate.test.js` covers it
+deterministically. They now read the other way — that the model left `.gitignore`
+alone — which at least fails when the instruction is ignored, but it is still
+instruction-following rather than judgement.
+
+Nothing here tests that a note reaches its destination in the language it was
+captured in. Both prompts are in English, so every captured note is in English and
+the rule cannot be observed. A task stated in another language would be needed.
