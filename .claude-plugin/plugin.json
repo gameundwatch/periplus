@@ -1,5 +1,5 @@
 {
     "name": "periplus",
-    "version": "0.2.1",
+    "version": "0.2.2",
     "description": "A ship's log for implementation-time decisions. Comments are routed through configurable criteria instead of being typed straight into the source."
 }
