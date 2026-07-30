@@ -13,7 +13,7 @@ of three exits, and the log shrinks by exactly the entries that were settled.
 
 ## Before starting
 
-Read `.periplus/log.md`, and `.periplus/config.json` when it exists — most
+Read `.periplus/.log.md`, and `.periplus/config.json` when it exists — most
 repositories run on the defaults and have no config file, which is not a problem
 to report. Nothing pending: say so and stop. An empty log means the discipline is
 working, so there is nothing to go looking for — do not scan the source for
@@ -61,7 +61,9 @@ Comment I would write, on line 38:
 often carries both a fact the code depends on and the reasoning that led to the
 choice; the fact goes in, the reasoning stays behind or leaves by another exit.
 Show the exact comment text before writing it, since this is the moment the
-comment the discipline was designed to intercept gets to exist after all.
+comment the discipline was designed to intercept gets to exist after all. Write
+it in the language the entry is in — picking is an extraction, and translating on
+the way out replaces the author's wording with yours under their name.
 
 **promote** — write an ADR under `docs/adr/`, numbered one past the highest
 present. Hard to reverse, surprising without context, the result of a real
@@ -73,7 +75,7 @@ as an arbitrary preference.
 `git log`, or a specific existing ADR. Naming the source gives the user the one
 chance to disagree while the note still exists.
 
-Then remove the settled entry from `.periplus/log.md`. An entry acted on but left
+Then remove the settled entry from `.periplus/.log.md`. An entry acted on but left
 in place will be argued about again next session, and the count that is supposed
 to signal a healthy log will keep pointing at work already done.
 

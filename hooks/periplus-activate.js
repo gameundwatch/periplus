@@ -19,9 +19,11 @@ const DEFAULT_CRITERIA = {
 
 const DESTINATIONS = ['code', 'periplus', 'drop'];
 const DEFAULT_THRESHOLD = 10;
-const LOG_REL = '.periplus/log.md';
-const PRE_REL = '.periplus/pre.md';
+const LOG_REL = '.periplus/.log.md';
+const PRE_REL = '.periplus/.pre.md';
 const CONFIG_REL = '.periplus/config.json';
+const IGNORE_LINE = '/.periplus/';
+const IGNORE_RE = /^\/?\.periplus\/?$/;
 const ENTRY_RE = /^- \d{4}-\d{2}-\d{2}/;
 const PRE_RE = /^- \S+:\d+ /;
 // Read at runtime, never restated here: /pp and the hook must not drift apart.
@@ -30,6 +32,29 @@ const TABLE_RE = /<!-- criteria-table:start -->[\s\S]*?<!-- criteria-table:end -
 const ALWAYS_RE = /<!-- always:start -->\n([\s\S]*?)<!-- always:end -->/;
 
 const hasConfig = (root) => fs.existsSync(path.join(root, CONFIG_REL));
+
+// The directory is the only visible sign the hook ran at all, so it is made
+// before anything has been captured. Runs once, when the directory is first
+// made: an ignore line deleted by hand stays deleted.
+function ensureWorkspace(root) {
+  const dir = path.join(root, '.periplus');
+  if (fs.existsSync(dir)) return;
+  fs.mkdirSync(dir, { recursive: true });
+
+  if (!fs.existsSync(path.join(root, '.git'))) return;
+  const ignoreFile = path.join(root, '.gitignore');
+  let body = '';
+  try {
+    body = fs.readFileSync(ignoreFile, 'utf8');
+  } catch {
+    body = '';
+  }
+  if (body.split('\n').some((l) => IGNORE_RE.test(l.trim()))) return;
+
+  // A .gitignore not ending in a newline would otherwise absorb the first line added.
+  const gap = body === '' ? '' : body.endsWith('\n') ? '\n' : '\n\n';
+  fs.appendFileSync(ignoreFile, `${gap}# periplus working files\n${IGNORE_LINE}\n`);
+}
 
 function projectRoot() {
   return process.env.CLAUDE_PROJECT_DIR || process.cwd();
@@ -80,7 +105,7 @@ function countMatching(root, rel, re) {
 
 const countEntries = (root) => countMatching(root, LOG_REL, ENTRY_RE);
 
-// A pre.md still holding entries means that work shipped with no comments at all.
+// A .pre.md still holding entries means that work shipped with no comments at all.
 const countPending = (root) => countMatching(root, PRE_REL, PRE_RE);
 
 function readDiscipline() {
@@ -101,7 +126,7 @@ function buildContext(criteria, count, warnThreshold, pending = 0, configured = 
     : `PERIPLUS ACTIVE — ${count} entries pending`;
 
   if (pending > 0) {
-    header += `\n${pending} pre-comment(s) in .periplus/pre.md were never filtered. `
+    header += `\n${pending} pre-comment(s) in .periplus/.pre.md were never filtered. `
       + 'Run phase 2 on them before writing new code, or that work shipped with no comments at all.';
   }
 
@@ -121,6 +146,11 @@ ${alwaysSection()}`;
 
 function main(event) {
   const root = projectRoot();
+  try {
+    ensureWorkspace(root);
+  } catch {
+    // A read-only checkout still gets the discipline, just no place to put it.
+  }
   const { criteria, warnThreshold } = loadConfig(root);
   const context = buildContext(
     criteria, countEntries(root), warnThreshold, countPending(root), hasConfig(root),
@@ -147,5 +177,5 @@ if (require.main === module) {
 
 module.exports = {
   loadConfig, countEntries, countPending, buildContext, readDiscipline, hasConfig,
-  alwaysSection, DEFAULT_CRITERIA, DEFAULT_THRESHOLD,
+  alwaysSection, ensureWorkspace, DEFAULT_CRITERIA, DEFAULT_THRESHOLD,
 };
