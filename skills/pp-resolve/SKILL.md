@@ -79,7 +79,7 @@ there, and matching it feels like tidiness rather than a rewrite.
 **periplus** — append the row to `.periplus/.log.md`, unchanged except for the
 updated timestamp. An entry whose text names no condition under which it would
 leave the log is inventory in a place meant to be temporary; add that condition
-now, or expect `/pp-list` to flag it.
+now, or expect `/pp-discussion` to refuse to let it pass unchanged.
 
 **drop** — write it nowhere.
 
