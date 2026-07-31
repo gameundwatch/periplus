@@ -3,8 +3,8 @@ name: pp-resolve
 description: >
   Deliver every classified pre-comment to the destination its kind resolves to,
   and drain `.periplus/.pre.md`. Invoked as /pp-resolve, and the second half of
-  /pp. Writes source files, `.periplus/.log.md`, and `.periplus/.all.md`. Use it
-  after /pp-classify; /pp runs both.
+  /pp. Writes source files, `.periplus/.log.md`, and the archive. Use it after
+  /pp-classify; /pp runs both.
 ---
 
 The second half of phase 2. Every row carrying a kind leaves `.pre.md` here, and
@@ -57,15 +57,24 @@ This is the step that keeps a source file from filling with prose, and the easy
 one to skip, because writing the sentence is faster than changing the code. A
 change to the code is still a change to the code: show it before making it.
 
-A row settled this way is delivered like any other — it goes to `.all.md` under
+A row settled this way is delivered like any other — it goes to the archive under
 its own kind, and it leaves `.pre.md`.
 
 ## Deliver
 
 **code** — write it into the source at the row's `file:line`, as the shortest
 statement of the fact rather than an account of how the code works. The reader
-can see the code; what they cannot see is the world outside it. Keep the language
-the row is in.
+can see the code; what they cannot see is the world outside it.
+
+Shorten it; do not translate it. The row is in the language it was thought in, and
+that is the wording that holds the distinction the note was made to hold — a
+translation is a rewrite performed with the original no longer in front of you,
+and once it is written nothing marks it as second-hand. **This holds even when the
+comments already in the file are in another language.** A row arriving in a
+different language from the code around it is a mismatch worth naming to the user,
+who can then say which language the file should settle on. It is not licence to
+translate quietly, and quietly is how it happens — the surrounding file is right
+there, and matching it feels like tidiness rather than a rewrite.
 
 **periplus** — append the row to `.periplus/.log.md`, unchanged except for the
 updated timestamp. An entry whose text names no condition under which it would
@@ -74,11 +83,13 @@ now, or expect `/pp-list` to flag it.
 
 **drop** — write it nowhere.
 
-Then, for every row regardless of destination: append it to `.periplus/.all.md`
-with the updated timestamp set to now, and delete it from `.periplus/.pre.md`.
-`.all.md` is the only record that the row ever existed, and it is what makes the
-distribution of kinds measurable later. Nothing reads it during a run; it is
-never edited and never drained.
+Then, for every row regardless of destination: append it to the archive with the
+updated timestamp set to now, and delete it from `.periplus/.pre.md`. The archive
+is `.periplus/.all.md` unless whoever invoked this named another — `/pp-refactor`
+does, because comments it swept out of existing code are a different population.
+The archive is the only record that the row ever existed, and it is what makes the
+distribution of kinds measurable later. Nothing reads it during a run; it is never
+edited and never drained.
 
 Drain row by row, not at the end. What is left in `.pre.md` at any moment is then
 exactly what has not been delivered, and a run that stops halfway is
@@ -101,6 +112,6 @@ part. Show the comment text before writing it: this is the moment the comment th
 discipline was built to intercept gets to exist after all, and it should exist on
 purpose.
 
-Never delete a row from `.pre.md` without it reaching `.all.md` first. That file
+Never delete a row from `.pre.md` without it reaching the archive first. That file
 is the record of what was captured, and a row that vanishes without landing there
 makes the discipline unmeasurable in exactly the way it was built to avoid.

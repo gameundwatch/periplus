@@ -58,8 +58,11 @@ it. The files inside are created lazily, on the first note and the first entry.
   `.pre.md`.
 - `/pp-list` — list pending entries with the exit each is heading for. Read-only.
 - `/pp-discussion` — work through them one at a time and carry out the exits.
-- `/pp-refactor` — the same two phases pointed at comments that already exist:
-  collect them into `.pre.md`, filter, write each file back with agreement.
+- `/pp-refactor` — the same discipline pointed at comments that already exist. It
+  **cuts** them out of the source into `.pre.md` first, one file at a time, then
+  runs the two halves over them. Destructive where `/pp` is not: the comments
+  leave the file before anything has decided where they belong, so what protects
+  you is that the change is uncommitted.
 
 Reach for `/pp`. Running `/pp-classify` alone and stopping leaves the source with
 no comments at all, which is the failure the discipline exists to prevent — the
@@ -69,7 +72,7 @@ session-start line reports rows left in that state.
 file at runtime rather than restating it, so `/pp` and the session hook cannot
 drift apart — a test asserts they stay identical.
 
-## The three files
+## The files
 
 ```
 - <created> → <updated> `<file>:<line>` [<kind>] <the note>
@@ -79,16 +82,21 @@ drift apart — a test asserts they stay identical.
 | --- | --- | --- |
 | `.periplus/.pre.md` | rows that have not been delivered | `/pp-resolve` |
 | `.periplus/.log.md` | rows whose kind sent them to periplus | pick, promote, discard |
-| `.periplus/.all.md` | every row that was ever captured | it does not leave |
+| `.periplus/.all.md` | every row captured while writing code | it does not leave |
+| `.periplus/.swept.md` | every row `/pp-refactor` cut out of existing code | it does not leave |
 
-One shape for all three, so which file a row is in is what says how far it has
-got. The kind is empty at capture and filled by `/pp-classify`; the second
-timestamp moves whenever something happens to the row, which is how `/pp-list`
-tells an entry nobody has looked at from one that was discussed and held over.
+One shape for all of them, so which file a row is in is what says how far it has
+got and where it came from. The kind is empty at capture and filled by
+`/pp-classify`; the second timestamp moves whenever something happens to the row,
+which is how `/pp-list` tells an entry nobody has looked at from one that was
+discussed and held over.
 
-`.all.md` is the exception to the log being a state — it is an archive on purpose,
-and the only record of which kinds are actually being written. Nothing reads it
-during a run.
+The two archives are the exception to the log being a state — they are archives on
+purpose, and the only record of which kinds are actually being written. They are
+kept apart because they answer different questions: `.all.md` is what this
+discipline produces, `.swept.md` is what was written without it. Mixed together, a
+sweep over code that had already been through `/pp` would make its output
+indistinguishable from its input. Nothing reads either during a run.
 
 ## Configuration
 

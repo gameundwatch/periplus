@@ -149,7 +149,7 @@ note that arrives in a different language from the code around it is a mismatch
 worth naming to the user, who can then say which language the file should settle
 on. It is not licence to translate quietly.
 
-## The three files share one format
+## The files share one format
 
 ```
 - <created> → <updated> `<file>:<line>` [<kind>] <the note>
@@ -159,12 +159,14 @@ on. It is not licence to translate quietly.
 | --- | --- | --- |
 | `.periplus/.pre.md` | rows that have not been delivered | `/pp-resolve` |
 | `.periplus/.log.md` | rows whose kind sent them to periplus | pick, promote, or discard |
-| `.periplus/.all.md` | every row that was ever captured | it does not leave |
+| `.periplus/.all.md` | every row that was captured while writing code | it does not leave |
+| `.periplus/.swept.md` | every row `/pp-refactor` cut out of existing code | it does not leave |
 
 Which file a row is in is what says how far it has got, so the row itself does
 not have to carry that. Neither does it carry its destination: that is the kind
 and the config, and a copy of it here would be a second source able to disagree
-with them.
+with them. The same goes for where a row came from — the two archives are two
+populations, and which file a row lands in is what tells them apart.
 
 `.log.md` is a state, not an archive. It holds notes that have not reached their
 destination, and every entry leaves it eventually by one of three exits:
@@ -179,9 +181,11 @@ being resolved, which is why the pending count is reported at every session star
 An entry naming no condition under which it would leave is permanent inventory in
 a place meant to be temporary; `/pp-list` tags those `no-trigger`.
 
-`.all.md` is the one exception to that rule, and it is deliberate: it is the only
-record of which kinds are actually being written, and it is what makes the
-discipline measurable rather than merely asserted. Nothing reads it during a run.
+The two archives are the exception to that rule, and it is deliberate: they are
+the only record of which kinds are actually being written, and they are what makes
+the discipline measurable rather than merely asserted. Nothing reads them during a
+run. They are kept apart because they answer different questions — `.all.md` is
+what this discipline produces, `.swept.md` is what was written without it.
 
 ## Commands
 
@@ -189,7 +193,8 @@ discipline measurable rather than merely asserted. Nothing reads it during a run
 - `/pp-resolve` — deliver each row and drain `.pre.md`.
 - `/pp-list` — list pending log entries with their proposed exits. Read-only.
 - `/pp-discussion` — work through them one at a time and carry out the exits.
-- `/pp-refactor` — run these same two phases over comments that already exist.
+- `/pp-refactor` — the same discipline pointed at comments that already exist. It
+  cuts them out of the source first, so it is destructive where `/pp` is not.
 
 ## Configuration
 
