@@ -185,6 +185,17 @@ test('the descriptions of the kinds live in one place only', () => {
   assert.ok(!source.includes('a browser quirk'), 'the wording is substituted into, never restated');
 });
 
+test('the README renders every kind, pointed where it ships pointed', () => {
+  const readme = fs.readFileSync(path.join(__dirname, '..', 'README.md'), 'utf8');
+  for (const [kind, to] of Object.entries(DEFAULT_CRITERIA)) {
+    assert.match(readme, new RegExp(`\\| \`${kind}\` \\|[^\\n]*\\| \\*\\*${to}\\*\\* \\|`),
+      `README is missing ${kind} → ${to}`);
+  }
+  const rows = readme.match(/^\| `[a-z-]+` \|/gm) || [];
+  assert.strictEqual(rows.length, Object.keys(DEFAULT_CRITERIA).length,
+    'and renders nothing that is not a kind');
+});
+
 test('phase 2 is told not to translate on the way out', () => {
   assert.ok(readDiscipline().includes('Keep the language it was captured in'));
 });
