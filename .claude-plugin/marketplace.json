@@ -8,7 +8,7 @@
   "plugins": [
     {
       "name": "periplus",
-      "description": "Routes comments through configurable criteria instead of letting them accumulate in the source.",
+      "description": "Gives every comment one kind, and lets the kind decide whether it reaches the source, the log, or nowhere.",
       "source": "./",
       "category": "productivity"
     }

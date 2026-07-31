@@ -22,15 +22,15 @@ should be able to disagree with a proposed exit before anything moves.
 `.periplus/.log.md`, one entry per line:
 
 ```
-- <ISO 8601 to the minute> `<file>:<line>` [<criterion>] <the note>
+- <created> → <updated> `<file>:<line>` [<kind>] <the note>
 ```
 
 No file, or no lines matching that shape: report `Log is empty. Nothing pending.`
 and stop. An empty log is the healthy state, not a problem to be solved — resist
 the pull to go hunting through the source for comments to fill the report with.
 
-Read `.periplus/config.json` when it exists. A criterion the user has moved to
-`code` changes which exit its entries should now be heading for, so a report that
+Read `.periplus/config.json` when it exists. A kind the user has moved to `code`
+changes which exit its entries should now be heading for, so a report that
 ignores the config will propose exits the repository has already ruled out.
 
 ## Propose an exit for each entry
@@ -57,19 +57,27 @@ described was already done.
 
 ## Output
 
-One row per entry, oldest first:
+One row per entry, oldest first by created timestamp:
 
 ```
-<file>:<line> [<criterion>] — <the note in a few words>. exit: <pick|promote|discard>. <one clause of reasoning>
+<file>:<line> [<kind>] — <the note in a few words>. exit: <pick|promote|discard>. <one clause of reasoning>
 ```
 
 **Example:**
 
 ```
-src/limiter.py:42 [upgrade-triggers] — one global lock, revisit on throughput. exit: promote. recurring: the same ceiling appears in three entries
+src/limiter.py:42 [upgrade-triggers] — one global lock, revisit on throughput. exit: promote. held over. recurring: the same ceiling appears in three entries
 src/checkout.ts:88 [rejected-alternatives] — considered a queue, chose direct write. exit: discard. no-trigger. the queue approach is visible in git log
 src/render.css:12 [external-facts] — Safari 15 has no flex gap. exit: pick. no-trigger
 ```
+
+Tag `held over` on any entry whose updated timestamp is later than its created
+one. Something has already happened to that entry — it was taken up in a
+`/pp-discussion` and put back — and it is still here. That is a stronger
+staleness signal than age alone: an old entry may simply never have been looked
+at, but a held-over entry was looked at and survived anyway. Two of them on the
+same subject usually means the decision is real and wants promoting rather than
+discussing a third time.
 
 Tag `no-trigger` on any entry whose own text names no condition that would make
 it leave the log. This is independent of the exit you are proposing: the exit is
@@ -81,7 +89,7 @@ The tag is diagnostic as much as it is a warning. Entries arriving without
 triggers means notes are being written without an exit condition upstream, and
 that is what turns a queue into a store.
 
-End with `<N> entries, <M> with no trigger.` Then name, in one line, the single
+End with `<N> entries, <M> with no trigger, <H> held over.` Then name, in one line, the single
 entry most worth resolving now — the report is useful in proportion to how
 obvious it makes the next move.
 
