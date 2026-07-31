@@ -100,6 +100,31 @@ discipline produces, `.swept.md` is what was written without it. Mixed together,
 sweep over code that had already been through `/pp` would make its output
 indistinguishable from its input. Nothing reads either during a run.
 
+## Kinds
+
+Eleven, and the set is closed — a note that seems to need a twelfth is a note that
+has not been split far enough. The destinations below are the shipped defaults;
+any of them can be moved per repository (see Configuration).
+
+| kind | which is | example | goes to |
+| --- | --- | --- | --- |
+| `external-facts` | a fact about the world outside the code that the code depends on — a browser quirk, the target device, the expected user, an external API limit | `Safari 15 has no flex gap` | **code** |
+| `contracts` | an obligation on the caller that the signature and the types do not express | `the caller closes the file` | **code** |
+| `current-limits` | what this implementation does not do or cannot do yet, which reads as an oversight without it | `only parses the seconds form of Retry-After` | **code** |
+| `why` | the reasoning behind a design or an approach | `sorted before grouping so the output is stable` | **code** |
+| `rejected-alternatives` | an option that was considered and turned down | `considered a queue, chose the direct write` | **periplus** |
+| `upgrade-triggers` | the condition under which this implementation should be revisited | `move to per-account locks if throughput becomes a problem` | **periplus** |
+| `block-headings` | a heading that labels the block of code below it | `--- helpers ---` | **drop** |
+| `tautology` | a restatement of what the code already shows, including a docstring summary naming what the function does | `increment the counter` | **drop** |
+| `doc-references` | a pointer to an ADR or another document | `see ADR 0007` | **drop** |
+| `history` | the story of how the code got here, or what it used to be | `used to be synchronous; timeouts made it async` | **drop** |
+| `test-intent` | what a test is checking — `describe`/`it` already says it | `checks that an empty cart returns zero` | **drop** |
+
+`skills/pp/SKILL.md` holds the operative table — the one `/pp-classify` reads, and
+the one the hook substitutes this repository's destinations into. The table above
+is a rendering of it with examples added, and a test keeps the two from drifting
+on which kinds exist and where they ship pointed.
+
 ## Configuration
 
 Optional, per repository, at `.periplus/config.json`. Absent or malformed fields
