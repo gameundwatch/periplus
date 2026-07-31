@@ -4,12 +4,13 @@ description: >
   Work through the pending periplus entries one at a time and carry out the exit
   agreed for each — picking part of a note into the source, promoting it to an
   ADR, or discarding it. Invoked as /pp-discussion. Changes files, one entry at a
-  time, each with the user's agreement. Also use it when the user wants to act on
-  what /pp-list has just reported rather than only see it.
+  time, each with the user's agreement. Also use it when the user asks what is
+  sitting in `.periplus/`, or when a session-start pending count is high enough
+  that new work should not start on top of it.
 ---
 
-`/pp-list` reports. This one resolves. Every entry taken up here leaves the log by one
-of three exits, and the log shrinks by exactly the entries that were settled.
+Every entry taken up here leaves the log by one of three exits, and the log shrinks
+by exactly the entries that were settled.
 
 ## Before starting
 
@@ -26,11 +27,22 @@ describes now.
 
 ## One entry at a time
 
-Take entries in order, oldest first. For each:
+Take entries in order, oldest first by the created timestamp — never by the
+updated one, or every entry that has already survived a discussion sinks to the
+back, and the rows that have resisted settling the longest are the last ones
+looked at.
+
+For each:
 
 1. Show the entry and the code it points at.
 2. Say which exit you think it takes, and why, in a sentence or two.
 3. Ask, and wait for the answer before touching a file.
+
+An entry whose updated timestamp is later than its created one has been here
+before: it was taken up, argued about, and put back. Say so when you show it, and
+do not re-run the argument that already failed to settle it once. An entry that
+survives a second discussion unchanged is usually one whose decision is real and
+wants promoting rather than being held a third time.
 
 Presenting several entries together looks efficient and is not: each exit is a
 different irreversible operation on a different file, and a single "yes, all of
@@ -96,7 +108,7 @@ An entry taken up here and left in the log — rewritten to carry a trigger, or
 held because the user wants it held — gets its updated timestamp set to now. Its
 created timestamp never changes.
 
-The gap between the two is what `/pp-list` reads as `held over`, and it is the
+The gap between the two is what the next run of this command reads, and it is the
 only way a later session can tell an entry nobody has looked at from one that was
 discussed and survived. Leaving the timestamp alone makes a discussion that
 changed nothing indistinguishable from a discussion that never happened.

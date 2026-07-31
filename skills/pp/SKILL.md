@@ -120,8 +120,8 @@ resolved table rather than this one.
 than an account of how the code works. The reader can see the code; what they
 cannot see is the world outside it.
 
-**periplus** — move it to `.periplus/.log.md`. `/pp-list` reports what is waiting
-there.
+**periplus** — move it to `.periplus/.log.md`. `/pp-discussion` works through what
+is waiting there.
 
 **drop** — write it nowhere. Everything routed here by default is recoverable
 from the code, from `git log`, or from an existing ADR, so keeping it would
@@ -179,7 +179,7 @@ destination, and every entry leaves it eventually by one of three exits:
 A log that stays near-empty is working. A log that grows means entries are not
 being resolved, which is why the pending count is reported at every session start.
 An entry naming no condition under which it would leave is permanent inventory in
-a place meant to be temporary; `/pp-list` tags those `no-trigger`.
+a place meant to be temporary; `/pp-discussion` does not let one pass unchanged.
 
 The two archives are the exception to that rule, and it is deliberate: they are
 the only record of which kinds are actually being written, and they are what makes
@@ -191,8 +191,8 @@ what this discipline produces, `.swept.md` is what was written without it.
 
 - `/pp-classify` — split and assign kinds. Writes only `.pre.md`.
 - `/pp-resolve` — deliver each row and drain `.pre.md`.
-- `/pp-list` — list pending log entries with their proposed exits. Read-only.
-- `/pp-discussion` — work through them one at a time and carry out the exits.
+- `/pp-discussion` — work through the pending log entries one at a time and carry
+  out the exits.
 - `/pp-refactor` — the same discipline pointed at comments that already exist. It
   cuts them out of the source first, so it is destructive where `/pp` is not.
 

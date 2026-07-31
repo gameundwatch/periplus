@@ -56,8 +56,8 @@ it. The files inside are created lazily, on the first note and the first entry.
   Writes only `.pre.md`, so the kinds can be reviewed before anything is delivered.
 - `/pp-resolve` — deliver each note to what its kind resolves to, and drain
   `.pre.md`.
-- `/pp-list` — list pending entries with the exit each is heading for. Read-only.
-- `/pp-discussion` — work through them one at a time and carry out the exits.
+- `/pp-discussion` — work through the pending log entries one at a time and carry
+  out the exits, each against a specific agreement.
 - `/pp-refactor` — the same discipline pointed at comments that already exist. It
   **cuts** them out of the source into `.pre.md` first, one file at a time, then
   runs the two halves over them. Destructive where `/pp` is not: the comments
@@ -88,8 +88,8 @@ drift apart — a test asserts they stay identical.
 One shape for all of them, so which file a row is in is what says how far it has
 got and where it came from. The kind is empty at capture and filled by
 `/pp-classify`; the second timestamp moves whenever something happens to the row,
-which is how `/pp-list` tells an entry nobody has looked at from one that was
-discussed and held over.
+which is how `/pp-discussion` tells an entry nobody has looked at from one that
+was discussed and held over.
 
 The two archives are the exception to the log being a state — they are archives on
 purpose, and the only record of which kinds are actually being written. They are

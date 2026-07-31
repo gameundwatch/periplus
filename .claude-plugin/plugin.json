@@ -1,5 +1,5 @@
 {
     "name": "periplus",
-    "version": "0.3.1",
+    "version": "0.3.2",
     "description": "A ship's log for implementation-time decisions. Every note carries one kind, and the kind decides whether it reaches the source, the log, or nowhere."
 }
