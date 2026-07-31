@@ -120,7 +120,7 @@ resolved table rather than this one.
 than an account of how the code works. The reader can see the code; what they
 cannot see is the world outside it.
 
-**periplus** — move it to `.periplus/.log.md`. `/pp-discussion` works through what
+**periplus** — move it to `.periplus/.log.md`. `/pp-discuss` works through what
 is waiting there.
 
 **drop** — write it nowhere. Everything routed here by default is recoverable
@@ -158,7 +158,7 @@ on. It is not licence to translate quietly.
 | file | what is in it | how a row leaves |
 | --- | --- | --- |
 | `.periplus/.pre.md` | rows that have not been delivered | `/pp-resolve` |
-| `.periplus/.log.md` | rows whose kind sent them to periplus | pick, promote, or discard |
+| `.periplus/.log.md` | rows whose kind sent them to periplus | docs, code, or trash |
 | `.periplus/.all.md` | every row that was captured while writing code | it does not leave |
 | `.periplus/.swept.md` | every row `/pp-refactor` cut out of existing code | it does not leave |
 
@@ -169,17 +169,20 @@ with them. The same goes for where a row came from — the two archives are two
 populations, and which file a row lands in is what tells them apart.
 
 `.log.md` is a state, not an archive. It holds notes that have not reached their
-destination, and every entry leaves it eventually by one of three exits:
+destination. What lands here is document material — the two kinds that route here
+are neither of them facts the code depends on — so `docs` is the main road out:
 
-- **pick** — part of it belongs in the source after all
-- **promote** — it carries the weight of an architecture decision and becomes an
-  ADR under `docs/adr/`
-- **discard** — it is recoverable from somewhere else
+- **docs** — it goes into a document this repository already keeps
+- **code** — part of it belongs in the source after all, which means it was not
+  split far enough upstream
+- **trash** — it is recoverable from somewhere else
+- **here** — it belongs in a document and this repository keeps none that holds
+  it. It stays, and that is its trigger: it leaves when such a document exists
 
 A log that stays near-empty is working. A log that grows means entries are not
 being resolved, which is why the pending count is reported at every session start.
 An entry naming no condition under which it would leave is permanent inventory in
-a place meant to be temporary; `/pp-discussion` does not let one pass unchanged.
+a place meant to be temporary; `/pp-discuss` does not let one pass unchanged.
 
 The two archives are the exception to that rule, and it is deliberate: they are
 the only record of which kinds are actually being written, and they are what makes
@@ -191,8 +194,8 @@ what this discipline produces, `.swept.md` is what was written without it.
 
 - `/pp-classify` — split and assign kinds. Writes only `.pre.md`.
 - `/pp-resolve` — deliver each row and drain `.pre.md`.
-- `/pp-discussion` — work through the pending log entries one at a time and carry
-  out the exits.
+- `/pp-discuss` — work through the pending log entries one at a time and send
+  each to its destination.
 - `/pp-refactor` — the same discipline pointed at comments that already exist. It
   cuts them out of the source first, so it is destructive where `/pp` is not.
 
