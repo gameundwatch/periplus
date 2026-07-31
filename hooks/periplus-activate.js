@@ -25,11 +25,12 @@ const PRE_REL = '.periplus/.pre.md';
 const CONFIG_REL = '.periplus/config.json';
 const IGNORE_LINE = '/.periplus/';
 const IGNORE_RE = /^\/?\.periplus\/?$/;
-const ENTRY_RE = /^- \d{4}-\d{2}-\d{2}/;
-const PRE_RE = /^- \S+:\d+ /;
+const TS = String.raw`\d{4}-\d{2}-\d{2}T\d{2}:\d{2}`;
+const ROW_RE = new RegExp(String.raw`^- ${TS} → ${TS} \`\S+:\d+\` \[([^\]]*)\]`);
 // Read at runtime, never restated here: /pp and the hook must not drift apart.
 const SKILL_PATH = path.join(__dirname, '..', 'skills', 'pp', 'SKILL.md');
 const TABLE_RE = /<!-- criteria-table:start -->[\s\S]*?<!-- criteria-table:end -->/;
+const TABLE_ROW_RE = /^\| `([^`]+)` \|(.*)\| \*\*(\w+)\*\* \|$/;
 const ALWAYS_RE = /<!-- always:start -->\n([\s\S]*?)<!-- always:end -->/;
 
 const hasConfig = (root) => fs.existsSync(path.join(root, CONFIG_REL));
@@ -65,7 +66,8 @@ function projectRoot() {
 function loadConfig(root) {
   const criteria = { ...DEFAULT_CRITERIA };
   let warnThreshold = DEFAULT_THRESHOLD;
-  const fallback = { criteria, warnThreshold };
+  const problems = [];
+  const fallback = { criteria, warnThreshold, problems };
 
   let raw;
   try {
@@ -78,36 +80,60 @@ function loadConfig(root) {
   try {
     parsed = JSON.parse(raw.replace(/^\uFEFF/, ''));
   } catch {
+    problems.push('the file is not valid JSON');
     return fallback;
   }
 
   const given = parsed && typeof parsed.criteria === 'object' && parsed.criteria !== null
     ? parsed.criteria
     : {};
-  for (const name of Object.keys(criteria)) {
-    if (DESTINATIONS.includes(given[name])) criteria[name] = given[name];
+  for (const [name, to] of Object.entries(given)) {
+    if (!(name in criteria)) problems.push(`unknown kind "${name}"`);
+    else if (!DESTINATIONS.includes(to)) problems.push(`"${name}": ${JSON.stringify(to)} is not code, periplus or drop`);
+    else criteria[name] = to;
   }
 
   const t = parsed && parsed.warnThreshold;
   if (Number.isInteger(t) && t > 0) warnThreshold = t;
+  else if (t !== undefined) problems.push(`warnThreshold: ${JSON.stringify(t)} is not a positive integer`);
 
-  return { criteria, warnThreshold };
+  return { criteria, warnThreshold, problems };
 }
 
-function countMatching(root, rel, re) {
+// One shape for all three files, so which file a row is in is what says how far it
+// has got, and one pattern counts any of them.
+function rows(root, rel) {
   let raw;
   try {
     raw = fs.readFileSync(path.join(root, rel), 'utf8');
   } catch {
-    return 0;
+    return [];
   }
-  return raw.split('\n').filter((line) => re.test(line)).length;
+  return raw.split('\n').map((line) => line.match(ROW_RE)).filter(Boolean);
 }
 
-const countEntries = (root) => countMatching(root, LOG_REL, ENTRY_RE);
+const countEntries = (root) => rows(root, LOG_REL).length;
 
-// A .pre.md still holding entries means that work shipped with no comments at all.
-const countPending = (root) => countMatching(root, PRE_REL, PRE_RE);
+// A .pre.md still holding rows means that work shipped with no comments at all.
+const countPending = (root) => rows(root, PRE_REL).length;
+
+// The rest carry a kind: classified, and then not delivered.
+const countUnclassified = (root) => rows(root, PRE_REL).filter((m) => m[1] === '').length;
+
+// Substituted into the shipped table rather than restated, so the wording of a kind
+// has one home.
+function criteriaTable(root) {
+  const { criteria, problems } = loadConfig(root);
+  const found = readDiscipline().match(TABLE_RE);
+  const table = (found ? found[0] : '')
+    .split('\n')
+    .filter((line) => !line.startsWith('<!--'))
+    .map((line) => {
+      const m = line.match(TABLE_ROW_RE);
+      return m ? `| \`${m[1]}\` |${m[2]}| **${criteria[m[1]] || m[3]}** |` : line;
+    });
+  return [...table, ...problems.map((p) => `config.json ignored \u2014 ${p}`)].join('\n');
+}
 
 function readDiscipline() {
   return fs.readFileSync(SKILL_PATH, 'utf8').replace(/^---[\s\S]*?---\s*/, '');
@@ -196,7 +222,7 @@ function statuslineNudge(file = settingsPath()) {
     + `wired up yet. To set it up, ${how}. Offer this to the user once.`;
 }
 
-function buildContext(criteria, count, warnThreshold, pending = 0, configured = false) {
+function buildContext(count, warnThreshold, pending = 0, unclassified = 0, configured = false) {
   // `.periplus/` is hidden, so these counts are the only sign it has stopped draining.
   let header = count > warnThreshold
     ? `PERIPLUS ACTIVE — ${count} entries pending, over the threshold of ${warnThreshold}. `
@@ -204,12 +230,14 @@ function buildContext(criteria, count, warnThreshold, pending = 0, configured = 
     : `PERIPLUS ACTIVE — ${count} entries pending`;
 
   if (pending > 0) {
-    header += `\n${pending} pre-comment(s) in .periplus/.pre.md were never filtered. `
-      + 'Run phase 2 on them before writing new code, or that work shipped with no comments at all.';
+    header += `\n${pending} row(s) in .periplus/.pre.md were never delivered — `
+      + `${unclassified} not yet classified, ${pending - unclassified} classified but left in place. `
+      + 'Run /pp on them before writing new code, or that work shipped with no comments at all.';
   }
 
   if (configured) {
-    header += '\nThis repository customises the criteria in .periplus/config.json — read it in phase 2.';
+    header += '\nThis repository customises the destinations in .periplus/config.json '
+      + '— /pp-resolve reads the resolved table.';
   }
 
   return `${header}
@@ -236,14 +264,21 @@ function main(event) {
   }
 
   const root = projectRoot();
+
+  // Ahead of ensureWorkspace: a read-only query should not make `.periplus/` appear.
+  if (event === 'criteria') {
+    process.stdout.write(`${criteriaTable(root)}\n`);
+    return;
+  }
+
   try {
     ensureWorkspace(root);
   } catch {
     // A read-only checkout still gets the discipline, just no place to put it.
   }
-  const { criteria, warnThreshold } = loadConfig(root);
+  const { warnThreshold } = loadConfig(root);
   const context = buildContext(
-    criteria, countEntries(root), warnThreshold, countPending(root), hasConfig(root),
+    countEntries(root), warnThreshold, countPending(root), countUnclassified(root), hasConfig(root),
   );
 
   // SessionStart takes raw stdout; SubagentStart drops anything that is not the
@@ -267,7 +302,7 @@ if (require.main === module) {
 }
 
 module.exports = {
-  loadConfig, countEntries, countPending, buildContext, readDiscipline, hasConfig,
-  alwaysSection, ensureWorkspace, statuslineNudge, installStatusline,
-  DEFAULT_CRITERIA, DEFAULT_THRESHOLD,
+  loadConfig, countEntries, countPending, countUnclassified, criteriaTable,
+  buildContext, readDiscipline, hasConfig, alwaysSection, ensureWorkspace,
+  statuslineNudge, installStatusline, DEFAULT_CRITERIA, DEFAULT_THRESHOLD,
 };

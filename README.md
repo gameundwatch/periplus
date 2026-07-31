@@ -27,6 +27,10 @@ source, promoted to an ADR, or discarded. A log that stays near-empty is working
 a log that grows is the signal that nothing is being resolved, which is why the
 pending count is reported at every session start.
 
+Every note carries exactly one **kind** — what the note is about — and the kind is
+what decides where it goes. A note that holds two is two notes, split when it is
+written down rather than when it is filed.
+
 ## Install
 
 ```
@@ -44,22 +48,53 @@ it. The files inside are created lazily, on the first note and the first entry.
 ## Commands
 
 - `/pp` — the discipline itself, applied on demand: capture while implementing,
-  filter when the code is done. The session hook normally does this for you;
-  invoke it when the hook is not active, in a subagent that did not inherit it,
-  or to re-anchor mid-session.
+  filter when the code is done. Phase 2 is `/pp-classify` then `/pp-resolve`, and
+  `/pp` is both. The session hook normally handles phase 1 for you; invoke `/pp`
+  when the hook is not active, in a subagent that did not inherit it, or to
+  re-anchor mid-session.
+- `/pp-classify` — split each captured note until one kind fits, and record it.
+  Writes only `.pre.md`, so the kinds can be reviewed before anything is delivered.
+- `/pp-resolve` — deliver each note to what its kind resolves to, and drain
+  `.pre.md`.
 - `/pp-list` — list pending entries with the exit each is heading for. Read-only.
 - `/pp-discussion` — work through them one at a time and carry out the exits.
 - `/pp-refactor` — the same two phases pointed at comments that already exist:
   collect them into `.pre.md`, filter, write each file back with agreement.
 
+Reach for `/pp`. Running `/pp-classify` alone and stopping leaves the source with
+no comments at all, which is the failure the discipline exists to prevent — the
+session-start line reports rows left in that state.
+
 `skills/pp/SKILL.md` is the single source of the discipline. The hook reads that
-file, substitutes the repository's criteria, and injects it, so `/pp` and the
-session hook cannot drift apart — a test asserts they stay identical.
+file at runtime rather than restating it, so `/pp` and the session hook cannot
+drift apart — a test asserts they stay identical.
+
+## The three files
+
+```
+- <created> → <updated> `<file>:<line>` [<kind>] <the note>
+```
+
+| file | what is in it | how a row leaves |
+| --- | --- | --- |
+| `.periplus/.pre.md` | rows that have not been delivered | `/pp-resolve` |
+| `.periplus/.log.md` | rows whose kind sent them to periplus | pick, promote, discard |
+| `.periplus/.all.md` | every row that was ever captured | it does not leave |
+
+One shape for all three, so which file a row is in is what says how far it has
+got. The kind is empty at capture and filled by `/pp-classify`; the second
+timestamp moves whenever something happens to the row, which is how `/pp-list`
+tells an entry nobody has looked at from one that was discussed and held over.
+
+`.all.md` is the exception to the log being a state — it is an archive on purpose,
+and the only record of which kinds are actually being written. Nothing reads it
+during a run.
 
 ## Configuration
 
 Optional, per repository, at `.periplus/config.json`. Absent or malformed fields
-fall back to the defaults below.
+fall back to the defaults below, and anything that could not be used is named when
+`/pp-resolve` prints the resolved table.
 
 ```json
 {
@@ -80,8 +115,13 @@ fall back to the defaults below.
 }
 ```
 
-Each criterion takes `code`, `periplus`, or `drop`. `warnThreshold` is the
-pending count above which the session-start line turns into a warning.
+Each kind takes `code`, `periplus`, or `drop`. `warnThreshold` is the pending
+count above which the session-start line turns into a warning.
+
+**The set of kinds is closed.** Destinations move; the vocabulary does not. Wanting
+a twelfth kind means wanting a category none of the eleven covers, which is a
+change to the discipline rather than to a setting — so a key that is not a kind is
+reported as ignored rather than quietly accepted.
 
 `.periplus/` is not tracked, `config.json` included: the directory holds working
 state, and a comment convention a team has agreed on is shared by copying the
@@ -89,8 +129,13 @@ file in, the same way a local tool config is. The plugin never writes
 `config.json` itself, so a repository that has not set one always tracks the
 shipped defaults rather than a snapshot of them.
 
-Only the phase 1 rule is injected at session start, about 300 tokens. The
-criteria table and the filter steps are read when `/pp` is invoked for phase 2.
+Only the phase 1 rule is injected at session start, about 300 tokens. The kind
+table and the filter steps are read when phase 2 runs. `/pp-resolve` gets the
+table with this repository's settings already applied:
+
+```
+node hooks/periplus-activate.js criteria
+```
 
 Everything routed to `drop` is recoverable from the code, from `git log`, or from
 an existing ADR, so writing it anywhere would create a second source that can go
@@ -135,8 +180,8 @@ command runs in it. The tag appears on the next session, and on Windows the
 
 ## Files
 
-- `CONTEXT.md` — the vocabulary: pre-comment, pick, promote, discard, and the
-  criteria they operate on.
+- `CONTEXT.md` — the vocabulary: pre-comment, kind, criterion, pick, promote,
+  discard.
 - `docs/motivation.md` — the problem this was written for, as originally stated.
 - `docs/adr/` — why the plugin is shaped this way, including two decisions that
   were measured and reversed.

@@ -41,8 +41,8 @@ about are exactly the ones that get waved through in a list.
 **Example of one round:**
 
 ```
-- 2026-07-29T11:03 `src/limiter.py:42` [upgrade-triggers] one global lock; move to
-  per-account locks if throughput becomes a problem
+- 2026-07-29T11:03 → 2026-07-29T11:03 `src/limiter.py:42` [upgrade-triggers] one
+  global lock; move to per-account locks if throughput becomes a problem
 
 src/limiter.py:38-45 still has the single module-level Lock.
 
@@ -89,6 +89,17 @@ that would make it leave, and rewrite the entry to carry that condition.
 Rewriting is the weaker option and should feel like it. A note nobody can act on
 is usually a note nobody needed, so reach for an exit first and keep the rewrite
 for the cases where the decision is real but its moment has not come.
+
+## Entries that stay
+
+An entry taken up here and left in the log — rewritten to carry a trigger, or
+held because the user wants it held — gets its updated timestamp set to now. Its
+created timestamp never changes.
+
+The gap between the two is what `/pp-list` reads as `held over`, and it is the
+only way a later session can tell an entry nobody has looked at from one that was
+discussed and survived. Leaving the timestamp alone makes a discussion that
+changed nothing indistinguishable from a discussion that never happened.
 
 ## Ending
 

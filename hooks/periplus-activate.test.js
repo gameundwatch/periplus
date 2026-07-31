@@ -10,6 +10,8 @@ const {
   loadConfig,
   countEntries,
   countPending,
+  countUnclassified,
+  criteriaTable,
   buildContext,
   readDiscipline,
   alwaysSection,
@@ -58,24 +60,52 @@ test('invalid values fall back instead of poisoning the discipline', () => {
   const { criteria, warnThreshold } = loadConfig(root);
   assert.strictEqual(criteria.why, 'code');
   assert.strictEqual(criteria.tautology, 'drop');
-  assert.ok(!('made-up-key' in criteria), 'unknown criteria are not admitted');
+  assert.ok(!('made-up-key' in criteria), 'unknown kinds are not admitted');
   assert.strictEqual(warnThreshold, DEFAULT_THRESHOLD);
+});
+
+test('a setting that could not be used is named rather than dropped in silence', () => {
+  const root = repo({
+    '.periplus/config.json': JSON.stringify({
+      criteria: { whys: 'code', tautology: 'somewhere' },
+      warnThreshold: 0,
+    }),
+  });
+  const { problems } = loadConfig(root);
+  assert.ok(problems.some((p) => p.includes('"whys"')), 'a misspelled kind is reported');
+  assert.ok(problems.some((p) => p.includes('tautology')), 'an impossible destination is reported');
+  assert.ok(problems.some((p) => p.includes('warnThreshold')));
+});
+
+test('a config that is doing exactly what it says raises nothing', () => {
+  const root = repo({ '.periplus/config.json': JSON.stringify({ criteria: { why: 'periplus' } }) });
+  assert.deepStrictEqual(loadConfig(root).problems, []);
 });
 
 test('malformed JSON degrades to defaults rather than throwing', () => {
   const root = repo({ '.periplus/config.json': '{ not json' });
-  assert.deepStrictEqual(loadConfig(root).criteria, DEFAULT_CRITERIA);
+  const { criteria, problems } = loadConfig(root);
+  assert.deepStrictEqual(criteria, DEFAULT_CRITERIA);
+  assert.ok(problems.some((p) => p.includes('not valid JSON')), 'and says so');
 });
 
-test('only entry lines are counted', () => {
+test('a missing config is the normal case and is not a problem', () => {
+  assert.deepStrictEqual(loadConfig(repo({})).problems, []);
+});
+
+const row = (created, updated, at, kind, note) =>
+  `- ${created} → ${updated} \`${at}\` [${kind}] ${note}`;
+
+test('only rows in the shared format are counted', () => {
   const root = repo({
     '.periplus/.log.md': [
-      '# periplus',
+      '# log',
       '',
-      '- 2026-07-29T11:03 `src/a.py:1` [why] first',
-      '  continuation line that is not its own entry',
-      '- 2026-07-30T09:00 `src/b.py:2` [upgrade-triggers] second',
-      '- not an entry, no date',
+      row('2026-07-29T11:03', '2026-07-29T11:03', 'src/a.py:1', 'why', 'first'),
+      '  continuation line that is not its own row',
+      row('2026-07-30T09:00', '2026-07-31T08:00', 'src/b.py:2', 'upgrade-triggers', 'second'),
+      '- 2026-07-29T11:03 `src/c.py:3` [why] the old single-timestamp shape',
+      '- not a row at all',
       '',
     ].join('\n'),
   });
@@ -86,48 +116,73 @@ test('a missing log counts as zero, not an error', () => {
   assert.strictEqual(countEntries(repo({})), 0);
 });
 
-test('unfiltered pre-comments are counted and warned about', () => {
+test('undelivered rows are split into unclassified and classified', () => {
   const root = repo({
     '.periplus/.pre.md': [
       '# pre',
-      '- src/payments.py:38 Retry-After only handles seconds, and we should parse dates one day',
-      '- src/ledger.py:4 the dict is per process, move to Redis later',
-      'a stray line that is not an entry',
+      row('2026-07-31T10:00', '2026-07-31T10:00', 'src/payments.py:38', '', 'Retry-After は秒しか解釈しない'),
+      row('2026-07-31T10:01', '2026-07-31T10:01', 'src/ledger.py:4', '', 'the dict is per process'),
+      row('2026-07-31T10:02', '2026-07-31T11:00', 'src/ledger.py:9', 'why', 'classified, and then left here'),
+      'a stray line that is not a row',
     ].join('\n'),
   });
-  assert.strictEqual(countPending(root), 2);
+  assert.strictEqual(countPending(root), 3);
+  assert.strictEqual(countUnclassified(root), 2);
 
-  const context = buildContext(DEFAULT_CRITERIA, 0, 10, countPending(root));
-  assert.ok(context.includes('2 pre-comment(s)'), 'the count is surfaced');
-  assert.ok(context.includes('never filtered'));
+  const context = buildContext(0, 10, countPending(root), countUnclassified(root));
+  assert.ok(context.includes('3 row(s)'), 'the total is surfaced');
+  assert.ok(context.includes('2 not yet classified'));
+  assert.ok(context.includes('1 classified but left in place'), 'the state the split newly allows');
 });
 
 test('no warning when nothing is parked', () => {
-  const context = buildContext(DEFAULT_CRITERIA, 0, 10, 0);
-  assert.ok(!context.includes('pre-comment(s)'));
+  const context = buildContext(0, 10, 0, 0);
+  assert.ok(!context.includes('row(s)'));
 });
 
 test('the threshold warning appears only above the threshold', () => {
-  const quiet = buildContext(DEFAULT_CRITERIA, 10, 10);
+  const quiet = buildContext(10, 10);
   assert.ok(quiet.startsWith('PERIPLUS ACTIVE — 10 entries pending\n'));
   assert.ok(!quiet.includes('stopped draining'));
 
-  const loud = buildContext(DEFAULT_CRITERIA, 11, 10);
+  const loud = buildContext(11, 10);
   assert.ok(loud.includes('over the threshold of 10'));
   assert.ok(loud.includes('stopped draining'));
 });
 
-test('a repository with a config is told to read it', () => {
-  const plain = buildContext(DEFAULT_CRITERIA, 0, 10, 0, false);
-  assert.ok(!plain.includes('customises the criteria'));
+test('a repository with a config is told which command applies it', () => {
+  const plain = buildContext(0, 10, 0, 0, false);
+  assert.ok(!plain.includes('customises the destinations'));
 
-  const configured = buildContext(DEFAULT_CRITERIA, 0, 10, 0, true);
+  const configured = buildContext(0, 10, 0, 0, true);
   assert.ok(configured.includes('.periplus/config.json'));
-  assert.ok(configured.includes('read it in phase 2'));
+  assert.ok(configured.includes('/pp-resolve'));
 });
 
-test('phase 2 is told to consult the config before routing', () => {
-  assert.ok(readDiscipline().includes('If `.periplus/config.json` exists, read it first'));
+test('the shipped table says it is not the authority', () => {
+  assert.ok(readDiscipline().includes('the shipped defaults, not the authority'));
+  assert.ok(readDiscipline().includes('/pp-resolve'), 'and names what is');
+});
+
+test('the resolved table carries the repository\'s destinations, not the shipped ones', () => {
+  const root = repo({
+    '.periplus/config.json': JSON.stringify({ criteria: { why: 'periplus', history: 'code' } }),
+  });
+  const table = criteriaTable(root);
+  assert.match(table, /\| `why` \|[^|]*\| \*\*periplus\*\* \|/);
+  assert.match(table, /\| `history` \|[^|]*\| \*\*code\*\* \|/);
+  assert.match(table, /\| `contracts` \|[^|]*\| \*\*code\*\* \|/, 'untouched kinds keep the default');
+  assert.ok(!table.includes('<!--'), 'the markers are not part of the output');
+});
+
+test('the resolved table is where a useless setting finally becomes visible', () => {
+  const root = repo({ '.periplus/config.json': JSON.stringify({ criteria: { whys: 'code' } }) });
+  assert.match(criteriaTable(root), /config\.json ignored — unknown kind "whys"/);
+});
+
+test('the descriptions of the kinds live in one place only', () => {
+  const source = fs.readFileSync(path.join(__dirname, 'periplus-activate.js'), 'utf8');
+  assert.ok(!source.includes('a browser quirk'), 'the wording is substituted into, never restated');
 });
 
 test('phase 2 is told not to translate on the way out', () => {
@@ -135,21 +190,28 @@ test('phase 2 is told not to translate on the way out', () => {
 });
 
 test('the injected capture rule is lifted verbatim from the skill', () => {
-  const delivered = buildContext(DEFAULT_CRITERIA, 3, 10);
+  const delivered = buildContext(3, 10);
   assert.ok(delivered.includes(alwaysSection()));
   assert.ok(readDiscipline().includes(alwaysSection()));
 });
 
 test('session start carries the capture rule only, not the filter machinery', () => {
-  const delivered = buildContext(DEFAULT_CRITERIA, 0, 10);
+  const delivered = buildContext(0, 10);
   assert.ok(delivered.includes('.periplus/.pre.md'), 'the capture rule is present');
   assert.ok(delivered.includes('invoke `/pp`'), 'phase 2 is pointed at, not inlined');
-  assert.ok(!TABLE_RE.test(delivered), 'the criteria table is not injected');
-  assert.ok(!delivered.includes('rejected-alternatives'), 'no criterion names leak in');
+  assert.ok(!TABLE_RE.test(delivered), 'the kind table is not injected');
+  assert.ok(!delivered.includes('rejected-alternatives'), 'no kind names leak in');
   assert.ok(
     delivered.length * 3 < readDiscipline().length,
     `injected ${delivered.length} chars against a ${readDiscipline().length} char skill`,
   );
+});
+
+test('capture is told to split before writing the row, not after', () => {
+  const rule = alwaysSection();
+  assert.ok(rule.includes('One note per line, one thing per note'));
+  assert.ok(rule.includes('[]'), 'the kind is left empty at capture');
+  assert.ok(rule.includes('→'), 'both timestamps are in the shape it is given');
 });
 
 const ignoreOf = (root) => fs.readFileSync(path.join(root, '.gitignore'), 'utf8');
