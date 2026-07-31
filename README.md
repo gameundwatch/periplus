@@ -22,10 +22,12 @@ count comes out about the same. The effect is that the source carries only what 
 true of the code now, while what should happen later moves to a queue that has to
 be drained.
 
-The log is a **state**, not an archive. Entries leave it by being picked into the
-source, promoted to an ADR, or discarded. A log that stays near-empty is working;
-a log that grows is the signal that nothing is being resolved, which is why the
-pending count is reported at every session start.
+The log is a **state**, not an archive. What lands in it is document material, so
+entries leave it mainly into a document the repository already keeps — or into the
+source, or nowhere. An entry that belongs in a document the repository does not
+keep stays, with that as its condition for leaving. A log that stays near-empty is
+working; a log that grows is the signal that nothing is being resolved, which is
+why the pending count is reported at every session start.
 
 Every note carries exactly one **kind** — what the note is about — and the kind is
 what decides where it goes. A note that holds two is two notes, split when it is
@@ -56,8 +58,8 @@ it. The files inside are created lazily, on the first note and the first entry.
   Writes only `.pre.md`, so the kinds can be reviewed before anything is delivered.
 - `/pp-resolve` — deliver each note to what its kind resolves to, and drain
   `.pre.md`.
-- `/pp-discussion` — work through the pending log entries one at a time and carry
-  out the exits, each against a specific agreement.
+- `/pp-discuss` — work through the pending log entries one at a time and send
+  each to its destination, one specific agreement per entry.
 - `/pp-refactor` — the same discipline pointed at comments that already exist. It
   **cuts** them out of the source into `.pre.md` first, one file at a time, then
   runs the two halves over them. Destructive where `/pp` is not: the comments
@@ -81,14 +83,14 @@ drift apart — a test asserts they stay identical.
 | file | what is in it | how a row leaves |
 | --- | --- | --- |
 | `.periplus/.pre.md` | rows that have not been delivered | `/pp-resolve` |
-| `.periplus/.log.md` | rows whose kind sent them to periplus | pick, promote, discard |
+| `.periplus/.log.md` | rows whose kind sent them to periplus | docs, code, trash |
 | `.periplus/.all.md` | every row captured while writing code | it does not leave |
 | `.periplus/.swept.md` | every row `/pp-refactor` cut out of existing code | it does not leave |
 
 One shape for all of them, so which file a row is in is what says how far it has
 got and where it came from. The kind is empty at capture and filled by
 `/pp-classify`; the second timestamp moves whenever something happens to the row,
-which is how `/pp-discussion` tells an entry nobody has looked at from one that
+which is how `/pp-discuss` tells an entry nobody has looked at from one that
 was discussed and held over.
 
 The two archives are the exception to the log being a state — they are archives on
@@ -188,8 +190,8 @@ command runs in it. The tag appears on the next session, and on Windows the
 
 ## Files
 
-- `CONTEXT.md` — the vocabulary: pre-comment, kind, criterion, pick, promote,
-  discard.
+- `CONTEXT.md` — the vocabulary: pre-comment, kind, criterion, and the four
+  destinations code, docs, here, trash.
 - `docs/motivation.md` — the problem this was written for, as originally stated.
 - `docs/adr/` — why the plugin is shaped this way, including two decisions that
   were measured and reversed.

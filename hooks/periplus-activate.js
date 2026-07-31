@@ -226,7 +226,7 @@ function buildContext(count, warnThreshold, pending = 0, unclassified = 0, confi
   // `.periplus/` is hidden, so these counts are the only sign it has stopped draining.
   let header = count > warnThreshold
     ? `PERIPLUS ACTIVE — ${count} entries pending, over the threshold of ${warnThreshold}. `
-      + 'The log has stopped draining. Offer to run /pp-discussion before starting new work.'
+      + 'The log has stopped draining. Offer to run /pp-discuss before starting new work.'
     : `PERIPLUS ACTIVE — ${count} entries pending`;
 
   if (pending > 0) {
