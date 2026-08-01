@@ -42,24 +42,6 @@ destinations and is not told this would see its configuration quietly ignored.
 A row still holding `[]` was never classified. Do not guess it — run
 `/pp-classify` over the file first, then come back.
 
-## Before writing a comment, try the code
-
-This applies only to rows the table sends to **code**. A comment is what is left
-when the code cannot carry the fact itself, so try making the code say it and see
-whether the note disappears:
-
-- a number that needs explaining wants a name
-- a block that wants a heading wants extracting into a function
-- a condition that wants explaining wants a named predicate
-- an invariant that wants stating wants an assertion or a test
-
-This is the step that keeps a source file from filling with prose, and the easy
-one to skip, because writing the sentence is faster than changing the code. A
-change to the code is still a change to the code: show it before making it.
-
-A row settled this way is delivered like any other — it goes to the archive under
-its own kind, and it leaves `.pre.md`.
-
 ## Deliver
 
 **code** — write it into the source at the row's `file:line`, as the shortest
@@ -77,9 +59,12 @@ translate quietly, and quietly is how it happens — the surrounding file is rig
 there, and matching it feels like tidiness rather than a rewrite.
 
 **periplus** — append the row to `.periplus/.log.md`, unchanged except for the
-updated timestamp. An entry whose text names no condition under which it would
-leave the log is inventory in a place meant to be temporary; add that condition
-now, or expect `/pp-discuss` to refuse to let it pass unchanged.
+updated timestamp. Do not work a leaving condition into it here. Whether an entry
+needs one is a question about *holding* it, and holding is `/pp-discuss`'s
+decision, not this command's. Any kind can be pointed here by
+`.periplus/config.json`, and a fact about the outside world has no leaving
+condition to give — asking for one at delivery would make that configuration
+unusable.
 
 **drop** — write it nowhere.
 
