@@ -5,7 +5,7 @@ A ship's log for implementation-time decisions.
 Coding agents write comments faster than anyone reads them, and the codebase ends
 up documenting itself: tautologies, back-references to ADRs, migration stories,
 and plans for later all competing with the code. Periplus works in two phases —
-while the code is being written every comment is captured to `.periplus/.pre.md`
+while the code is being written every comment is captured to `.periplus/pre.csv`
 untouched, and once the code is finished they are filtered in one pass into the
 source, into the log, or nowhere.
 
@@ -55,13 +55,13 @@ it. The files inside are created lazily, on the first note and the first entry.
   when the hook is not active, in a subagent that did not inherit it, or to
   re-anchor mid-session.
 - `/pp-classify` — split each captured note until one kind fits, and record it.
-  Writes only `.pre.md`, so the kinds can be reviewed before anything is delivered.
+  Writes only `pre.csv`, so the kinds can be reviewed before anything is delivered.
 - `/pp-resolve` — deliver each note to what its kind resolves to, and drain
-  `.pre.md`.
+  `pre.csv`.
 - `/pp-discuss` — work through the pending log entries one at a time and send
   each to its destination, one specific agreement per entry.
 - `/pp-refactor` — the same discipline pointed at comments that already exist. It
-  **cuts** them out of the source into `.pre.md` first, one file at a time, then
+  **cuts** them out of the source into `pre.csv` first, one file at a time, then
   runs the two halves over them. Destructive where `/pp` is not: the comments
   leave the file before anything has decided where they belong, so what protects
   you is that the change is uncommitted.
@@ -77,15 +77,19 @@ drift apart — a test asserts they stay identical.
 ## The files
 
 ```
-- <created> `<file>:<line>` [<kind>] <the note>
+<timestamp>,<file>,<line>,<kind>,"<the note>"
 ```
+
+No header row. The note is the last field and is quoted whatever is in it, so
+nothing has to be read to decide whether it needs quoting; a `"` inside it is
+doubled to `""` and it never contains a newline.
 
 | file | what is in it | how a row leaves |
 | --- | --- | --- |
-| `.periplus/.pre.md` | rows that have not been delivered | `/pp-resolve` |
-| `.periplus/.log.md` | rows whose kind sent them to periplus | docs, code, trash — or it stays |
-| `.periplus/.all.md` | every row captured while writing code | it does not leave |
-| `.periplus/.swept.md` | every row `/pp-refactor` cut out of existing code | it does not leave |
+| `.periplus/pre.csv` | rows that have not been delivered | `/pp-resolve` |
+| `.periplus/log.csv` | rows whose kind sent them to periplus | docs, code, trash — or it stays |
+| `.periplus/all.csv` | every row captured while writing code | it does not leave |
+| `.periplus/swept.csv` | every row `/pp-refactor` cut out of existing code | it does not leave |
 
 One shape for all of them, so which file a row is in is what says how far it has
 got and where it came from. The kind is empty at capture and filled by
@@ -94,8 +98,8 @@ after that.
 
 The two archives are the only record of which kinds are actually being written,
 which is what makes the discipline measurable rather than asserted. They are
-kept apart because they answer different questions: `.all.md` is what this
-discipline produces, `.swept.md` is what was written without it. Mixed together, a
+kept apart because they answer different questions: `all.csv` is what this
+discipline produces, `swept.csv` is what was written without it. Mixed together, a
 sweep over code that had already been through `/pp` would make its output
 indistinguishable from its input. Nothing reads either during a run.
 
@@ -228,7 +232,7 @@ Measured across two coding tasks, against the same tasks run without it:
 the rest is the capture-and-filter work itself, which is what the discipline is.
 
 A cheaper variant was tried and removed — writing comments inline and sweeping
-them into `.pre.md` before phase 2. It measured *more* expensive (1.35x and 1.62x),
+them into `pre.csv` before phase 2. It measured *more* expensive (1.35x and 1.62x),
 because reading comments back out of the source adds a round trip rather than
 removing one, and it produced fewer log entries: a sweep only finds what someone
 was willing to commit to the source.

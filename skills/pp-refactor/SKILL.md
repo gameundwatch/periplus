@@ -2,7 +2,7 @@
 name: pp-refactor
 description: >
   Point the periplus discipline at comments that already exist. Cuts the comments
-  out of a named file or directory into `.periplus/.pre.md`, then runs
+  out of a named file or directory into `.periplus/pre.csv`, then runs
   /pp-classify and /pp-resolve over them, so what survives is written back and the
   rest becomes log entries or nothing. Invoked as /pp-refactor. Use it when the
   user asks to clean up comments in existing code, points at a file that has
@@ -41,20 +41,23 @@ cut → /pp-classify → /pp-resolve → next file
 ```
 
 Finish a file before opening the next one. Cutting the whole scope first would
-leave every `file:line` in `.pre.md` pointing at coordinates the source no longer
+leave every `file:line` in `pre.csv` pointing at coordinates the source no longer
 has — removing a comment moves every line below it.
 
 ### Cut
 
 Remove every comment and docstring in the file from the source, and write them
-into `.periplus/.pre.md`:
+into `.periplus/pre.csv`:
 
 ```
-- <created> `<file>:<line>` [] <the comment>
+<timestamp>,<file>,<line>,,"<the comment>"
 ```
 
 The timestamp is now. The kind is left empty. The `file:line` is where the comment
-was before the file was rewritten.
+was before the file was rewritten. The comment is always quoted, a `"` inside it
+is doubled to `""`, and a block comment that spanned several lines arrives on one:
+a newline inside the quotes is legal CSV that everything counting rows would
+miscount.
 
 Split as you go, by the same rule phase 1 uses: one row per thing said. A comment
 joined by a contrast or a plain "and" is two rows at the same `file:line`; one
@@ -64,7 +67,7 @@ joined by a cause stays whole. What that rule misses, `/pp-classify` splits.
 belong.** That is what makes this command destructive and `/pp` not. What protects
 you is that the file is modified and uncommitted: `git diff` shows exactly what
 was cut, and `git restore` puts it back. Nothing in this skill can restore a
-comment once the change has been committed — the rows in `.pre.md` are split
+comment once the change has been committed — the rows in `pre.csv` are split
 fragments, and the connectives that joined them are gone.
 
 Collect them all, including the ones that obviously belong where they are.
@@ -76,9 +79,9 @@ unfiltered list is what makes the before-and-after reviewable.
 Run `/pp-classify`, then `/pp-resolve`. Both are unchanged here, with one
 exception:
 
-- **The archive is `.periplus/.swept.md`, not `.all.md`.** These comments were
+- **The archive is `.periplus/swept.csv`, not `all.csv`.** These comments were
   written somewhere else, by someone else, under no discipline. Mixed into
-  `.all.md` they would drown the record of what this discipline actually
+  `all.csv` they would drown the record of what this discipline actually
   captures — and worse, a sweep over code that has already been through `/pp`
   would make its output indistinguishable from its input, so `/pp` letting
   something through would stop being visible.
@@ -101,20 +104,20 @@ Per file, one line per row:
 <file>:<line> [<kind>] → <code|periplus|drop>
 ```
 
-End with `<N> to code, <M> to periplus, <K> dropped, across <F> files. .pre.md
+End with `<N> to code, <M> to periplus, <K> dropped, across <F> files. pre.csv
 empty.` If it is not empty, that is the report instead: `<R> rows still in
-.pre.md` — and the sweep is not done.
+pre.csv` — and the sweep is not done.
 
 ## Boundaries
 
 **Never rewrite code.** This command moves comments. The moment it touches the
 code it is no longer refactoring comments.
 
-**Never remove a comment that has not passed through `.periplus/.pre.md`.** That
+**Never remove a comment that has not passed through `.periplus/pre.csv`.** That
 file is the record of what was cut, and without it a sweep is indistinguishable
 from a mistake.
 
-**`.pre.md` must be empty before this is over.** Rows in it are comments in
+**`pre.csv` must be empty before this is over.** Rows in it are comments in
 flight: cut out of the source and not yet put anywhere. Unlike `/pp`, where an
 undelivered row only costs a note that was never written, here every row is a
 comment that has already been removed from a file and has had its fate left
