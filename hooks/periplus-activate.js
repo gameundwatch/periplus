@@ -20,21 +20,18 @@ const DEFAULT_CRITERIA = {
 };
 
 const DESTINATIONS = ['code', 'periplus', 'drop'];
-const DEFAULT_THRESHOLD = 10;
 const LOG_REL = '.periplus/.log.md';
 const PRE_REL = '.periplus/.pre.md';
 const CONFIG_REL = '.periplus/config.json';
 const IGNORE_LINE = '/.periplus/';
 const IGNORE_RE = /^\/?\.periplus\/?$/;
 const TS = String.raw`\d{4}-\d{2}-\d{2}T\d{2}:\d{2}`;
-const ROW_RE = new RegExp(String.raw`^- ${TS} → ${TS} \`\S+:\d+\` \[([^\]]*)\]`);
+const ROW_RE = new RegExp(String.raw`^- ${TS} \`\S+:\d+\` \[([^\]]*)\]`);
 // Read at runtime, never restated here: /pp and the hook must not drift apart.
 const SKILL_PATH = path.join(__dirname, '..', 'skills', 'pp', 'SKILL.md');
 const TABLE_RE = /<!-- criteria-table:start -->[\s\S]*?<!-- criteria-table:end -->/;
 const TABLE_ROW_RE = /^\| `([^`]+)` \|(.*)\| \*\*(\w+)\*\* \|$/;
 const ALWAYS_RE = /<!-- always:start -->\n([\s\S]*?)<!-- always:end -->/;
-
-const hasConfig = (root) => fs.existsSync(path.join(root, CONFIG_REL));
 
 // The directory is the only visible sign the hook ran at all, so it is made
 // before anything has been captured. Runs once, when the directory is first
@@ -66,9 +63,8 @@ function projectRoot() {
 // Config is user input: every field falls back to its default rather than throwing.
 function loadConfig(root) {
   const criteria = { ...DEFAULT_CRITERIA };
-  let warnThreshold = DEFAULT_THRESHOLD;
   const problems = [];
-  const fallback = { criteria, warnThreshold, problems };
+  const fallback = { criteria, problems };
 
   let raw;
   try {
@@ -94,11 +90,7 @@ function loadConfig(root) {
     else criteria[name] = to;
   }
 
-  const t = parsed && parsed.warnThreshold;
-  if (Number.isInteger(t) && t > 0) warnThreshold = t;
-  else if (t !== undefined) problems.push(`warnThreshold: ${JSON.stringify(t)} is not a positive integer`);
-
-  return { criteria, warnThreshold, problems };
+  return { criteria, problems };
 }
 
 // One shape for all three files, so which file a row is in is what says how far it
@@ -223,22 +215,14 @@ function statuslineNudge(file = settingsPath()) {
     + `wired up yet. To set it up, ${how}. Offer this to the user once.`;
 }
 
-function buildContext(count, warnThreshold, pending = 0, unclassified = 0, configured = false) {
-  // `.periplus/` is hidden, so these counts are the only sign it has stopped draining.
-  let header = count > warnThreshold
-    ? `PERIPLUS ACTIVE — ${count} entries pending, over the threshold of ${warnThreshold}. `
-      + 'The log has stopped draining. Offer to run /pp-discuss before starting new work.'
-    : `PERIPLUS ACTIVE — ${count} entries pending`;
+// Without the status line installed, this is the only place the count appears.
+function buildContext(count, pending = 0, unclassified = 0) {
+  let header = `PERIPLUS ACTIVE — ${count} in the log`;
 
   if (pending > 0) {
     header += `\n${pending} row(s) in .periplus/.pre.md were never delivered — `
       + `${unclassified} not yet classified, ${pending - unclassified} classified but left in place. `
       + 'Run /pp on them before writing new code, or that work shipped with no comments at all.';
-  }
-
-  if (configured) {
-    header += '\nThis repository customises the destinations in .periplus/config.json '
-      + '— /pp-resolve reads the resolved table.';
   }
 
   return `${header}
@@ -277,19 +261,22 @@ function main(event) {
   } catch {
     // A read-only checkout still gets the discipline, just no place to put it.
   }
-  const { warnThreshold } = loadConfig(root);
-  const context = buildContext(
-    countEntries(root), warnThreshold, countPending(root), countUnclassified(root), hasConfig(root),
-  );
 
   // SessionStart takes raw stdout; SubagentStart drops anything that is not the
   // hookSpecificOutput envelope.
+  // The undelivered warning is not passed down this branch: the parent wrote those
+  // rows, and a subagent draining the parent's .pre.md is a delivery nobody agreed to.
   if (event === 'SubagentStart') {
     process.stdout.write(JSON.stringify({
-      hookSpecificOutput: { hookEventName: event, additionalContext: context },
+      hookSpecificOutput: {
+        hookEventName: event,
+        additionalContext: buildContext(countEntries(root)),
+      },
     }));
     return;
   }
+
+  const context = buildContext(countEntries(root), countPending(root), countUnclassified(root));
   // The nudge is on this branch only: a subagent has no status line to configure.
   process.stdout.write(context + statuslineNudge());
 }
@@ -304,6 +291,6 @@ if (require.main === module) {
 
 module.exports = {
   loadConfig, countEntries, countPending, countUnclassified, criteriaTable,
-  buildContext, readDiscipline, hasConfig, alwaysSection, ensureWorkspace,
-  statuslineNudge, installStatusline, DEFAULT_CRITERIA, DEFAULT_THRESHOLD,
+  buildContext, readDiscipline, alwaysSection, ensureWorkspace,
+  statuslineNudge, installStatusline, DEFAULT_CRITERIA,
 };

@@ -20,12 +20,12 @@ finding that two names fit.
 `.periplus/.pre.md`, one row per line:
 
 ```
-- <created> → <updated> `<file>:<line>` [<kind>] <the note>
+- <created> `<file>:<line>` [<kind>] <the note>
 ```
 
 Rows with an empty `[]` are yours. Rows that already carry a kind were classified
-in an earlier run — leave them exactly as they are, timestamps included. No file,
-or no empty rows: report `Nothing to classify.` and stop.
+in an earlier run — leave them exactly as they are. No file, or no empty rows:
+report `Nothing to classify.` and stop.
 
 The kinds and what each one means are in `skills/pp/SKILL.md`, in the table
 between the `criteria-table` markers. Read the first two columns. **Ignore the
@@ -49,19 +49,19 @@ half can hold two kinds of its own:
 ```
 
 Splitting a row replaces it with the rows it became, at the same `file:line`,
-carrying the same created timestamp. The note was captured once; splitting it is
-something done to it afterwards.
+carrying the same timestamp. The note was captured once; splitting it is something
+done to it afterwards.
 
 Write each half in the language the row was captured in. Splitting is a cut, not
 a rewrite.
 
 ## What to write back
 
-For each row settled: put the kind between the brackets, and set the updated
-timestamp to now. The created timestamp never changes.
+For each row settled: put the kind between the brackets. Nothing else on the row
+changes — the timestamp says when the note was captured, not when it was handled.
 
 ```
-- 2026-07-31T14:22 → 2026-07-31T15:03 `hooks/x.js:88` [why] タイムアウトが多発したため非同期にした
+- 2026-07-31T14:22 `hooks/x.js:88` [why] タイムアウトが多発したため非同期にした
 ```
 
 Nothing else in `.pre.md` moves, and nothing outside it is touched. A source file

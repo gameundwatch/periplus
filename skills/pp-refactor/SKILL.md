@@ -50,11 +50,11 @@ Remove every comment and docstring in the file from the source, and write them
 into `.periplus/.pre.md`:
 
 ```
-- <created> → <updated> `<file>:<line>` [] <the comment>
+- <created> `<file>:<line>` [] <the comment>
 ```
 
-Both timestamps are now. The kind is left empty. The `file:line` is where the
-comment was before the file was rewritten.
+The timestamp is now. The kind is left empty. The `file:line` is where the comment
+was before the file was rewritten.
 
 Split as you go, by the same rule phase 1 uses: one row per thing said. A comment
 joined by a contrast or a plain "and" is two rows at the same `file:line`; one

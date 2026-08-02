@@ -5,24 +5,25 @@ description: >
   destination — a comment in the source, a document the repository keeps, back to
   the log, or nowhere. Invoked as /pp-discuss. Changes files, one entry at a
   time, each with the user's agreement. Also use it when the user asks what is
-  sitting in `.periplus/`, or when a session-start pending count is high enough
-  that new work should not start on top of it.
+  sitting in `.periplus/`, or asks what the implementation has been left to decide
+  on its own.
 ---
 
 Every entry taken up here reaches one of four destinations, and the log shrinks by
 exactly the entries that left it.
 
-What arrives in the log is document material. Only two kinds route here by default
-— `rejected-alternatives` and `upgrade-triggers` — and neither is a fact the code
-depends on. So `docs` is the main road, and the other three are the shoulders.
+What arrives in the log is document material. Three kinds route here by default —
+`unspecified-choices`, `rejected-alternatives` and `upgrade-triggers` — and none
+of them is a fact the code depends on. `docs` is what they are aimed at, but the
+four destinations are not a ranking: which one an entry takes follows from whether
+it has been settled, not from which outcome is the better one.
 
 ## Before starting
 
 Read `.periplus/.log.md`, and `.periplus/config.json` when it exists — most
 repositories run on the defaults and have no config file, which is not a problem
-to report. Nothing pending: say so and stop. An empty log means the discipline is
-working, so there is nothing to go looking for — do not scan the source for
-comments to fill a session with.
+to report. An empty log: say so and stop — do not scan the source for comments to
+fill a session with.
 
 **Then survey what documents this repository keeps.** Look at `docs/`, at the
 repository root, and at wherever else design writing has collected — ADRs, a
@@ -41,10 +42,7 @@ describes now.
 
 ## One entry at a time
 
-Take entries in order, oldest first by the created timestamp — never by the
-updated one, or every entry that has already survived a discussion sinks to the
-back, and the rows that have resisted settling the longest are the last ones
-looked at.
+Take entries in order, oldest first.
 
 For each:
 
@@ -52,10 +50,6 @@ For each:
 2. Say which destination you think it takes, and why, in a sentence or two. Name
    the document when you say `docs`.
 3. Ask, and wait for the answer before touching a file.
-
-An entry whose updated timestamp is later than its created one has been here
-before: it was taken up, argued about, and put back. Say so when you show it, and
-do not re-run the argument that already failed to settle it once.
 
 Presenting several entries together looks efficient and is not: each destination
 is a different irreversible operation on a different file, and a single "yes, all
@@ -66,8 +60,8 @@ argued about are exactly the ones that get waved through in a list.
 **Example of one round:**
 
 ```
-- 2026-07-29T11:03 → 2026-07-29T11:03 `src/limiter.py:42` [upgrade-triggers] one
-  global lock; move to per-account locks if throughput becomes a problem
+- 2026-07-29T11:03 `src/limiter.py:42` [upgrade-triggers] one global lock; move
+  to per-account locks if throughput becomes a problem
 
 src/limiter.py:38-45 still has the single module-level Lock.
 
@@ -109,54 +103,34 @@ The document supplies the test, and it is not the same test everywhere:
 Nothing in the repository's documents supplies a test it passes: it is `trash`,
 not `docs`. Widening the destination is not licence to widen what qualifies.
 
-**here** — it belongs in a document, and no practice in this repository holds it
-yet. It stays in the log, and that is its trigger: it leaves when such a document
-exists. Set its updated timestamp to now.
+**here** — it is not settled yet, so it stays in the log.
 
-This is the honest answer for a repository that keeps no design writing, and it is
-also the failure mode to watch — in a repository with no `docs/`, every entry fits
-this description, and the log quietly becomes the store it was never meant to be.
-The counter-pressure is recurrence: **the second time the same subject lands
-here, that is the evidence for starting the practice.** Say so, and propose
-creating the document rather than holding the note a third time. One note does not
-justify a document tree; two notes on one subject do.
+Staying is the normal outcome for a decision nobody has made. An unsettled note
+cannot pass the test a document sets, and pushing one through anyway would write
+an open question into the record as though it had been closed. Do not ask the user
+for a condition under which the entry would leave: what would settle it is a
+decision still owed, and the entry sitting in the log is the evidence that it is
+owed. A `.log.md` that grows says how much design the implementation has been left
+to decide, which is worth knowing and is not a fault to correct.
 
 **trash** — delete it, after naming what makes it recoverable: the code itself,
 `git log`, or a specific existing document. Naming the source gives the user the
 one chance to disagree while the note still exists.
 
 Then remove the settled entry from `.periplus/.log.md`. An entry acted on but left
-in place will be argued about again next session, and the count that is supposed
-to signal a healthy log will keep pointing at work already done. An entry sent to
-`here` is the one case that stays, and its updated timestamp is what says so.
-
-## Entries with no trigger
-
-An entry whose own text names no condition that would make it leave is how a
-temporary log turns into permanent storage. Do not let one pass unchanged.
-
-`here` supplies a trigger by construction — the document that does not exist yet
-is the condition. Any other reason for holding an entry does not, and there the
-condition has to be worked out with the user and written into the entry.
-
-Rewriting is the weaker option and should feel like it. A note nobody can act on
-is usually a note nobody needed, so reach for a destination first and keep the
-rewrite for the cases where the decision is real but its moment has not come.
-
-The gap between the created and updated timestamps is what the next run of this
-command reads, and it is the only way a later session can tell an entry nobody has
-looked at from one that was discussed and survived. Leaving the timestamp alone
-makes a discussion that changed nothing indistinguishable from a discussion that
-never happened. The created timestamp never changes.
+in place will be argued about again next session, and the count will keep pointing
+at work already done. An entry sent to `here` is the one case that stays.
 
 ## Ending
 
 Stop when the entries run out, or when the user says stop. Report what moved:
 `<N> to code, <M> to docs, <K> trashed, <R> held here.`
 
-If the same note keeps returning across sessions in different words, say so. A
-recurring note is a document that has not been written yet — the repetition is the
-evidence that the decision is real and keeps being rediscovered.
+**If the same subject has now landed in the log twice, say so.** Whether the two
+arrived in different sessions, in different words, or sit side by side in the same
+run, that is what the log is for: one note is not a reason to write a document,
+two on one subject are, and the log is where the evidence for it accumulates.
+Propose the document by name rather than leaving both entries for a third pass.
 
 ## Boundaries
 

@@ -19,15 +19,15 @@ done with the original no longer in front of you.
 
 The effect is not fewer comments — measured against an undisciplined baseline the
 count comes out about the same. The effect is that the source carries only what is
-true of the code now, while what should happen later moves to a queue that has to
-be drained.
+true of the code now, while what is still undecided moves to the log.
 
-The log is a **state**, not an archive. What lands in it is document material, so
-entries leave it mainly into a document the repository already keeps — or into the
-source, or nowhere. An entry that belongs in a document the repository does not
-keep stays, with that as its condition for leaving. A log that stays near-empty is
-working; a log that grows is the signal that nothing is being resolved, which is
-why the pending count is reported at every session start.
+The log is a **log**. What lands in it is document material, so entries leave it
+mainly into a document the repository already keeps — or into the source, or
+nowhere. An entry that is not settled yet stays, and staying is not a failure: it
+cannot pass the test a document sets until someone decides it, and the entry
+sitting there is the evidence that the decision is owed. A log that grows is a
+reading of how much design the implementation has been left to decide, which is
+the second thing periplus is for after keeping comments out of the source.
 
 Every note carries exactly one **kind** — what the note is about — and the kind is
 what decides where it goes. A note that holds two is two notes, split when it is
@@ -77,24 +77,23 @@ drift apart — a test asserts they stay identical.
 ## The files
 
 ```
-- <created> → <updated> `<file>:<line>` [<kind>] <the note>
+- <created> `<file>:<line>` [<kind>] <the note>
 ```
 
 | file | what is in it | how a row leaves |
 | --- | --- | --- |
 | `.periplus/.pre.md` | rows that have not been delivered | `/pp-resolve` |
-| `.periplus/.log.md` | rows whose kind sent them to periplus | docs, code, trash |
+| `.periplus/.log.md` | rows whose kind sent them to periplus | docs, code, trash — or it stays |
 | `.periplus/.all.md` | every row captured while writing code | it does not leave |
 | `.periplus/.swept.md` | every row `/pp-refactor` cut out of existing code | it does not leave |
 
 One shape for all of them, so which file a row is in is what says how far it has
 got and where it came from. The kind is empty at capture and filled by
-`/pp-classify`; the second timestamp moves whenever something happens to the row,
-which is how `/pp-discuss` tells an entry nobody has looked at from one that
-was discussed and held over.
+`/pp-classify`; the timestamp says when the note was captured and never moves
+after that.
 
-The two archives are the exception to the log being a state — they are archives on
-purpose, and the only record of which kinds are actually being written. They are
+The two archives are the only record of which kinds are actually being written,
+which is what makes the discipline measurable rather than asserted. They are
 kept apart because they answer different questions: `.all.md` is what this
 discipline produces, `.swept.md` is what was written without it. Mixed together, a
 sweep over code that had already been through `/pp` would make its output
@@ -147,13 +146,11 @@ fall back to the defaults below, and anything that could not be used is named wh
     "doc-references": "drop",
     "history": "drop",
     "test-intent": "drop"
-  },
-  "warnThreshold": 10
+  }
 }
 ```
 
-Each kind takes `code`, `periplus`, or `drop`. `warnThreshold` is the pending
-count above which the session-start line turns into a warning.
+Each kind takes `code`, `periplus`, or `drop`, and `criteria` is the whole file.
 
 **The set of kinds is closed.** Destinations move; the vocabulary does not. Wanting
 a thirteenth kind means wanting a category none of the twelve covers, which is a
@@ -180,11 +177,12 @@ out of date on its own.
 
 ## Status line
 
-The session-start line reports the pending count once, and it is stale as soon as
-the first note is captured. `hooks/periplus-statusline.js` keeps both counts on
-screen: `[PERIPLUS]` while nothing is pending, `[PERIPLUS:3!2]` for three log
-entries and two unfiltered pre-comments, amber once the log is over the
-threshold. In a repository without `.periplus/` it prints nothing.
+The session-start line reports the log count once, and it is stale as soon as the
+first note is captured. `hooks/periplus-statusline.js` keeps both counts on
+screen: `[PERIPLUS]` while both files are empty, `[PERIPLUS:3!2]` for three log
+entries and two unfiltered pre-comments. The numbers are line counts and nothing
+more — neither turns into a warning. In a repository without `.periplus/` it
+prints nothing.
 
 Claude Code reads only the `agent` and `subagentStatusLine` keys out of a
 plugin's own `settings.json`, so the status line has to live in yours. The

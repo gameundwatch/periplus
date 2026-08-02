@@ -2,18 +2,15 @@
 
 const fs = require('fs');
 const path = require('path');
-const { countEntries, countPending, loadConfig } = require('./periplus-activate.js');
+const { countEntries, countPending } = require('./periplus-activate.js');
 
 // Far enough from the 108 ponytail prints that the two tags stay apart side by side.
 const SEA = '\u001b[38;5;110m';
-const WARN = '\u001b[38;5;179m';
 const RESET = '\u001b[0m';
 
-// Only the log turns the tag amber. A non-empty .pre.md is the normal state while
-// code is being written, and a colour that is on for most of a session says nothing.
-function tag(log, pre, warnThreshold) {
+function tag(log, pre) {
   const counts = `${log > 0 ? `:${log}` : ''}${pre > 0 ? `!${pre}` : ''}`;
-  return `${log > warnThreshold ? WARN : SEA}[PERIPLUS${counts}]${RESET}`;
+  return `${SEA}[PERIPLUS${counts}]${RESET}`;
 }
 
 const fallbackRoot = () => process.env.CLAUDE_PROJECT_DIR || process.cwd();
@@ -38,8 +35,7 @@ function main() {
   // Silent where the hook has never run: a tag in a repository without the
   // discipline would claim it is live.
   if (!fs.existsSync(path.join(root, '.periplus'))) return;
-  const { warnThreshold } = loadConfig(root);
-  process.stdout.write(tag(countEntries(root), countPending(root), warnThreshold));
+  process.stdout.write(tag(countEntries(root), countPending(root)));
 }
 
 if (require.main === module) {

@@ -5,6 +5,7 @@ const assert = require('node:assert');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
+const { execFileSync } = require('node:child_process');
 
 const {
   loadConfig,
@@ -19,7 +20,6 @@ const {
   statuslineNudge,
   installStatusline,
   DEFAULT_CRITERIA,
-  DEFAULT_THRESHOLD,
 } = require('./periplus-activate.js');
 
 const TABLE_RE = /<!-- criteria-table:start -->[\s\S]*?<!-- criteria-table:end -->/;
@@ -35,46 +35,46 @@ function repo(files) {
 }
 
 test('no config falls back to the shipped defaults', () => {
-  const { criteria, warnThreshold } = loadConfig(repo({}));
-  assert.deepStrictEqual(criteria, DEFAULT_CRITERIA);
-  assert.strictEqual(warnThreshold, DEFAULT_THRESHOLD);
+  assert.deepStrictEqual(loadConfig(repo({})).criteria, DEFAULT_CRITERIA);
 });
 
 test('a valid destination overrides the default', () => {
   const root = repo({
-    '.periplus/config.json': JSON.stringify({ criteria: { why: 'periplus' }, warnThreshold: 3 }),
+    '.periplus/config.json': JSON.stringify({ criteria: { why: 'periplus' } }),
   });
-  const { criteria, warnThreshold } = loadConfig(root);
+  const { criteria } = loadConfig(root);
   assert.strictEqual(criteria.why, 'periplus');
   assert.strictEqual(criteria.contracts, 'code', 'untouched criteria keep their default');
-  assert.strictEqual(warnThreshold, 3);
 });
 
 test('invalid values fall back instead of poisoning the discipline', () => {
   const root = repo({
     '.periplus/config.json': JSON.stringify({
       criteria: { why: 'wherever', tautology: null, 'made-up-key': 'code' },
-      warnThreshold: -1,
     }),
   });
-  const { criteria, warnThreshold } = loadConfig(root);
+  const { criteria } = loadConfig(root);
   assert.strictEqual(criteria.why, 'code');
   assert.strictEqual(criteria.tautology, 'drop');
   assert.ok(!('made-up-key' in criteria), 'unknown kinds are not admitted');
-  assert.strictEqual(warnThreshold, DEFAULT_THRESHOLD);
 });
 
 test('a setting that could not be used is named rather than dropped in silence', () => {
   const root = repo({
     '.periplus/config.json': JSON.stringify({
       criteria: { whys: 'code', tautology: 'somewhere' },
-      warnThreshold: 0,
     }),
   });
   const { problems } = loadConfig(root);
   assert.ok(problems.some((p) => p.includes('"whys"')), 'a misspelled kind is reported');
   assert.ok(problems.some((p) => p.includes('tautology')), 'an impossible destination is reported');
-  assert.ok(problems.some((p) => p.includes('warnThreshold')));
+});
+
+test('criteria is the only key config.json has left', () => {
+  const root = repo({
+    '.periplus/config.json': JSON.stringify({ criteria: {}, warnThreshold: 3 }),
+  });
+  assert.deepStrictEqual(loadConfig(root).problems, [], 'a leftover key is ignored, not reported');
 });
 
 test('a config that is doing exactly what it says raises nothing', () => {
@@ -93,18 +93,17 @@ test('a missing config is the normal case and is not a problem', () => {
   assert.deepStrictEqual(loadConfig(repo({})).problems, []);
 });
 
-const row = (created, updated, at, kind, note) =>
-  `- ${created} → ${updated} \`${at}\` [${kind}] ${note}`;
+const row = (created, at, kind, note) => `- ${created} \`${at}\` [${kind}] ${note}`;
 
 test('only rows in the shared format are counted', () => {
   const root = repo({
     '.periplus/.log.md': [
       '# log',
       '',
-      row('2026-07-29T11:03', '2026-07-29T11:03', 'src/a.py:1', 'why', 'first'),
+      row('2026-07-29T11:03', 'src/a.py:1', 'why', 'first'),
       '  continuation line that is not its own row',
-      row('2026-07-30T09:00', '2026-07-31T08:00', 'src/b.py:2', 'upgrade-triggers', 'second'),
-      '- 2026-07-29T11:03 `src/c.py:3` [why] the old single-timestamp shape',
+      row('2026-07-30T09:00', 'src/b.py:2', 'upgrade-triggers', 'second'),
+      '- 2026-07-29T11:03 → 2026-07-29T11:03 `src/c.py:3` [why] the shape before v0.3.6',
       '- not a row at all',
       '',
     ].join('\n'),
@@ -120,43 +119,53 @@ test('undelivered rows are split into unclassified and classified', () => {
   const root = repo({
     '.periplus/.pre.md': [
       '# pre',
-      row('2026-07-31T10:00', '2026-07-31T10:00', 'src/payments.py:38', '', 'Retry-After は秒しか解釈しない'),
-      row('2026-07-31T10:01', '2026-07-31T10:01', 'src/ledger.py:4', '', 'the dict is per process'),
-      row('2026-07-31T10:02', '2026-07-31T11:00', 'src/ledger.py:9', 'why', 'classified, and then left here'),
+      row('2026-07-31T10:00', 'src/payments.py:38', '', 'Retry-After は秒しか解釈しない'),
+      row('2026-07-31T10:01', 'src/ledger.py:4', '', 'the dict is per process'),
+      row('2026-07-31T10:02', 'src/ledger.py:9', 'why', 'classified, and then left here'),
       'a stray line that is not a row',
     ].join('\n'),
   });
   assert.strictEqual(countPending(root), 3);
   assert.strictEqual(countUnclassified(root), 2);
 
-  const context = buildContext(0, 10, countPending(root), countUnclassified(root));
+  const context = buildContext(0, countPending(root), countUnclassified(root));
   assert.ok(context.includes('3 row(s)'), 'the total is surfaced');
   assert.ok(context.includes('2 not yet classified'));
   assert.ok(context.includes('1 classified but left in place'), 'the state the split newly allows');
 });
 
 test('no warning when nothing is parked', () => {
-  const context = buildContext(0, 10, 0, 0);
-  assert.ok(!context.includes('row(s)'));
+  assert.ok(!buildContext(0, 0, 0).includes('row(s)'));
 });
 
-test('the threshold warning appears only above the threshold', () => {
-  const quiet = buildContext(10, 10);
-  assert.ok(quiet.startsWith('PERIPLUS ACTIVE — 10 entries pending\n'));
-  assert.ok(!quiet.includes('stopped draining'));
+const hookOutput = (root, event) => execFileSync(
+  process.execPath,
+  [path.join(__dirname, 'periplus-activate.js'), event],
+  { env: { ...process.env, CLAUDE_PROJECT_DIR: root }, encoding: 'utf8' },
+);
 
-  const loud = buildContext(11, 10);
-  assert.ok(loud.includes('over the threshold of 10'));
-  assert.ok(loud.includes('stopped draining'));
+test('the undelivered warning reaches the session, never a subagent', () => {
+  const root = repo({ '.periplus/.pre.md': row('2026-08-02T09:00', 'src/a.py:1', '', 'a note') });
+  const session = hookOutput(root, 'SessionStart');
+  const subagent = hookOutput(root, 'SubagentStart');
+
+  assert.ok(session.includes('never delivered'));
+  assert.ok(!subagent.includes('never delivered'), 'a subagent did not write those rows');
+  assert.ok(session.includes('0 in the log') && subagent.includes('0 in the log'), 'both carry the count');
 });
 
-test('a repository with a config is told which command applies it', () => {
-  const plain = buildContext(0, 10, 0, 0, false);
-  assert.ok(!plain.includes('customises the destinations'));
+test('a long log is reported, never warned about', () => {
+  for (const count of [0, 10, 99]) {
+    const context = buildContext(count);
+    assert.ok(context.startsWith(`PERIPLUS ACTIVE — ${count} in the log\n`));
+    assert.ok(!/threshold|stopped draining|pp-discuss/.test(context));
+  }
+});
 
-  const configured = buildContext(0, 10, 0, 0, true);
-  assert.ok(configured.includes('.periplus/config.json'));
-  assert.ok(configured.includes('/pp-resolve'));
+test('a repository with a config is not told about it at session start', () => {
+  const root = repo({ '.periplus/config.json': JSON.stringify({ criteria: { why: 'periplus' } }) });
+  const context = buildContext(countEntries(root));
+  assert.ok(!context.includes('config.json'), 'phase 1 never reads a destination');
 });
 
 test('the shipped table says it is not the authority', () => {
@@ -201,13 +210,13 @@ test('phase 2 is told not to translate on the way out', () => {
 });
 
 test('the injected capture rule is lifted verbatim from the skill', () => {
-  const delivered = buildContext(3, 10);
+  const delivered = buildContext(3);
   assert.ok(delivered.includes(alwaysSection()));
   assert.ok(readDiscipline().includes(alwaysSection()));
 });
 
 test('session start carries the capture rule only, not the filter machinery', () => {
-  const delivered = buildContext(0, 10);
+  const delivered = buildContext(0);
   assert.ok(delivered.includes('.periplus/.pre.md'), 'the capture rule is present');
   assert.ok(delivered.includes('invoke `/pp`'), 'phase 2 is pointed at, not inlined');
   assert.ok(!TABLE_RE.test(delivered), 'the kind table is not injected');
@@ -222,7 +231,7 @@ test('capture is told to split before writing the row, not after', () => {
   const rule = alwaysSection();
   assert.ok(rule.includes('One note per line, one thing per note'));
   assert.ok(rule.includes('[]'), 'the kind is left empty at capture');
-  assert.ok(rule.includes('→'), 'both timestamps are in the shape it is given');
+  assert.ok(!rule.includes('→'), 'one timestamp, not two');
 });
 
 const ignoreOf = (root) => fs.readFileSync(path.join(root, '.gitignore'), 'utf8');
