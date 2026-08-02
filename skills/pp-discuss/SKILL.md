@@ -20,7 +20,7 @@ it has been settled, not from which outcome is the better one.
 
 ## Before starting
 
-Read `.periplus/.log.md`, and `.periplus/config.json` when it exists — most
+Read `.periplus/log.csv`, and `.periplus/config.json` when it exists — most
 repositories run on the defaults and have no config file, which is not a problem
 to report. An empty log: say so and stop — do not scan the source for comments to
 fill a session with.
@@ -60,8 +60,7 @@ argued about are exactly the ones that get waved through in a list.
 **Example of one round:**
 
 ```
-- 2026-07-29T11:03 `src/limiter.py:42` [upgrade-triggers] one global lock; move
-  to per-account locks if throughput becomes a problem
+2026-07-29T11:03,src/limiter.py,42,upgrade-triggers,"one global lock; move to per-account locks if throughput becomes a problem"
 
 src/limiter.py:38-45 still has the single module-level Lock.
 
@@ -110,14 +109,14 @@ cannot pass the test a document sets, and pushing one through anyway would write
 an open question into the record as though it had been closed. Do not ask the user
 for a condition under which the entry would leave: what would settle it is a
 decision still owed, and the entry sitting in the log is the evidence that it is
-owed. A `.log.md` that grows says how much design the implementation has been left
+owed. A `log.csv` that grows says how much design the implementation has been left
 to decide, which is worth knowing and is not a fault to correct.
 
 **trash** — delete it, after naming what makes it recoverable: the code itself,
 `git log`, or a specific existing document. Naming the source gives the user the
 one chance to disagree while the note still exists.
 
-Then remove the settled entry from `.periplus/.log.md`. An entry acted on but left
+Then remove the settled entry from `.periplus/log.csv`. An entry acted on but left
 in place will be argued about again next session, and the count will keep pointing
 at work already done. An entry sent to `here` is the one case that stays.
 

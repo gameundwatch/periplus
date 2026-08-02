@@ -3,12 +3,12 @@ name: pp-classify
 description: >
   Give every captured pre-comment exactly one kind, splitting the rows that hold
   more than one. Invoked as /pp-classify, and the first half of /pp. Writes only
-  `.periplus/.pre.md` — no source file, no log, no ADR. Use it when the kinds are
+  `.periplus/pre.csv` — no source file, no log, no ADR. Use it when the kinds are
   worth reviewing before anything is delivered; otherwise run /pp, which does this
   and then /pp-resolve.
 ---
 
-The first half of phase 2. Every row in `.periplus/.pre.md` comes out of this
+The first half of phase 2. Every row in `.periplus/pre.csv` comes out of this
 carrying exactly one kind, and nothing outside that file has changed.
 
 Splitting and naming are one job, not two. A row holds one kind when it cannot be
@@ -17,15 +17,15 @@ finding that two names fit.
 
 ## Read
 
-`.periplus/.pre.md`, one row per line:
+`.periplus/pre.csv`, one row per line, no header:
 
 ```
-- <created> `<file>:<line>` [<kind>] <the note>
+<timestamp>,<file>,<line>,<kind>,"<the note>"
 ```
 
-Rows with an empty `[]` are yours. Rows that already carry a kind were classified
-in an earlier run — leave them exactly as they are. No file, or no empty rows:
-report `Nothing to classify.` and stop.
+Rows with an empty fourth field are yours. Rows that already carry a kind were
+classified in an earlier run — leave them exactly as they are. No file, or no
+empty rows: report `Nothing to classify.` and stop.
 
 The kinds and what each one means are in `skills/pp/SKILL.md`, in the table
 between the `criteria-table` markers. Read the first two columns. **Ignore the
@@ -57,14 +57,15 @@ a rewrite.
 
 ## What to write back
 
-For each row settled: put the kind between the brackets. Nothing else on the row
+For each row settled: put the kind in the fourth field. Nothing else on the row
 changes — the timestamp says when the note was captured, not when it was handled.
+The note keeps its quotes, and a `"` inside it stays doubled to `""`.
 
 ```
-- 2026-07-31T14:22 `hooks/x.js:88` [why] タイムアウトが多発したため非同期にした
+2026-07-31T14:22,hooks/x.js,88,why,"タイムアウトが多発したため非同期にした"
 ```
 
-Nothing else in `.pre.md` moves, and nothing outside it is touched. A source file
+Nothing else in `pre.csv` moves, and nothing outside it is touched. A source file
 edited here would be a comment written before its destination was known, which is
 the failure this whole discipline is built around.
 
@@ -88,8 +89,8 @@ End with `<N> rows classified, <M> from splits. Run /pp-resolve to deliver them.
 
 ## Boundaries
 
-`.periplus/.pre.md` is the only file this writes. It does not deliver, it does
-not write to `.log.md` or `.all.md`, and it does not remove rows.
+`.periplus/pre.csv` is the only file this writes. It does not deliver, it does
+not write to `log.csv` or `all.csv`, and it does not remove rows.
 
 **Classifying and stopping is a worse state than not having started**, because
 the rows now look handled and the source still has no comments. Say so in the

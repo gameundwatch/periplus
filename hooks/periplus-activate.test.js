@@ -20,6 +20,7 @@ const {
   statuslineNudge,
   installStatusline,
   DEFAULT_CRITERIA,
+  ROW_RE,
 } = require('./periplus-activate.js');
 
 const TABLE_RE = /<!-- criteria-table:start -->[\s\S]*?<!-- criteria-table:end -->/;
@@ -93,22 +94,46 @@ test('a missing config is the normal case and is not a problem', () => {
   assert.deepStrictEqual(loadConfig(repo({})).problems, []);
 });
 
-const row = (created, at, kind, note) => `- ${created} \`${at}\` [${kind}] ${note}`;
+const row = (created, at, kind, note) => {
+  const [file, line] = at.split(':');
+  return `${created},${file},${line},${kind},"${note.replace(/"/g, '""')}"`;
+};
 
 test('only rows in the shared format are counted', () => {
   const root = repo({
-    '.periplus/.log.md': [
-      '# log',
+    '.periplus/log.csv': [
+      'timestamp,file,line,kind,body',
       '',
       row('2026-07-29T11:03', 'src/a.py:1', 'why', 'first'),
       '  continuation line that is not its own row',
       row('2026-07-30T09:00', 'src/b.py:2', 'upgrade-triggers', 'second'),
-      '- 2026-07-29T11:03 → 2026-07-29T11:03 `src/c.py:3` [why] the shape before v0.3.6',
-      '- not a row at all',
+      '- 2026-07-29T11:03 `src/c.py:3` [why] the shape before v0.4.0',
+      'not a row at all',
       '',
     ].join('\n'),
   });
   assert.strictEqual(countEntries(root), 2);
+});
+
+test('a row whose body was quoted wrong is counted rather than hidden', () => {
+  const root = repo({
+    '.periplus/pre.csv': '2026-07-29T11:03,src/a.py,1,,body with no quotes at all',
+  });
+  assert.strictEqual(countPending(root), 1);
+  assert.strictEqual(countUnclassified(root), 1);
+});
+
+test('a body holding commas and quotes does not split the row', () => {
+  const root = repo({
+    '.periplus/pre.csv': row('2026-07-29T11:03', 'src/a.py:1', '', 'a, b, and a "quoted" bit'),
+  });
+  assert.strictEqual(countUnclassified(root), 1);
+});
+
+test('a row with no line number is still a row', () => {
+  const root = repo({ '.periplus/pre.csv': '2026-07-29T11:03,src/a.py,,why,"the line is unknown"' });
+  assert.strictEqual(countPending(root), 1);
+  assert.strictEqual(countUnclassified(root), 0);
 });
 
 test('a missing log counts as zero, not an error', () => {
@@ -117,8 +142,7 @@ test('a missing log counts as zero, not an error', () => {
 
 test('undelivered rows are split into unclassified and classified', () => {
   const root = repo({
-    '.periplus/.pre.md': [
-      '# pre',
+    '.periplus/pre.csv': [
       row('2026-07-31T10:00', 'src/payments.py:38', '', 'Retry-After は秒しか解釈しない'),
       row('2026-07-31T10:01', 'src/ledger.py:4', '', 'the dict is per process'),
       row('2026-07-31T10:02', 'src/ledger.py:9', 'why', 'classified, and then left here'),
@@ -145,7 +169,7 @@ const hookOutput = (root, event) => execFileSync(
 );
 
 test('the undelivered warning reaches the session, never a subagent', () => {
-  const root = repo({ '.periplus/.pre.md': row('2026-08-02T09:00', 'src/a.py:1', '', 'a note') });
+  const root = repo({ '.periplus/pre.csv': row('2026-08-02T09:00', 'src/a.py:1', '', 'a note') });
   const session = hookOutput(root, 'SessionStart');
   const subagent = hookOutput(root, 'SubagentStart');
 
@@ -217,7 +241,7 @@ test('the injected capture rule is lifted verbatim from the skill', () => {
 
 test('session start carries the capture rule only, not the filter machinery', () => {
   const delivered = buildContext(0);
-  assert.ok(delivered.includes('.periplus/.pre.md'), 'the capture rule is present');
+  assert.ok(delivered.includes('.periplus/pre.csv'), 'the capture rule is present');
   assert.ok(delivered.includes('invoke `/pp`'), 'phase 2 is pointed at, not inlined');
   assert.ok(!TABLE_RE.test(delivered), 'the kind table is not injected');
   assert.ok(!delivered.includes('rejected-alternatives'), 'no kind names leak in');
@@ -230,8 +254,50 @@ test('session start carries the capture rule only, not the filter machinery', ()
 test('capture is told to split before writing the row, not after', () => {
   const rule = alwaysSection();
   assert.ok(rule.includes('One note per line, one thing per note'));
-  assert.ok(rule.includes('[]'), 'the kind is left empty at capture');
+  assert.ok(rule.includes(',,"'), 'the kind is left empty at capture');
   assert.ok(!rule.includes('→'), 'one timestamp, not two');
+});
+
+const TEMPLATE_FILES = [
+  'README.md',
+  'skills/pp/SKILL.md',
+  'skills/pp-classify/SKILL.md',
+  'skills/pp-resolve/SKILL.md',
+  'skills/pp-refactor/SKILL.md',
+];
+
+const fill = (template) => template
+  .replace('<timestamp>', '2026-07-31T14:22')
+  .replace('<file>', 'hooks/x.js')
+  .replace('<line>', '88')
+  .replace('<kind>', 'why')
+  .replace(/<[^>]*>/g, 'a note about ""seconds"", and commas');
+
+const templatesIn = (text) => text.split('\n').filter((line) => line.startsWith('<timestamp>,'));
+
+test('every format template that ships is a row the hook counts as the template says', () => {
+  const root = path.join(__dirname, '..');
+
+  for (const rel of TEMPLATE_FILES) {
+    const templates = templatesIn(fs.readFileSync(path.join(root, rel), 'utf8'));
+    assert.ok(templates.length > 0, `${rel} states no row format`);
+
+    for (const template of templates) {
+      const filled = fill(template);
+      assert.match(filled, ROW_RE, `${rel}: the hook does not count "${template}"`);
+      assert.strictEqual(
+        filled.match(ROW_RE)[1],
+        template.includes('<kind>') ? 'why' : '',
+        `${rel}: the hook reads a different field as the kind than "${template}" states`,
+      );
+    }
+  }
+});
+
+test('the injected capture template leaves the kind for phase 2 to fill', () => {
+  const [template, ...rest] = templatesIn(alwaysSection());
+  assert.deepStrictEqual(rest, [], 'capture states the format once');
+  assert.strictEqual(fill(template).match(ROW_RE)[1], '');
 });
 
 const ignoreOf = (root) => fs.readFileSync(path.join(root, '.gitignore'), 'utf8');
@@ -247,7 +313,7 @@ test('the workspace exists before anything has been captured into it', () => {
 });
 
 test('an existing workspace is left alone, whatever the .gitignore says', () => {
-  const root = repo({ '.git/HEAD': 'x', '.gitignore': 'node_modules/\n', '.periplus/.log.md': '' });
+  const root = repo({ '.git/HEAD': 'x', '.gitignore': 'node_modules/\n', '.periplus/log.csv': '' });
   ensureWorkspace(root);
   assert.strictEqual(ignoreOf(root), 'node_modules/\n', 'a deleted ignore line stays deleted');
 });

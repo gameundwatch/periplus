@@ -20,13 +20,15 @@ const DEFAULT_CRITERIA = {
 };
 
 const DESTINATIONS = ['code', 'periplus', 'drop'];
-const LOG_REL = '.periplus/.log.md';
-const PRE_REL = '.periplus/.pre.md';
+const LOG_REL = '.periplus/log.csv';
+const PRE_REL = '.periplus/pre.csv';
 const CONFIG_REL = '.periplus/config.json';
 const IGNORE_LINE = '/.periplus/';
 const IGNORE_RE = /^\/?\.periplus\/?$/;
 const TS = String.raw`\d{4}-\d{2}-\d{2}T\d{2}:\d{2}`;
-const ROW_RE = new RegExp(String.raw`^- ${TS} \`\S+:\d+\` \[([^\]]*)\]`);
+// The body's quoting is not checked: a miswritten row would drop out of the
+// count and out of sight.
+const ROW_RE = new RegExp(String.raw`^${TS},[^,]*,\d*,([^,]*),`);
 // Read at runtime, never restated here: /pp and the hook must not drift apart.
 const SKILL_PATH = path.join(__dirname, '..', 'skills', 'pp', 'SKILL.md');
 const TABLE_RE = /<!-- criteria-table:start -->[\s\S]*?<!-- criteria-table:end -->/;
@@ -107,7 +109,7 @@ function rows(root, rel) {
 
 const countEntries = (root) => rows(root, LOG_REL).length;
 
-// A .pre.md still holding rows means that work shipped with no comments at all.
+// A pre.csv still holding rows means that work shipped with no comments at all.
 const countPending = (root) => rows(root, PRE_REL).length;
 
 // The rest carry a kind: classified, and then not delivered.
@@ -220,7 +222,7 @@ function buildContext(count, pending = 0, unclassified = 0) {
   let header = `PERIPLUS ACTIVE — ${count} in the log`;
 
   if (pending > 0) {
-    header += `\n${pending} row(s) in .periplus/.pre.md were never delivered — `
+    header += `\n${pending} row(s) in .periplus/pre.csv were never delivered — `
       + `${unclassified} not yet classified, ${pending - unclassified} classified but left in place. `
       + 'Run /pp on them before writing new code, or that work shipped with no comments at all.';
   }
@@ -265,7 +267,7 @@ function main(event) {
   // SessionStart takes raw stdout; SubagentStart drops anything that is not the
   // hookSpecificOutput envelope.
   // The undelivered warning is not passed down this branch: the parent wrote those
-  // rows, and a subagent draining the parent's .pre.md is a delivery nobody agreed to.
+  // rows, and a subagent draining the parent's pre.csv is a delivery nobody agreed to.
   if (event === 'SubagentStart') {
     process.stdout.write(JSON.stringify({
       hookSpecificOutput: {
@@ -292,5 +294,5 @@ if (require.main === module) {
 module.exports = {
   loadConfig, countEntries, countPending, countUnclassified, criteriaTable,
   buildContext, readDiscipline, alwaysSection, ensureWorkspace,
-  statuslineNudge, installStatusline, DEFAULT_CRITERIA,
+  statuslineNudge, installStatusline, DEFAULT_CRITERIA, ROW_RE,
 };

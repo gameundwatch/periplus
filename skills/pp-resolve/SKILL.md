@@ -2,13 +2,13 @@
 name: pp-resolve
 description: >
   Deliver every classified pre-comment to the destination its kind resolves to,
-  and drain `.periplus/.pre.md`. Invoked as /pp-resolve, and the second half of
-  /pp. Writes source files, `.periplus/.log.md`, and the archive. Use it after
+  and drain `.periplus/pre.csv`. Invoked as /pp-resolve, and the second half of
+  /pp. Writes source files, `.periplus/log.csv`, and the archive. Use it after
   /pp-classify; /pp runs both.
 ---
 
-The second half of phase 2. Every row carrying a kind leaves `.pre.md` here, and
-`.pre.md` is empty when this is over.
+The second half of phase 2. Every row carrying a kind leaves `pre.csv` here, and
+`pre.csv` is empty when this is over.
 
 Where a kind goes is a lookup, not a judgement. The judgement was made by
 `/pp-classify` when it named the kind, and it is not made again here.
@@ -33,13 +33,13 @@ destinations and is not told this would see its configuration quietly ignored.
 
 ## Read
 
-`.periplus/.pre.md`. Rows carrying a kind are yours:
+`.periplus/pre.csv`. Rows carrying a kind are yours:
 
 ```
-- <created> `<file>:<line>` [<kind>] <the note>
+<timestamp>,<file>,<line>,<kind>,"<the note>"
 ```
 
-A row still holding `[]` was never classified. Do not guess it — run
+A row with an empty fourth field was never classified. Do not guess it — run
 `/pp-classify` over the file first, then come back.
 
 ## Deliver
@@ -58,21 +58,21 @@ who can then say which language the file should settle on. It is not licence to
 translate quietly, and quietly is how it happens — the surrounding file is right
 there, and matching it feels like tidiness rather than a rewrite.
 
-**periplus** — append the row to `.periplus/.log.md`, unchanged. Where it goes
+**periplus** — append the row to `.periplus/log.csv`, unchanged. Where it goes
 from there, and whether it goes anywhere at all, is `/pp-discuss`'s decision and
 not this command's.
 
 **drop** — write it nowhere.
 
 Then, for every row regardless of destination: append it to the archive unchanged,
-and delete it from `.periplus/.pre.md`. The archive
-is `.periplus/.all.md` unless whoever invoked this named another — `/pp-refactor`
+and delete it from `.periplus/pre.csv`. The archive
+is `.periplus/all.csv` unless whoever invoked this named another — `/pp-refactor`
 does, because comments it swept out of existing code are a different population.
 The archive is the only record that the row ever existed, and it is what makes the
 distribution of kinds measurable later. Nothing reads it during a run; it is never
 edited and never drained.
 
-Drain row by row, not at the end. What is left in `.pre.md` at any moment is then
+Drain row by row, not at the end. What is left in `pre.csv` at any moment is then
 exactly what has not been delivered, and a run that stops halfway is
 distinguishable from one that never started.
 
@@ -82,8 +82,8 @@ distinguishable from one that never started.
 <file>:<line> [<kind>] → <code|periplus|drop>
 ```
 
-End with `<N> to code, <M> to periplus, <K> dropped. .pre.md empty.` If it is not
-empty, that is the report instead: `<R> rows still in .pre.md` — and the work is
+End with `<N> to code, <M> to periplus, <K> dropped. pre.csv empty.` If it is not
+empty, that is the report instead: `<R> rows still in pre.csv` — and the work is
 not done.
 
 ## Boundaries
@@ -93,6 +93,6 @@ part. Show the comment text before writing it: this is the moment the comment th
 discipline was built to intercept gets to exist after all, and it should exist on
 purpose.
 
-Never delete a row from `.pre.md` without it reaching the archive first. That file
+Never delete a row from `pre.csv` without it reaching the archive first. That file
 is the record of what was captured, and a row that vanishes without landing there
 makes the discipline unmeasurable in exactly the way it was built to avoid.

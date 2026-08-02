@@ -2,8 +2,8 @@
 name: pp
 description: >
   Keep implementation-time notes out of the source until the code is finished.
-  Comments are captured to `.periplus/.pre.md` while you work, then filtered once
-  at the end into the source, into `.periplus/.log.md`, or nowhere. Invoke as /pp,
+  Comments are captured to `.periplus/pre.csv` while you work, then filtered once
+  at the end into the source, into `.periplus/log.csv`, or nowhere. Invoke as /pp,
   which runs /pp-classify and then /pp-resolve. Use it on any coding task where
   you would otherwise be writing comments — and whenever the user says "periplus",
   "stop commenting everything", "the code is turning into documentation", "keep a
@@ -37,16 +37,17 @@ edit a source file, this task's notes already have their destination: by the tim
 a comment is forming in the line you are typing, the decision has been made, and
 made wrong.
 
-Every time you are about to write a comment, append it to `.periplus/.pre.md`
-instead, creating the file on the first note. The directory is already there and
-already ignored — do not touch `.gitignore`.
+Every time you are about to write a comment, append it to `.periplus/pre.csv`
+instead, creating the file on the first note. No header row. The directory is
+already there and already ignored — do not touch `.gitignore`.
 
 ```
-- <created> `<file>:<line>` [] <the note, as it occurred to you>
+<timestamp>,<file>,<line>,,"<the note, as it occurred to you>"
 ```
 
-The timestamp is ISO 8601 to the minute. `[]` is the kind, which phase 2 fills in
-— leave it empty.
+The timestamp is ISO 8601 to the minute. The fourth field is the kind, which
+phase 2 fills in — leave it empty. The note is always quoted, whatever is in it,
+and a `"` inside it is doubled to `""`.
 
 **One note per line, one thing per note.** A note joined by a contrast or a plain
 "and" is two notes and goes on two lines: *it used to be synchronous, but
@@ -62,12 +63,12 @@ punctuation, and they go here too.
 
 Nothing is written into the source in this phase. Not one line.
 
-**The task is not finished while `.periplus/.pre.md` has rows in it.** Before
+**The task is not finished while `.periplus/pre.csv` has rows in it.** Before
 calling any piece of work done, invoke `/pp` and run phase 2 over what you
 captured. Skipping it leaves the code with no comments at all, which is a worse
 outcome than the noise this discipline exists to remove.
 
-An empty `.pre.md` is not evidence the discipline ran. It is equally what a task
+An empty `pre.csv` is not evidence the discipline ran. It is equally what a task
 that never captured anything leaves behind, and that failure writes nothing into
 the diff for anyone to catch later. So emptiness is not the report: when you call
 a coding task done, say which of the two it was — `periplus: 3 filtered`, or
@@ -82,9 +83,9 @@ indistinguishable from the first is how this discipline dies quietly.
 Two commands, in order:
 
 1. **`/pp-classify`** — split what is not yet atomic, and give each row exactly
-   one kind. Writes nothing outside `.pre.md`.
+   one kind. Writes nothing outside `pre.csv`.
 2. **`/pp-resolve`** — look the destination up from the kind, deliver each row,
-   and drain `.pre.md`.
+   and drain `pre.csv`.
 
 `/pp` is both, run back to back, and is what to reach for by default. The halves
 exist for the case where the kinds are worth reviewing before anything is
@@ -121,7 +122,7 @@ resolved table rather than this one.
 than an account of how the code works. The reader can see the code; what they
 cannot see is the world outside it.
 
-**periplus** — move it to `.periplus/.log.md`. `/pp-discuss` works through what
+**periplus** — move it to `.periplus/log.csv`. `/pp-discuss` works through what
 is waiting there.
 
 **drop** — write it nowhere. Everything routed here by default is recoverable
@@ -166,15 +167,21 @@ on. It is not licence to translate quietly.
 ## The files share one format
 
 ```
-- <created> `<file>:<line>` [<kind>] <the note>
+<timestamp>,<file>,<line>,<kind>,"<the note>"
 ```
+
+No header row, and the note is quoted whatever is in it — the quoting is a rule
+rather than a decision, so no row is read to find out whether it needs it. A `"`
+inside the note is doubled to `""`, and the note holds no newline: a compliant
+parser would read one record, but everything that counts rows splits the file on
+lines, and a note that spans two makes the count silently wrong.
 
 | file | what is in it | how a row leaves |
 | --- | --- | --- |
-| `.periplus/.pre.md` | rows that have not been delivered | `/pp-resolve` |
-| `.periplus/.log.md` | rows whose kind sent them to periplus | docs, code, or trash |
-| `.periplus/.all.md` | every row that was captured while writing code | it does not leave |
-| `.periplus/.swept.md` | every row `/pp-refactor` cut out of existing code | it does not leave |
+| `.periplus/pre.csv` | rows that have not been delivered | `/pp-resolve` |
+| `.periplus/log.csv` | rows whose kind sent them to periplus | docs, code, or trash |
+| `.periplus/all.csv` | every row that was captured while writing code | it does not leave |
+| `.periplus/swept.csv` | every row `/pp-refactor` cut out of existing code | it does not leave |
 
 Which file a row is in is what says how far it has got, so the row itself does
 not have to carry that. Neither does it carry its destination: that is the kind
@@ -182,7 +189,7 @@ and the config, and a copy of it here would be a second source able to disagree
 with them. The same goes for where a row came from — the two archives are two
 populations, and which file a row lands in is what tells them apart.
 
-`.log.md` is a log. It holds notes that are not settled — what lands here is
+`log.csv` is a log. It holds notes that are not settled — what lands here is
 document material, none of it a fact the code depends on, and `docs` is what it
 is aimed at:
 
@@ -202,13 +209,13 @@ and nothing has to be done about the number itself.
 The two archives never lose a row either, and for a different reason: they are the
 only record of which kinds are actually being written, and they are what makes the
 discipline measurable rather than merely asserted. Nothing reads them during a
-run. They are kept apart because they answer different questions — `.all.md` is
-what this discipline produces, `.swept.md` is what was written without it.
+run. They are kept apart because they answer different questions — `all.csv` is
+what this discipline produces, `swept.csv` is what was written without it.
 
 ## Commands
 
-- `/pp-classify` — split and assign kinds. Writes only `.pre.md`.
-- `/pp-resolve` — deliver each row and drain `.pre.md`.
+- `/pp-classify` — split and assign kinds. Writes only `pre.csv`.
+- `/pp-resolve` — deliver each row and drain `pre.csv`.
 - `/pp-discuss` — work through the pending log entries one at a time and send
   each to its destination.
 - `/pp-refactor` — the same discipline pointed at comments that already exist. It
