@@ -93,8 +93,8 @@ with no comments at all, which is the outcome this discipline exists to prevent.
 
 ## Kinds
 
-Exactly one per row. The set is closed: a note that seems to need a twelfth kind
-is a note that has not been split far enough.
+Exactly one per row. The set is closed: a note that seems to need a thirteenth
+kind is a note that has not been split far enough.
 
 The destinations below are the shipped defaults, not the authority. A repository
 can move any kind with `.periplus/config.json`, and `/pp-resolve` reads the
@@ -107,6 +107,7 @@ resolved table rather than this one.
 | `contracts` | an obligation on the caller that the signature and the types do not express | **code** |
 | `current-limits` | what this implementation does not do or cannot do yet, which reads as an oversight without it | **code** |
 | `why` | the reasoning behind a design or an approach | **code** |
+| `unspecified-choices` | a value or a shape the design did not specify, chosen at the implementer's discretion — the reason for it is in neither the code nor the design | **periplus** |
 | `rejected-alternatives` | an option that was considered and turned down | **periplus** |
 | `upgrade-triggers` | the condition under which this implementation should be revisited | **periplus** |
 | `block-headings` | a heading that labels the block of code below it | **drop** |
@@ -134,6 +135,19 @@ plan, and belongs in the log. Read the source alone and you should learn what th
 code does and does not handle. Read the log alone and you should learn what to do
 about it one day. Sending the whole note to either destination costs you one of
 those two readings.
+
+`unspecified-choices` is read last of the three kinds that can claim the same
+note, and the order is what keeps them apart. If a fact about the outside world
+fixes the value, it is `external-facts`; if the design fixes it, it is `why`;
+only when neither does has the implementer chosen, and the note defending that
+choice is an unsettled design decision rather than something the source should
+carry. What settles it is the design, which is why it goes to the log.
+
+Whether the design fixed something is read from the session first, then from the
+documents this repository keeps, then from the code. `/pp` settles it at the
+first of those, since the code and the notes were made in the same session there.
+`/pp-refactor` has no such session and reads the later two, so there it is an
+inference.
 
 ## Keep the language it was captured in
 

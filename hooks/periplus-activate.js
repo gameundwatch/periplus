@@ -9,6 +9,7 @@ const DEFAULT_CRITERIA = {
   'contracts': 'code',
   'current-limits': 'code',
   'why': 'code',
+  'unspecified-choices': 'periplus',
   'rejected-alternatives': 'periplus',
   'upgrade-triggers': 'periplus',
   'block-headings': 'drop',

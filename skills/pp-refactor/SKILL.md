@@ -73,8 +73,8 @@ unfiltered list is what makes the before-and-after reviewable.
 
 ### Classify, then resolve
 
-Run `/pp-classify`, then `/pp-resolve`. Both are unchanged here, with two
-exceptions:
+Run `/pp-classify`, then `/pp-resolve`. Both are unchanged here, with one
+exception:
 
 - **The archive is `.periplus/.swept.md`, not `.all.md`.** These comments were
   written somewhere else, by someone else, under no discipline. Mixed into
@@ -82,11 +82,11 @@ exceptions:
   captures — and worse, a sweep over code that has already been through `/pp`
   would make its output indistinguishable from its input, so `/pp` letting
   something through would stop being visible.
-- **Do not run the code-first step.** `/pp-resolve` tells you to try making the
-  code carry the fact before writing a comment — name the number, extract the
-  block, name the predicate. That is right where the code was written minutes ago
-  and wrong here, where it belongs to someone else. When you see one, put it in
-  the report as a suggestion and leave the code alone.
+
+`unspecified-choices` has no session to read here, so decide it from the
+documents this repository keeps and from the code. That is an inference and it
+will be wrong sometimes; `/pp-discuss` is where a wrong one gets corrected. A log
+that fills up after a sweep is the finding, not a fault.
 
 Comments routed to `code` are written back rewritten, not restored. Shortening a
 comment to the fact it carries is the work this command exists to do. Keep the
@@ -101,21 +101,14 @@ Per file, one line per row:
 <file>:<line> [<kind>] → <code|periplus|drop>
 ```
 
-Then the suggestions the code-first step would have acted on, if any:
-
-```
-suggestion  src/limiter.py:38  the heading over this block wants the block extracted
-```
-
 End with `<N> to code, <M> to periplus, <K> dropped, across <F> files. .pre.md
 empty.` If it is not empty, that is the report instead: `<R> rows still in
 .pre.md` — and the sweep is not done.
 
 ## Boundaries
 
-**Never rewrite code.** Extracting a function to retire a heading comment is a
-suggestion for the user, not something to do inside a comment sweep. The moment
-this touches the code it is no longer refactoring comments.
+**Never rewrite code.** This command moves comments. The moment it touches the
+code it is no longer refactoring comments.
 
 **Never remove a comment that has not passed through `.periplus/.pre.md`.** That
 file is the record of what was cut, and without it a sweep is indistinguishable

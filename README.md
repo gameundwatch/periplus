@@ -102,8 +102,8 @@ indistinguishable from its input. Nothing reads either during a run.
 
 ## Kinds
 
-Eleven, and the set is closed — a note that seems to need a twelfth is a note that
-has not been split far enough. The destinations below are the shipped defaults;
+Twelve, and the set is closed — a note that seems to need a thirteenth is a note
+that has not been split far enough. The destinations below are the shipped defaults;
 any of them can be moved per repository (see Configuration).
 
 | kind | which is | example | goes to |
@@ -112,6 +112,7 @@ any of them can be moved per repository (see Configuration).
 | `contracts` | an obligation on the caller that the signature and the types do not express | `the caller closes the file` | **code** |
 | `current-limits` | what this implementation does not do or cannot do yet, which reads as an oversight without it | `only parses the seconds form of Retry-After` | **code** |
 | `why` | the reasoning behind a design or an approach | `sorted before grouping so the output is stable` | **code** |
+| `unspecified-choices` | a value or a shape the design did not specify, chosen at the implementer's discretion — the reason for it is in neither the code nor the design | `300 ms, because it felt responsive enough` | **periplus** |
 | `rejected-alternatives` | an option that was considered and turned down | `considered a queue, chose the direct write` | **periplus** |
 | `upgrade-triggers` | the condition under which this implementation should be revisited | `move to per-account locks if throughput becomes a problem` | **periplus** |
 | `block-headings` | a heading that labels the block of code below it | `--- helpers ---` | **drop** |
@@ -138,6 +139,7 @@ fall back to the defaults below, and anything that could not be used is named wh
     "contracts": "code",
     "current-limits": "code",
     "why": "code",
+    "unspecified-choices": "periplus",
     "rejected-alternatives": "periplus",
     "upgrade-triggers": "periplus",
     "block-headings": "drop",
@@ -154,7 +156,7 @@ Each kind takes `code`, `periplus`, or `drop`. `warnThreshold` is the pending
 count above which the session-start line turns into a warning.
 
 **The set of kinds is closed.** Destinations move; the vocabulary does not. Wanting
-a twelfth kind means wanting a category none of the eleven covers, which is a
+a thirteenth kind means wanting a category none of the twelve covers, which is a
 change to the discipline rather than to a setting — so a key that is not a kind is
 reported as ignored rather than quietly accepted.
 
