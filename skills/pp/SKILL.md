@@ -42,11 +42,11 @@ instead, creating the file on the first note. The directory is already there and
 already ignored — do not touch `.gitignore`.
 
 ```
-- <created> → <updated> `<file>:<line>` [] <the note, as it occurred to you>
+- <created> `<file>:<line>` [] <the note, as it occurred to you>
 ```
 
-Both timestamps are ISO 8601 to the minute and identical at capture. `[]` is the
-kind, which phase 2 fills in — leave it empty.
+The timestamp is ISO 8601 to the minute. `[]` is the kind, which phase 2 fills in
+— leave it empty.
 
 **One note per line, one thing per note.** A note joined by a contrast or a plain
 "and" is two notes and goes on two lines: *it used to be synchronous, but
@@ -166,7 +166,7 @@ on. It is not licence to translate quietly.
 ## The files share one format
 
 ```
-- <created> → <updated> `<file>:<line>` [<kind>] <the note>
+- <created> `<file>:<line>` [<kind>] <the note>
 ```
 
 | file | what is in it | how a row leaves |
@@ -182,25 +182,26 @@ and the config, and a copy of it here would be a second source able to disagree
 with them. The same goes for where a row came from — the two archives are two
 populations, and which file a row lands in is what tells them apart.
 
-`.log.md` is a state, not an archive. It holds notes that have not reached their
-destination. What lands here is document material — the two kinds that route here
-are neither of them facts the code depends on — so `docs` is the main road out:
+`.log.md` is a log. It holds notes that are not settled — what lands here is
+document material, none of it a fact the code depends on, and `docs` is what it
+is aimed at:
 
 - **docs** — it goes into a document this repository already keeps
 - **code** — part of it belongs in the source after all, which means it was not
   split far enough upstream
 - **trash** — it is recoverable from somewhere else
-- **here** — it belongs in a document and this repository keeps none that holds
-  it. It stays, and that is its trigger: it leaves when such a document exists
+- **here** — it is not settled yet, so it stays
 
-A log that stays near-empty is working. A log that grows means entries are not
-being resolved, which is why the pending count is reported at every session start.
-An entry naming no condition under which it would leave is permanent inventory in
-a place meant to be temporary; `/pp-discuss` does not let one pass unchanged.
+Reaching `docs` is the point; not reaching it is not a failure. An unsettled note
+does not pass the test a document sets, and that is the test working rather than
+the log failing. What stays is the evidence for writing that document later — the
+same subject arriving a second time is what says the gap is real. So a log that
+grows is a reading of how much design the implementation has been left to decide,
+and nothing has to be done about the number itself.
 
-The two archives are the exception to that rule, and it is deliberate: they are
-the only record of which kinds are actually being written, and they are what makes
-the discipline measurable rather than merely asserted. Nothing reads them during a
+The two archives never lose a row either, and for a different reason: they are the
+only record of which kinds are actually being written, and they are what makes the
+discipline measurable rather than merely asserted. Nothing reads them during a
 run. They are kept apart because they answer different questions — `.all.md` is
 what this discipline produces, `.swept.md` is what was written without it.
 
@@ -216,6 +217,6 @@ what this discipline produces, `.swept.md` is what was written without it.
 ## Configuration
 
 Configure per repository in `.periplus/config.json`: any kind can be sent to
-`code`, `periplus`, or `drop`, and `warnThreshold` sets the pending count that
-triggers the session-start warning. The set of kinds is not configurable.
-`.periplus/` is not tracked, so a shared config is copied in by hand.
+`code`, `periplus`, or `drop`. That table is the whole file, and the set of kinds
+is not configurable. `.periplus/` is not tracked, so a shared config is copied in
+by hand.

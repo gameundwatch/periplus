@@ -36,7 +36,7 @@ destinations and is not told this would see its configuration quietly ignored.
 `.periplus/.pre.md`. Rows carrying a kind are yours:
 
 ```
-- <created> → <updated> `<file>:<line>` [<kind>] <the note>
+- <created> `<file>:<line>` [<kind>] <the note>
 ```
 
 A row still holding `[]` was never classified. Do not guess it — run
@@ -58,18 +58,14 @@ who can then say which language the file should settle on. It is not licence to
 translate quietly, and quietly is how it happens — the surrounding file is right
 there, and matching it feels like tidiness rather than a rewrite.
 
-**periplus** — append the row to `.periplus/.log.md`, unchanged except for the
-updated timestamp. Do not work a leaving condition into it here. Whether an entry
-needs one is a question about *holding* it, and holding is `/pp-discuss`'s
-decision, not this command's. Any kind can be pointed here by
-`.periplus/config.json`, and a fact about the outside world has no leaving
-condition to give — asking for one at delivery would make that configuration
-unusable.
+**periplus** — append the row to `.periplus/.log.md`, unchanged. Where it goes
+from there, and whether it goes anywhere at all, is `/pp-discuss`'s decision and
+not this command's.
 
 **drop** — write it nowhere.
 
-Then, for every row regardless of destination: append it to the archive with the
-updated timestamp set to now, and delete it from `.periplus/.pre.md`. The archive
+Then, for every row regardless of destination: append it to the archive unchanged,
+and delete it from `.periplus/.pre.md`. The archive
 is `.periplus/.all.md` unless whoever invoked this named another — `/pp-refactor`
 does, because comments it swept out of existing code are a different population.
 The archive is the only record that the row ever existed, and it is what makes the
