@@ -8,11 +8,11 @@ const DEFAULT_CRITERIA = {
   'external-facts': 'code',
   'contracts': 'code',
   'current-limits': 'code',
-  'why': 'code',
+  'block-headings': 'code',
+  'why': 'periplus',
   'unspecified-choices': 'periplus',
   'rejected-alternatives': 'periplus',
   'upgrade-triggers': 'periplus',
-  'block-headings': 'drop',
   'tautology': 'drop',
   'doc-references': 'drop',
   'history': 'drop',
@@ -32,7 +32,8 @@ const ROW_RE = new RegExp(String.raw`^${TS},[^,]*,\d*,([^,]*),`);
 // Read at runtime, never restated here: /pp and the hook must not drift apart.
 const SKILL_PATH = path.join(__dirname, '..', 'skills', 'pp', 'SKILL.md');
 const TABLE_RE = /<!-- criteria-table:start -->[\s\S]*?<!-- criteria-table:end -->/;
-const TABLE_ROW_RE = /^\| `([^`]+)` \|(.*)\| \*\*(\w+)\*\* \|$/;
+// The table in SKILL.md has two columns, and the destination is not one of them.
+const TABLE_ROW_RE = /^\| `([^`]+)` \|(.*)\|$/;
 const ALWAYS_RE = /<!-- always:start -->\n([\s\S]*?)<!-- always:end -->/;
 
 // The directory is the only visible sign the hook ran at all, so it is made
@@ -56,6 +57,15 @@ function ensureWorkspace(root) {
   // A .gitignore not ending in a newline would otherwise absorb the first line added.
   const gap = body === '' ? '' : body.endsWith('\n') ? '\n' : '\n\n';
   fs.appendFileSync(ignoreFile, `${gap}# periplus working files\n${IGNORE_LINE}\n`);
+}
+
+// Folded into ensureWorkspace, this would never run for anyone who already has a
+// `.periplus/`.
+function ensureConfig(root) {
+  const file = path.join(root, CONFIG_REL);
+  if (fs.existsSync(file)) return;
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  fs.writeFileSync(file, `${JSON.stringify({ criteria: DEFAULT_CRITERIA }, null, 2)}\n`);
 }
 
 function projectRoot() {
@@ -115,8 +125,6 @@ const countPending = (root) => rows(root, PRE_REL).length;
 // The rest carry a kind: classified, and then not delivered.
 const countUnclassified = (root) => rows(root, PRE_REL).filter((m) => m[1] === '').length;
 
-// Substituted into the shipped table rather than restated, so the wording of a kind
-// has one home.
 function criteriaTable(root) {
   const { criteria, problems } = loadConfig(root);
   const found = readDiscipline().match(TABLE_RE);
@@ -124,8 +132,12 @@ function criteriaTable(root) {
     .split('\n')
     .filter((line) => !line.startsWith('<!--'))
     .map((line) => {
+      // A test holds SKILL.md and DEFAULT_CRITERIA to the same set of kinds.
       const m = line.match(TABLE_ROW_RE);
-      return m ? `| \`${m[1]}\` |${m[2]}| **${criteria[m[1]] || m[3]}** |` : line;
+      if (m) return `${line} **${criteria[m[1]]}** |`;
+      if (line.startsWith('| ---')) return `${line} --- |`;
+      if (line.startsWith('|')) return `${line} it goes to |`;
+      return line;
     });
   return [...table, ...problems.map((p) => `config.json ignored \u2014 ${p}`)].join('\n');
 }
@@ -260,6 +272,7 @@ function main(event) {
 
   try {
     ensureWorkspace(root);
+    ensureConfig(root);
   } catch {
     // A read-only checkout still gets the discipline, just no place to put it.
   }
@@ -293,6 +306,6 @@ if (require.main === module) {
 
 module.exports = {
   loadConfig, countEntries, countPending, countUnclassified, criteriaTable,
-  buildContext, readDiscipline, alwaysSection, ensureWorkspace,
+  buildContext, readDiscipline, alwaysSection, ensureWorkspace, ensureConfig,
   statuslineNudge, installStatusline, DEFAULT_CRITERIA, ROW_RE,
 };

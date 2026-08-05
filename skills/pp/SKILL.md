@@ -97,52 +97,38 @@ with no comments at all, which is the outcome this discipline exists to prevent.
 Exactly one per row. The set is closed: a note that seems to need a thirteenth
 kind is a note that has not been split far enough.
 
-The destinations below are the shipped defaults, not the authority. A repository
-can move any kind with `.periplus/config.json`, and `/pp-resolve` reads the
-resolved table rather than this one.
+This table names the kinds. It does not say where any of them goes: that is
+`.periplus/config.json`, which `/pp-resolve` reads and this file never restates.
 
 <!-- criteria-table:start -->
-| kind | which is | it goes to |
-| --- | --- | --- |
-| `external-facts` | a fact about the world outside the code that the code depends on — a browser quirk, the target device, the expected user, an external API limit | **code** |
-| `contracts` | an obligation on the caller that the signature and the types do not express | **code** |
-| `current-limits` | what this implementation does not do or cannot do yet, which reads as an oversight without it | **code** |
-| `why` | the reasoning behind a design or an approach | **code** |
-| `unspecified-choices` | a value or a shape the design did not specify, chosen at the implementer's discretion — the reason for it is in neither the code nor the design | **periplus** |
-| `rejected-alternatives` | an option that was considered and turned down | **periplus** |
-| `upgrade-triggers` | the condition under which this implementation should be revisited | **periplus** |
-| `block-headings` | a heading that labels the block of code below it | **drop** |
-| `tautology` | a restatement of what the code already shows — including a docstring summary naming what the function does | **drop** |
-| `doc-references` | a pointer to an ADR or another document | **drop** |
-| `history` | the story of how the code got here, or what it used to be | **drop** |
-| `test-intent` | what a test is checking — describe/it already says it | **drop** |
+| kind | which is |
+| --- | --- |
+| `external-facts` | a fact about the world outside the code that the code depends on — a browser quirk, the target device, the expected user, an external API limit |
+| `contracts` | an obligation on the caller that the signature and the types do not express |
+| `current-limits` | what this implementation does not do or cannot do yet, which reads as an oversight without it |
+| `block-headings` | a heading that labels the block of code below it |
+| `why` | the reasoning behind a design or an approach |
+| `unspecified-choices` | a value or a shape the design did not specify, chosen at the implementer's discretion — the reason for it is in neither the code nor the design |
+| `rejected-alternatives` | an option that was considered and turned down |
+| `upgrade-triggers` | the condition under which this implementation should be revisited |
+| `tautology` | a restatement of what the code already shows — including a docstring summary naming what the function does |
+| `doc-references` | a pointer to an ADR or another document |
+| `history` | the story of how the code got here, or what it used to be |
+| `test-intent` | what a test is checking — describe/it already says it |
 <!-- criteria-table:end -->
-
-**code** — write it into the source, as the shortest statement of the fact rather
-than an account of how the code works. The reader can see the code; what they
-cannot see is the world outside it.
-
-**periplus** — move it to `.periplus/log.csv`. `/pp-discuss` works through what
-is waiting there.
-
-**drop** — write it nowhere. Everything routed here by default is recoverable
-from the code, from `git log`, or from an existing ADR, so keeping it would
-create a second source that can go out of date on its own.
 
 `current-limits` and `upgrade-triggers` are the pair that most often arrive as
 one note, and the split matters most there. A limit is a property of the code as
-it stands and belongs beside it; the intention to lift that limit some day is a
-plan, and belongs in the log. Read the source alone and you should learn what the
-code does and does not handle. Read the log alone and you should learn what to do
-about it one day. Sending the whole note to either destination costs you one of
-those two readings.
+it stands; the intention to lift that limit some day is a plan, and a plan is not
+a property of anything. The line is the one ADR 0004 drew — what is true of the
+code now, against what is to be done later.
 
 `unspecified-choices` is read last of the three kinds that can claim the same
 note, and the order is what keeps them apart. If a fact about the outside world
 fixes the value, it is `external-facts`; if the design fixes it, it is `why`;
-only when neither does has the implementer chosen, and the note defending that
-choice is an unsettled design decision rather than something the source should
-carry. What settles it is the design, which is why it goes to the log.
+only when neither does has the implementer chosen. `why` is material for writing
+the design down; `unspecified-choices` is a hole in the design, and `/pp-discuss`
+treats the two differently for that reason.
 
 Whether the design fixed something is read from the session first, then from the
 documents this repository keeps, then from the code. `/pp` settles it at the
@@ -223,7 +209,9 @@ what this discipline produces, `swept.csv` is what was written without it.
 
 ## Configuration
 
-Configure per repository in `.periplus/config.json`: any kind can be sent to
-`code`, `periplus`, or `drop`. That table is the whole file, and the set of kinds
-is not configurable. `.periplus/` is not tracked, so a shared config is copied in
-by hand.
+`.periplus/config.json` holds the destinations, and it is the only thing that
+does. It is written with every kind in it the first time a session starts, and
+never overwritten after that, so it is always there to read. Any kind can be sent
+to `code`, `periplus`, or `drop`; the set of kinds itself is not configurable.
+`.periplus/` is not tracked, so a shared config is copied in by hand — and a
+config generated here is indistinguishable from one a team wrote on purpose.

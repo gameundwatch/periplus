@@ -17,6 +17,7 @@ const {
   readDiscipline,
   alwaysSection,
   ensureWorkspace,
+  ensureConfig,
   statuslineNudge,
   installStatusline,
   DEFAULT_CRITERIA,
@@ -41,10 +42,10 @@ test('no config falls back to the shipped defaults', () => {
 
 test('a valid destination overrides the default', () => {
   const root = repo({
-    '.periplus/config.json': JSON.stringify({ criteria: { why: 'periplus' } }),
+    '.periplus/config.json': JSON.stringify({ criteria: { why: 'code' } }),
   });
   const { criteria } = loadConfig(root);
-  assert.strictEqual(criteria.why, 'periplus');
+  assert.strictEqual(criteria.why, 'code');
   assert.strictEqual(criteria.contracts, 'code', 'untouched criteria keep their default');
 });
 
@@ -55,7 +56,7 @@ test('invalid values fall back instead of poisoning the discipline', () => {
     }),
   });
   const { criteria } = loadConfig(root);
-  assert.strictEqual(criteria.why, 'code');
+  assert.strictEqual(criteria.why, 'periplus');
   assert.strictEqual(criteria.tautology, 'drop');
   assert.ok(!('made-up-key' in criteria), 'unknown kinds are not admitted');
 });
@@ -79,7 +80,7 @@ test('criteria is the only key config.json has left', () => {
 });
 
 test('a config that is doing exactly what it says raises nothing', () => {
-  const root = repo({ '.periplus/config.json': JSON.stringify({ criteria: { why: 'periplus' } }) });
+  const root = repo({ '.periplus/config.json': JSON.stringify({ criteria: { why: 'code' } }) });
   assert.deepStrictEqual(loadConfig(root).problems, []);
 });
 
@@ -90,7 +91,7 @@ test('malformed JSON degrades to defaults rather than throwing', () => {
   assert.ok(problems.some((p) => p.includes('not valid JSON')), 'and says so');
 });
 
-test('a missing config is the normal case and is not a problem', () => {
+test('a config missing entirely is repaired, not reported', () => {
   assert.deepStrictEqual(loadConfig(repo({})).problems, []);
 });
 
@@ -192,17 +193,20 @@ test('a repository with a config is not told about it at session start', () => {
   assert.ok(!context.includes('config.json'), 'phase 1 never reads a destination');
 });
 
-test('the shipped table says it is not the authority', () => {
-  assert.ok(readDiscipline().includes('the shipped defaults, not the authority'));
-  assert.ok(readDiscipline().includes('/pp-resolve'), 'and names what is');
+test('the shipped table names kinds and never their destinations', () => {
+  const table = readDiscipline().match(TABLE_RE)[0];
+  assert.ok(readDiscipline().includes('It does not say where any of them goes'));
+  for (const to of ['**code**', '**periplus**', '**drop**']) {
+    assert.ok(!table.includes(to), `the table still ships a ${to} column`);
+  }
 });
 
 test('the resolved table carries the repository\'s destinations, not the shipped ones', () => {
   const root = repo({
-    '.periplus/config.json': JSON.stringify({ criteria: { why: 'periplus', history: 'code' } }),
+    '.periplus/config.json': JSON.stringify({ criteria: { why: 'code', history: 'code' } }),
   });
   const table = criteriaTable(root);
-  assert.match(table, /\| `why` \|[^|]*\| \*\*periplus\*\* \|/);
+  assert.match(table, /\| `why` \|[^|]*\| \*\*code\*\* \|/);
   assert.match(table, /\| `history` \|[^|]*\| \*\*code\*\* \|/);
   assert.match(table, /\| `contracts` \|[^|]*\| \*\*code\*\* \|/, 'untouched kinds keep the default');
   assert.ok(!table.includes('<!--'), 'the markers are not part of the output');
@@ -333,14 +337,28 @@ test('a directory that is not a repository gets the workspace but no .gitignore'
   assert.ok(!fs.existsSync(path.join(root, '.gitignore')));
 });
 
-test('the shipped table in SKILL.md matches the defaults the hook falls back to', () => {
+test('the shipped table holds exactly the kinds the hook knows destinations for', () => {
   const table = readDiscipline().match(TABLE_RE)[0];
-  for (const [name, dest] of Object.entries(DEFAULT_CRITERIA)) {
-    assert.ok(
-      new RegExp(`\\| \`${name}\` \\|[^|]*\\| \\*\\*${dest}\\*\\* \\|`).test(table),
-      `${name} should be documented as ${dest}`,
-    );
+  for (const name of Object.keys(DEFAULT_CRITERIA)) {
+    assert.ok(new RegExp(`\\| \`${name}\` \\|`).test(table), `${name} is missing from the table`);
   }
+  const rows = table.match(/^\| `[a-z-]+` \|/gm) || [];
+  assert.strictEqual(rows.length, Object.keys(DEFAULT_CRITERIA).length,
+    'and nothing the hook cannot resolve');
+});
+
+test('the config is written when it is missing, whatever the workspace looks like', () => {
+  const root = repo({ '.periplus/log.csv': '' });
+  ensureConfig(root);
+  const written = JSON.parse(fs.readFileSync(path.join(root, '.periplus/config.json'), 'utf8'));
+  assert.deepStrictEqual(written.criteria, DEFAULT_CRITERIA, 'every kind, so it can be read alone');
+});
+
+test('a config that is already there is never written over', () => {
+  const mine = JSON.stringify({ criteria: { why: 'code' } });
+  const root = repo({ '.periplus/config.json': mine });
+  ensureConfig(root);
+  assert.strictEqual(fs.readFileSync(path.join(root, '.periplus/config.json'), 'utf8'), mine);
 });
 
 function settings(body) {

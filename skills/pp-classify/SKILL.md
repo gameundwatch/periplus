@@ -12,8 +12,8 @@ The first half of phase 2. Every row in `.periplus/pre.csv` comes out of this
 carrying exactly one kind, and nothing outside that file has changed.
 
 Splitting and naming are one job, not two. A row holds one kind when it cannot be
-split further, so the way you find the split is by trying to name the kind and
-finding that two names fit.
+split further, and the hard stop is one kind per row. What decides it is how many
+claims the row makes, not how many names you managed to fit.
 
 ## Read
 
@@ -28,18 +28,56 @@ classified in an earlier run — leave them exactly as they are. No file, or no
 empty rows: report `Nothing to classify.` and stop.
 
 The kinds and what each one means are in `skills/pp/SKILL.md`, in the table
-between the `criteria-table` markers. Read the first two columns. **Ignore the
-destination column** — where a kind goes is `/pp-resolve`'s business, and knowing
-that `history` is dropped is exactly the pressure that makes a note get called
-something else so that it survives.
+between the `criteria-table` markers. **Do not read `.periplus/config.json`** —
+where a kind goes is `/pp-resolve`'s business, and knowing that `history` is
+dropped is exactly the pressure that makes a note get called something else so
+that it survives.
 
-## Split until one kind fits
+## Give every row a subject
 
-For each empty row, try to name its kind. If two names fit, the row is two rows.
+Before naming anything, read each row with its subject filled in — the one the
+sentence left out because the clause beside it had already supplied it. A clause
+with no subject cannot assert its own kind, so it borrows the kind of whatever it
+is sitting next to.
+
+```
+「update_all はモデルを更新しないので a.floor_layer_index は古い。割り当てた値をそのまま返す」
+  → update_all はモデルを更新しないので … は古い   [external-facts]
+  → このアクションは割り当てた値をそのまま返す      [tautology]
+```
+
+The second clause names no subject, so it rode in on `external-facts` and reached
+the source. Supplied with one, it says what the code says.
+
+Filling a subject in is a restoration, not a rewrite: the original could omit it
+only because it was shared with the clause it has now been cut away from. Some
+rows arrive with no subject at all — those get one written for them, which is
+plainly an addition, and it is still this command's job.
+
+A row with no predicate is not a sentence but a label, and a label is
+`block-headings`. That is the whole test — what a label is, not where labels go.
+
+## Split unless there is a reason not to
+
+Assume a row is two. Wherever clauses are joined, split; if you do not, say why
+in the report.
+
+```
+each row
+  ├ subject can be supplied (it has a predicate)  → name the kind
+  └ no predicate (a bare noun phrase)             → block-headings
+```
+
+A subordinating join — `〜ため`, `〜ので`, *because* — is one claim and stays
+whole, because cause and effect in separate rows leave no row that `why` can
+describe. Coordinated main clauses — contrast, plain conjunction, a full stop —
+are two. It is the join that decides, never the number of sentences: causes cross
+sentence boundaries all the time, and a rule of one claim per sentence would cut
+those in half.
 
 Phase 1 already splits on contrast and on plain conjunction, so most rows arrive
 atomic. What survives that is the split to make here, and it is recursive — a
-half can hold two kinds of its own:
+half can hold two kinds of its own, or two claims of the same kind:
 
 ```
 // parseConfig() からリネーム。旧名は1リリースだけ alias で残す
@@ -53,7 +91,8 @@ carrying the same timestamp. The note was captured once; splitting it is somethi
 done to it afterwards.
 
 Write each half in the language the row was captured in. Splitting is a cut, not
-a rewrite.
+a rewrite — the subject supplied above is the one exception, and it is what makes
+the cut legible.
 
 ## What to write back
 
@@ -83,6 +122,12 @@ their note:
 ```
 hooks/x.js:88 [history] — 以前は同期だった (split 1/2)
 hooks/x.js:88 [why] — タイムアウトが多発したため非同期にした (split 2/2)
+```
+
+A row left whole where clauses were joined carries the reason instead:
+
+```
+hooks/x.js:88 [why] — タイムアウトが多発したため非同期にした (kept whole: cause)
 ```
 
 End with `<N> rows classified, <M> from splits. Run /pp-resolve to deliver them.`
