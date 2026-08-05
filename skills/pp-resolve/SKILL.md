@@ -26,10 +26,11 @@ and it names any setting it could not use. Report those lines to the user
 verbatim — a misspelled kind in a config file is silently doing nothing, and this
 is the only place it becomes visible.
 
-If the command cannot be run, fall back to the shipped table in
-`skills/pp/SKILL.md` and **say that you did**: `config could not be resolved;
-filtered with the shipped defaults`. A repository that has customised its
-destinations and is not told this would see its configuration quietly ignored.
+If the command cannot be run, read `.periplus/config.json` directly — it holds
+every kind, and it is written at session start if it is missing, so it is there.
+Say that you did: `criteria read from config.json; the hook could not be run`.
+A repository whose config could not be applied at all must hear about it, because
+a customised destination silently ignored looks exactly like one that worked.
 
 ## Read
 
