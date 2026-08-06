@@ -26,19 +26,16 @@ const CONFIG_REL = '.periplus/config.json';
 const IGNORE_LINE = '/.periplus/';
 const IGNORE_RE = /^\/?\.periplus\/?$/;
 const TS = String.raw`\d{4}-\d{2}-\d{2}T\d{2}:\d{2}`;
-// The body's quoting is not checked: a miswritten row would drop out of the
-// count and out of sight.
+// Quoting is not checked: a miswritten row drops out of the count unseen.
 const ROW_RE = new RegExp(String.raw`^${TS},[^,]*,\d*,([^,]*),`);
-// Read at runtime, never restated here: /pp and the hook must not drift apart.
 const SKILL_PATH = path.join(__dirname, '..', 'skills', 'pp', 'SKILL.md');
 const TABLE_RE = /<!-- criteria-table:start -->[\s\S]*?<!-- criteria-table:end -->/;
-// The table in SKILL.md has two columns, and the destination is not one of them.
+// The SKILL.md table has two columns, and the destination is not one of them.
 const TABLE_ROW_RE = /^\| `([^`]+)` \|(.*)\|$/;
 const ALWAYS_RE = /<!-- always:start -->\n([\s\S]*?)<!-- always:end -->/;
 
-// The directory is the only visible sign the hook ran at all, so it is made
-// before anything has been captured. Runs once, when the directory is first
-// made: an ignore line deleted by hand stays deleted.
+// Runs once, when the directory is first made: an ignore line deleted by hand
+// stays deleted.
 function ensureWorkspace(root) {
   const dir = path.join(root, '.periplus');
   if (fs.existsSync(dir)) return;
@@ -54,13 +51,11 @@ function ensureWorkspace(root) {
   }
   if (body.split('\n').some((l) => IGNORE_RE.test(l.trim()))) return;
 
-  // A .gitignore not ending in a newline would otherwise absorb the first line added.
+  // A .gitignore not ending in a newline would absorb the first line added.
   const gap = body === '' ? '' : body.endsWith('\n') ? '\n' : '\n\n';
   fs.appendFileSync(ignoreFile, `${gap}# periplus working files\n${IGNORE_LINE}\n`);
 }
 
-// Folded into ensureWorkspace, this would never run for anyone who already has a
-// `.periplus/`.
 function ensureConfig(root) {
   const file = path.join(root, CONFIG_REL);
   if (fs.existsSync(file)) return;
@@ -105,8 +100,6 @@ function loadConfig(root) {
   return { criteria, problems };
 }
 
-// One shape for all three files, so which file a row is in is what says how far it
-// has got, and one pattern counts any of them.
 function rows(root, rel) {
   let raw;
   try {
@@ -119,10 +112,8 @@ function rows(root, rel) {
 
 const countEntries = (root) => rows(root, LOG_REL).length;
 
-// A pre.csv still holding rows means that work shipped with no comments at all.
 const countPending = (root) => rows(root, PRE_REL).length;
 
-// The rest carry a kind: classified, and then not delivered.
 const countUnclassified = (root) => rows(root, PRE_REL).filter((m) => m[1] === '').length;
 
 function criteriaTable(root) {
@@ -146,25 +137,21 @@ function readDiscipline() {
   return fs.readFileSync(SKILL_PATH, 'utf8').replace(/^---[\s\S]*?---\s*/, '');
 }
 
-// Only the capture rule. Phase 2 needs the table, and /pp carries the whole file.
+// /pp carries the whole file.
 function alwaysSection() {
   const m = readDiscipline().match(ALWAYS_RE);
   return m ? m[1].trimEnd() : readDiscipline();
 }
 
-// A plugin cannot install this itself: only `agent` and `subagentStatusLine` are
-// read out of a plugin's own settings.json, so the hook has to ask for it.
-// The glob and not a pinned path — the cache is versioned, so a path pinned to
-// this release stops resolving on the next update, and the check below would go
-// on reporting it as wired.
+// Only `agent` and `subagentStatusLine` are read out of a plugin's own
+// settings.json, so a plugin cannot install this itself.
 const STATUSLINE_CMD =
   'node "$(ls -t ~/.claude/plugins/cache/*/periplus/*/hooks/periplus-statusline.js | head -1)"';
 
 const settingsPath = () =>
   path.join(process.env.CLAUDE_CONFIG_DIR || path.join(os.homedir(), '.claude'), 'settings.json');
 
-// A missing or half-edited file is not an error here: install has to be able to
-// create one from nothing.
+// A missing or half-edited file is not an error here: install has to create one from nothing.
 function readSettings(file) {
   try {
     const parsed = JSON.parse(fs.readFileSync(file, 'utf8').trim());
@@ -179,20 +166,17 @@ const currentCommand = (settings) =>
     ? settings.statusLine.command
     : '';
 
-// The command string, not whether a statusLine exists: most users of this plugin
-// already have one from somewhere else.
+// Most users of this plugin already have a status line from somewhere else.
 const isWired = (command) => command.includes('periplus-statusline');
 
-// Adding one key rewrites the whole file, so everything else in it is carried
-// over — this is the user's global configuration. Formatting and key order do not
-// survive the round trip; the previous file is kept beside it.
+// This file is the user's global configuration.
+// Formatting and key order do not survive the round trip.
 function installStatusline(file = settingsPath()) {
   const settings = readSettings(file);
   const command = currentCommand(settings);
   if (isWired(command)) return 'already';
 
-  // periplus goes last: it is the one that takes the project directory from the
-  // status line JSON on stdin, and a command in front that ignores stdin leaves it.
+  // A command in front that ignores stdin leaves it unread.
   settings.statusLine = {
     type: 'command',
     command: command ? `${command}; printf ' '; ${STATUSLINE_CMD}` : STATUSLINE_CMD,
@@ -204,7 +188,7 @@ function installStatusline(file = settingsPath()) {
   return command ? 'appended' : 'wired';
 }
 
-// The nudge quotes __filename into a command, and the install path is not ours.
+// The install path is not ours.
 // Anything outside this set would need escaping for a shell we cannot identify here.
 const SHELL_SAFE = /^[A-Za-z0-9 _.\-:/\\~]+$/;
 
@@ -229,7 +213,6 @@ function statuslineNudge(file = settingsPath()) {
     + `wired up yet. To set it up, ${how}. Offer this to the user once.`;
 }
 
-// Without the status line installed, this is the only place the count appears.
 function buildContext(count, pending = 0, unclassified = 0) {
   let header = `PERIPLUS ACTIVE — ${count} in the log`;
 
@@ -264,7 +247,6 @@ function main(event) {
 
   const root = projectRoot();
 
-  // Ahead of ensureWorkspace: a read-only query should not make `.periplus/` appear.
   if (event === 'criteria') {
     process.stdout.write(`${criteriaTable(root)}\n`);
     return;
@@ -279,8 +261,6 @@ function main(event) {
 
   // SessionStart takes raw stdout; SubagentStart drops anything that is not the
   // hookSpecificOutput envelope.
-  // The undelivered warning is not passed down this branch: the parent wrote those
-  // rows, and a subagent draining the parent's pre.csv is a delivery nobody agreed to.
   if (event === 'SubagentStart') {
     process.stdout.write(JSON.stringify({
       hookSpecificOutput: {
@@ -291,8 +271,8 @@ function main(event) {
     return;
   }
 
+  // A subagent has no status line to configure.
   const context = buildContext(countEntries(root), countPending(root), countUnclassified(root));
-  // The nudge is on this branch only: a subagent has no status line to configure.
   process.stdout.write(context + statuslineNudge());
 }
 
