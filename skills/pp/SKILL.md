@@ -94,7 +94,7 @@ with no comments at all, which is the outcome this discipline exists to prevent.
 
 ## Kinds
 
-Exactly one per row. The set is closed: a note that seems to need a thirteenth
+Exactly one per row. The set is closed: a note that seems to need a fourteenth
 kind is a note that has not been split far enough.
 
 This table names the kinds. It does not say where any of them goes: that is
@@ -107,12 +107,13 @@ This table names the kinds. It does not say where any of them goes: that is
 | `contracts` | an obligation on the caller that the signature and the types do not express |
 | `current-limits` | what this implementation does not do or cannot do yet, which reads as an oversight without it |
 | `block-headings` | a heading that labels the block of code below it |
-| `why` | the reasoning behind a design or an approach |
+| `undocumented-design` | the reasoning behind a design the design settled, which none of this repository's documents records |
 | `unspecified-choices` | a value or a shape the design did not specify, chosen at the implementer's discretion — the reason for it is in neither the code nor the design |
+| `why` | the reasoning behind a design or an approach |
 | `rejected-alternatives` | an option that was considered and turned down |
 | `upgrade-triggers` | the condition under which this implementation should be revisited |
 | `tautology` | a restatement of what the code already shows — including a docstring summary naming what the function does |
-| `doc-references` | a pointer to an ADR or another document |
+| `doc-restatement` | a claim one of this repository's existing documents already makes — a pointer to that document included |
 | `history` | the story of how the code got here, or what it used to be |
 | `test-intent` | what a test is checking — describe/it already says it |
 <!-- criteria-table:end -->
@@ -123,18 +124,59 @@ it stands; the intention to lift that limit some day is a plan, and a plan is no
 a property of anything. The line is the one ADR 0004 drew — what is true of the
 code now, against what is to be done later.
 
-`unspecified-choices` is read last of the three kinds that can claim the same
-note, and the order is what keeps them apart. If a fact about the outside world
-fixes the value, it is `external-facts`; if the design fixes it, it is `why`;
-only when neither does has the implementer chosen. `why` is material for writing
-the design down; `unspecified-choices` is a hole in the design, and `/pp-discuss`
-treats the two differently for that reason.
+## The order the kinds are read in
 
-Whether the design fixed something is read from the session first, then from the
-documents this repository keeps, then from the code. `/pp` settles it at the
-first of those, since the code and the notes were made in the same session there.
-`/pp-refactor` has no such session and reads the later two, so there it is an
-inference.
+Several kinds can claim the same reason-shaped note, and the table cannot tell
+them apart — the order below is what does. Read it from the top and stop at the
+first that holds.
+
+```
+1. it would let the next reader break the code if it went missing
+                       → external-facts / contracts / current-limits
+2. the code in front of you already shows it        → tautology
+3. a document and a line in it can be named         → doc-restatement
+4. the design settled it and no document records it → undocumented-design
+5. the design demonstrably did not settle it        → unspecified-choices
+6. a reason, and neither 4 nor 5 can be shown       → why
+```
+
+**1 comes before 3 whatever the documents say.** A fact about the outside world
+that some ADR happens to also record — that a `.gitignore` not ending in a
+newline swallows the next line added — is still the thing that stops the next
+reader breaking the code. What is written elsewhere does not change what a note
+is about.
+
+**2 comes before 3** because the nearer evidence wins: if the code shows it, the
+note was redundant with or without a document. It is also the cheaper test — the
+code is already open, and 3 costs a search.
+
+**5 comes before 6** because 5 has to be shown, not assumed. Where it cannot be,
+the note falls through to 6 rather than being guessed at. Reversed, the residual
+would take everything and 5 would never be reached.
+
+`why` is the residual. It holds the reasons that survive all five tests above,
+which is not a failure of the note — it is the honest record that nothing
+established who decided.
+
+### What counts as a document, for 3
+
+Only what this repository keeps in a durable form. **The session does not count.**
+A reason someone gave in conversation is a reason no document records, which is
+4. What 3 asks is whether it can be read back later, and a session cannot.
+
+Name the document and the line. Then check that the line makes the same claim —
+**a line that says something else is not a restatement**, and a note that
+contradicts a stale document belongs at 4 or 6, where it survives. The citation
+appears in the `/pp-classify` report and is stored nowhere, so nothing depends on
+the line number staying put; requiring it is what makes the finding real rather
+than a guess that the ADRs probably cover this.
+
+### What counts as settled, for 4 and 5
+
+Read the documents this repository keeps, then the code. `/pp` can also settle it
+from the session it is running in, since the code and the notes were made there
+and who chose the value is not in question. `/pp-refactor` has no such session,
+so 4 and 5 will rarely be shown and most reasons will land in 6.
 
 ## Keep the language it was captured in
 
@@ -210,8 +252,17 @@ what this discipline produces, `swept.csv` is what was written without it.
 ## Configuration
 
 `.periplus/config.json` holds the destinations, and it is the only thing that
-does. It is written with every kind in it the first time a session starts, and
-never overwritten after that, so it is always there to read. Any kind can be sent
-to `code`, `periplus`, or `drop`; the set of kinds itself is not configurable.
+does. It is written with every kind in it the first time a session starts, so it
+is always there to read. Any kind can be sent to `code`, `periplus`, or `drop`;
+the set of kinds itself is not configurable.
+
+**A value already in the file is never changed, and a kind missing from it is
+added at its default.** Writing a kind at the default it already had is the one
+edit that cannot alter how the file reads, so the repair is safe in a way that
+touching an existing value would not be. It is what carries a config written
+before a kind existed — or a config still naming one that has been renamed —
+across the version that changed the set. The old key stays where it is and is
+reported as unknown, which is the notice that it can be deleted; guessing what it
+was meant to say is not this hook's business.
 `.periplus/` is not tracked, so a shared config is copied in by hand — and a
 config generated here is indistinguishable from one a team wrote on purpose.

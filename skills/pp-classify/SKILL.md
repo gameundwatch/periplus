@@ -28,10 +28,16 @@ classified in an earlier run — leave them exactly as they are. No file, or no
 empty rows: report `Nothing to classify.` and stop.
 
 The kinds and what each one means are in `skills/pp/SKILL.md`, in the table
-between the `criteria-table` markers. **Do not read `.periplus/config.json`** —
-where a kind goes is `/pp-resolve`'s business, and knowing that `history` is
-dropped is exactly the pressure that makes a note get called something else so
-that it survives.
+between the `criteria-table` markers, and the order they are read in is the
+section below that table. Several kinds can claim the same reason-shaped note and
+the table alone will not separate them, so the order is not optional reading.
+
+**Do not read `.periplus/config.json`** — where a kind goes is `/pp-resolve`'s
+business, and knowing that `history` is dropped is exactly the pressure that
+makes a note get called something else so that it survives.
+
+The repository's own documents are a different matter: step 3 of that order sends
+you to them, and you are expected to go.
 
 ## Give every row a subject
 
@@ -94,6 +100,20 @@ Write each half in the language the row was captured in. Splitting is a cut, not
 a rewrite — the subject supplied above is the one exception, and it is what makes
 the cut legible.
 
+## Search the documents, one row at a time
+
+A row that reads as a reason gets step 3 of the order run on it: is this
+something one of this repository's documents already says? Search when such a row
+comes up, for that row. Do not read the document tree first — naming the document
+a note should go into needs an inventory and is `/pp-discuss`'s job; asking
+whether one sentence is already written somewhere is a search, and reading
+twenty-eight ADRs before classifying three rows is ceremony, not discipline.
+
+File names are usually index enough to know where to look. Open the ones that
+could hold it, and **read the line before claiming it**. If nothing turns up, the
+row keeps the kind it would otherwise have had — a search that misses leaves a
+note in the source or the log, which is the harmless direction to fail in.
+
 ## What to write back
 
 For each row settled: put the kind in the fourth field. Nothing else on the row
@@ -128,6 +148,14 @@ A row left whole where clauses were joined carries the reason instead:
 
 ```
 hooks/x.js:88 [why] — タイムアウトが多発したため非同期にした (kept whole: cause)
+```
+
+A `doc-restatement` row carries the document and the line it was found at. This
+is the only place the citation ever appears, and it is the user's one chance to
+say that the document does not in fact say that:
+
+```
+hooks/x.js:88 [doc-restatement] — 種別の集合は閉じている (docs/adr/0014-...md:17)
 ```
 
 End with `<N> rows classified, <M> from splits. Run /pp-resolve to deliver them.`
