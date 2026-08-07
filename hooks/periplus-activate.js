@@ -9,17 +9,19 @@ const DEFAULT_CRITERIA = {
   'contracts': 'code',
   'current-limits': 'code',
   'block-headings': 'code',
-  'why': 'periplus',
+  'undocumented-design': 'periplus',
   'unspecified-choices': 'periplus',
+  'why': 'periplus',
   'rejected-alternatives': 'periplus',
   'upgrade-triggers': 'periplus',
   'tautology': 'drop',
-  'doc-references': 'drop',
+  'doc-restatement': 'drop',
   'history': 'drop',
   'test-intent': 'drop',
 };
 
 const DESTINATIONS = ['code', 'periplus', 'drop'];
+const KEY_IGNORED = ' — that key alone was ignored, the rest of the file was applied';
 const LOG_REL = '.periplus/log.csv';
 const PRE_REL = '.periplus/pre.csv';
 const CONFIG_REL = '.periplus/config.json';
@@ -58,9 +60,27 @@ function ensureWorkspace(root) {
 
 function ensureConfig(root) {
   const file = path.join(root, CONFIG_REL);
-  if (fs.existsSync(file)) return;
   fs.mkdirSync(path.dirname(file), { recursive: true });
-  fs.writeFileSync(file, `${JSON.stringify({ criteria: DEFAULT_CRITERIA }, null, 2)}\n`);
+
+  let parsed = null;
+  if (fs.existsSync(file)) {
+    // A config nobody can parse is left as it is: what the user wrote is not ours to overwrite.
+    try {
+      parsed = JSON.parse(fs.readFileSync(file, 'utf8').replace(/^\uFEFF/, ''));
+    } catch {
+      return;
+    }
+    if (!parsed || typeof parsed !== 'object') return;
+  }
+
+  const criteria = parsed && typeof parsed.criteria === 'object' && parsed.criteria !== null
+    ? parsed.criteria
+    : {};
+  const missing = Object.keys(DEFAULT_CRITERIA).filter((name) => !(name in criteria));
+  if (missing.length === 0) return;
+
+  for (const name of missing) criteria[name] = DEFAULT_CRITERIA[name];
+  fs.writeFileSync(file, `${JSON.stringify({ ...parsed, criteria }, null, 2)}\n`);
 }
 
 function projectRoot() {
@@ -84,7 +104,7 @@ function loadConfig(root) {
   try {
     parsed = JSON.parse(raw.replace(/^\uFEFF/, ''));
   } catch {
-    problems.push('the file is not valid JSON');
+    problems.push('the file is not valid JSON, so none of it was applied');
     return fallback;
   }
 
@@ -92,8 +112,8 @@ function loadConfig(root) {
     ? parsed.criteria
     : {};
   for (const [name, to] of Object.entries(given)) {
-    if (!(name in criteria)) problems.push(`unknown kind "${name}"`);
-    else if (!DESTINATIONS.includes(to)) problems.push(`"${name}": ${JSON.stringify(to)} is not code, periplus or drop`);
+    if (!(name in criteria)) problems.push(`unknown kind "${name}"${KEY_IGNORED}`);
+    else if (!DESTINATIONS.includes(to)) problems.push(`"${name}": ${JSON.stringify(to)} is not code, periplus or drop${KEY_IGNORED}`);
     else criteria[name] = to;
   }
 
@@ -130,7 +150,7 @@ function criteriaTable(root) {
       if (line.startsWith('|')) return `${line} it goes to |`;
       return line;
     });
-  return [...table, ...problems.map((p) => `config.json ignored \u2014 ${p}`)].join('\n');
+  return [...table, ...problems.map((p) => `config.json: ${p}`)].join('\n');
 }
 
 function readDiscipline() {

@@ -214,7 +214,24 @@ test('the resolved table carries the repository\'s destinations, not the shipped
 
 test('the resolved table is where a useless setting finally becomes visible', () => {
   const root = repo({ '.periplus/config.json': JSON.stringify({ criteria: { whys: 'code' } }) });
-  assert.match(criteriaTable(root), /config\.json ignored — unknown kind "whys"/);
+  assert.match(criteriaTable(root), /config\.json: unknown kind "whys"/);
+});
+
+test('one bad key says so, and says the rest of the file still ran', () => {
+  const root = repo({ '.periplus/config.json': JSON.stringify({ criteria: { whys: 'code' } }) });
+  assert.match(criteriaTable(root), /that key alone was ignored, the rest of the file was applied/);
+});
+
+test('a file that could not be parsed says the whole of it was ignored', () => {
+  const root = repo({ '.periplus/config.json': '{ not json' });
+  assert.match(criteriaTable(root), /none of it was applied/);
+});
+
+test('the kinds the table cannot separate are separated somewhere', () => {
+  const after = readDiscipline().split(TABLE_RE)[1];
+  for (const kind of ['doc-restatement', 'undocumented-design', 'unspecified-choices', 'why']) {
+    assert.ok(after.includes(kind), `nothing after the table says when a row is ${kind}`);
+  }
 });
 
 test('the descriptions of the kinds live in one place only', () => {
@@ -354,11 +371,47 @@ test('the config is written when it is missing, whatever the workspace looks lik
   assert.deepStrictEqual(written.criteria, DEFAULT_CRITERIA, 'every kind, so it can be read alone');
 });
 
-test('a config that is already there is never written over', () => {
-  const mine = JSON.stringify({ criteria: { why: 'code' } });
+test('a config that already answers for every kind is left byte for byte', () => {
+  const mine = `${JSON.stringify({ criteria: { ...DEFAULT_CRITERIA, why: 'code' } })}`;
   const root = repo({ '.periplus/config.json': mine });
   ensureConfig(root);
   assert.strictEqual(fs.readFileSync(path.join(root, '.periplus/config.json'), 'utf8'), mine);
+});
+
+test('a kind the config has never heard of is added at its default', () => {
+  const root = repo({
+    '.periplus/config.json': JSON.stringify({ criteria: { why: 'code', 'doc-references': 'code' } }),
+  });
+  ensureConfig(root);
+  const { criteria } = JSON.parse(fs.readFileSync(path.join(root, '.periplus/config.json'), 'utf8'));
+  assert.strictEqual(criteria.why, 'code', 'a value the user chose is not touched');
+  assert.strictEqual(criteria['doc-references'], 'code', 'and neither is one that is no longer a kind');
+  assert.strictEqual(criteria['undocumented-design'], DEFAULT_CRITERIA['undocumented-design']);
+  assert.strictEqual(criteria['doc-restatement'], DEFAULT_CRITERIA['doc-restatement']);
+});
+
+test('adding a kind at its default changes nothing about how the config reads', () => {
+  const before = loadConfig(repo({
+    '.periplus/config.json': JSON.stringify({ criteria: { why: 'code' } }),
+  }));
+  const root = repo({ '.periplus/config.json': JSON.stringify({ criteria: { why: 'code' } }) });
+  ensureConfig(root);
+  assert.deepStrictEqual(loadConfig(root).criteria, before.criteria);
+});
+
+test('a config nobody can parse is left for its owner rather than rewritten', () => {
+  const mine = '{ not json';
+  const root = repo({ '.periplus/config.json': mine });
+  ensureConfig(root);
+  assert.strictEqual(fs.readFileSync(path.join(root, '.periplus/config.json'), 'utf8'), mine);
+});
+
+test('keys that are not criteria survive the repair', () => {
+  const root = repo({ '.periplus/config.json': JSON.stringify({ note: 'mine', criteria: {} }) });
+  ensureConfig(root);
+  const written = JSON.parse(fs.readFileSync(path.join(root, '.periplus/config.json'), 'utf8'));
+  assert.strictEqual(written.note, 'mine');
+  assert.deepStrictEqual(written.criteria, DEFAULT_CRITERIA);
 });
 
 function settings(body) {

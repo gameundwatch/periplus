@@ -12,9 +12,9 @@ description: >
 Every entry taken up here reaches one of four destinations, and the log shrinks by
 exactly the entries that left it.
 
-What arrives in the log is document material. Three kinds route here by default —
-`unspecified-choices`, `rejected-alternatives` and `upgrade-triggers` — and none
-of them is a fact the code depends on. `docs` is what they are aimed at, but the
+What arrives in the log is document material. Five kinds route here by default —
+`undocumented-design`, `unspecified-choices`, `why`, `rejected-alternatives` and
+`upgrade-triggers` — and none of them is a fact the code depends on. `docs` is what they are aimed at, but the
 four destinations are not a ranking: which one an entry takes follows from whether
 it has been settled, not from which outcome is the better one.
 

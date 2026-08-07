@@ -105,7 +105,7 @@ indistinguishable from its input. Nothing reads either during a run.
 
 ## Kinds
 
-Twelve, and the set is closed — a note that seems to need a thirteenth is a note
+Thirteen, and the set is closed — a note that seems to need a fourteenth is a note
 that has not been split far enough. The destinations below are the shipped defaults;
 any of them can be moved per repository (see Configuration).
 
@@ -115,12 +115,13 @@ any of them can be moved per repository (see Configuration).
 | `contracts` | an obligation on the caller that the signature and the types do not express | `the caller closes the file` | **code** |
 | `current-limits` | what this implementation does not do or cannot do yet, which reads as an oversight without it | `only parses the seconds form of Retry-After` | **code** |
 | `block-headings` | a heading that labels the block of code below it | `--- helpers ---` | **code** |
-| `why` | the reasoning behind a design or an approach | `sorted before grouping so the output is stable` | **periplus** |
+| `undocumented-design` | the reasoning behind a design the design settled, which none of this repository's documents records | `sorted before grouping so the output is stable` | **periplus** |
 | `unspecified-choices` | a value or a shape the design did not specify, chosen at the implementer's discretion — the reason for it is in neither the code nor the design | `300 ms, because it felt responsive enough` | **periplus** |
+| `why` | the reasoning behind a design or an approach | `the retry is here rather than in the caller` | **periplus** |
 | `rejected-alternatives` | an option that was considered and turned down | `considered a queue, chose the direct write` | **periplus** |
 | `upgrade-triggers` | the condition under which this implementation should be revisited | `move to per-account locks if throughput becomes a problem` | **periplus** |
 | `tautology` | a restatement of what the code already shows, including a docstring summary naming what the function does | `increment the counter` | **drop** |
-| `doc-references` | a pointer to an ADR or another document | `see ADR 0007` | **drop** |
+| `doc-restatement` | a claim one of this repository's existing documents already makes, a pointer to that document included | `see ADR 0007` | **drop** |
 | `history` | the story of how the code got here, or what it used to be | `used to be synchronous; timeouts made it async` | **drop** |
 | `test-intent` | what a test is checking — `describe`/`it` already says it | `checks that an empty cart returns zero` | **drop** |
 
@@ -134,9 +135,11 @@ destinations added, and a test keeps the two from drifting on which kinds exist.
 
 Per repository, at `.periplus/config.json`. It is the only place a destination is
 written down, so it is created with every kind in it the first time a session
-starts, and never overwritten after that. Malformed fields fall back to the
-defaults below, and anything that could not be used is named when `/pp-resolve`
-prints the resolved table.
+starts. A value already in the file is never changed; a kind missing from it is
+added at its default, which is the one edit that cannot alter how the file reads,
+and it is what carries a config across a version that adds or renames a kind.
+Malformed fields fall back to the defaults below, and anything that could not be
+used is named when `/pp-resolve` prints the resolved table.
 
 ```json
 {
@@ -145,27 +148,29 @@ prints the resolved table.
     "contracts": "code",
     "current-limits": "code",
     "block-headings": "code",
-    "why": "periplus",
+    "undocumented-design": "periplus",
     "unspecified-choices": "periplus",
+    "why": "periplus",
     "rejected-alternatives": "periplus",
     "upgrade-triggers": "periplus",
     "tautology": "drop",
-    "doc-references": "drop",
+    "doc-restatement": "drop",
     "history": "drop",
     "test-intent": "drop"
   }
 }
 ```
 
-Four to each destination, and one line explains the split: what stays in the
-source is the outside fact the code cannot show you.
+Four, five and four, and one line explains the split: what stays in the source is
+the outside fact the code cannot show you.
 
 Each kind takes `code`, `periplus`, or `drop`, and `criteria` is the whole file.
 
 **The set of kinds is closed.** Destinations move; the vocabulary does not. Wanting
-a thirteenth kind means wanting a category none of the twelve covers, which is a
+a fourteenth kind means wanting a category none of the thirteen covers, which is a
 change to the discipline rather than to a setting — so a key that is not a kind is
-reported as ignored rather than quietly accepted.
+reported as ignored rather than quietly accepted. A key left behind by a rename is
+reported the same way, and deleting it is the reader's call, not the hook's.
 
 `.periplus/` is not tracked, `config.json` included: the directory holds working
 state, and a comment convention a team has agreed on is shared by copying the
