@@ -31,10 +31,11 @@ const TS = String.raw`\d{4}-\d{2}-\d{2}T\d{2}:\d{2}`;
 // Quoting is not checked: a miswritten row drops out of the count unseen.
 const ROW_RE = new RegExp(String.raw`^${TS},[^,]*,\d*,([^,]*),`);
 const SKILL_PATH = path.join(__dirname, '..', 'skills', 'pp', 'SKILL.md');
+const KINDS_PATH = path.join(__dirname, '..', 'skills', 'pp-classify', 'SKILL.md');
+const CAPTURE_PATH = path.join(__dirname, '..', 'skills', 'pp', 'CAPTURE.md');
 const TABLE_RE = /<!-- criteria-table:start -->[\s\S]*?<!-- criteria-table:end -->/;
-// The SKILL.md table has two columns, and the destination is not one of them.
+// The shipped table has two columns, and the destination is not one of them.
 const TABLE_ROW_RE = /^\| `([^`]+)` \|(.*)\|$/;
-const ALWAYS_RE = /<!-- always:start -->\n([\s\S]*?)<!-- always:end -->/;
 
 // Runs once, when the directory is first made: an ignore line deleted by hand
 // stays deleted.
@@ -138,7 +139,7 @@ const countUnclassified = (root) => rows(root, PRE_REL).filter((m) => m[1] === '
 
 function criteriaTable(root) {
   const { criteria, problems } = loadConfig(root);
-  const found = readDiscipline().match(TABLE_RE);
+  const found = readKinds().match(TABLE_RE);
   const table = (found ? found[0] : '')
     .split('\n')
     .filter((line) => !line.startsWith('<!--'))
@@ -153,15 +154,14 @@ function criteriaTable(root) {
   return [...table, ...problems.map((p) => `config.json: ${p}`)].join('\n');
 }
 
-function readDiscipline() {
-  return fs.readFileSync(SKILL_PATH, 'utf8').replace(/^---[\s\S]*?---\s*/, '');
-}
+const body = (file) => fs.readFileSync(file, 'utf8').replace(/^---[\s\S]*?---\s*/, '');
 
-// /pp carries the whole file.
-function alwaysSection() {
-  const m = readDiscipline().match(ALWAYS_RE);
-  return m ? m[1].trimEnd() : readDiscipline();
-}
+const readDiscipline = () => body(SKILL_PATH);
+
+const readKinds = () => body(KINDS_PATH);
+
+// The whole file is the rule: nothing else is injected, and nothing restates it.
+const captureRule = () => body(CAPTURE_PATH).trimEnd();
 
 // Only `agent` and `subagentStatusLine` are read out of a plugin's own
 // settings.json, so a plugin cannot install this itself.
@@ -249,7 +249,7 @@ function buildContext(count, pending = 0, unclassified = 0) {
 Comments do not go straight into the source. While the code is being written you
 only capture; when it is finished you filter, once, with \`/pp\`.
 
-${alwaysSection()}`;
+${captureRule()}`;
 }
 
 const INSTALL_RESULT = {
@@ -306,6 +306,7 @@ if (require.main === module) {
 
 module.exports = {
   loadConfig, countEntries, countPending, countUnclassified, criteriaTable,
-  buildContext, readDiscipline, alwaysSection, ensureWorkspace, ensureConfig,
-  statuslineNudge, installStatusline, DEFAULT_CRITERIA, ROW_RE,
+  buildContext, readDiscipline, readKinds, captureRule, ensureWorkspace,
+  ensureConfig, statuslineNudge, installStatusline, DEFAULT_CRITERIA, ROW_RE,
+  CAPTURE_PATH,
 };

@@ -15,13 +15,15 @@ const {
   criteriaTable,
   buildContext,
   readDiscipline,
-  alwaysSection,
+  readKinds,
+  captureRule,
   ensureWorkspace,
   ensureConfig,
   statuslineNudge,
   installStatusline,
   DEFAULT_CRITERIA,
   ROW_RE,
+  CAPTURE_PATH,
 } = require('./periplus-activate.js');
 
 const TABLE_RE = /<!-- criteria-table:start -->[\s\S]*?<!-- criteria-table:end -->/;
@@ -194,8 +196,8 @@ test('a repository with a config is not told about it at session start', () => {
 });
 
 test('the shipped table names kinds and never their destinations', () => {
-  const table = readDiscipline().match(TABLE_RE)[0];
-  assert.ok(readDiscipline().includes('It does not say where any of them goes'));
+  const table = readKinds().match(TABLE_RE)[0];
+  assert.ok(readKinds().includes("It does not say where any of them goes"));
   for (const to of ['**code**', '**periplus**', '**drop**']) {
     assert.ok(!table.includes(to), `the table still ships a ${to} column`);
   }
@@ -228,7 +230,7 @@ test('a file that could not be parsed says the whole of it was ignored', () => {
 });
 
 test('the kinds the table cannot separate are separated somewhere', () => {
-  const after = readDiscipline().split(TABLE_RE)[1];
+  const after = readKinds().split(TABLE_RE)[1];
   for (const kind of ['doc-restatement', 'undocumented-design', 'unspecified-choices', 'why']) {
     assert.ok(after.includes(kind), `nothing after the table says when a row is ${kind}`);
   }
@@ -254,10 +256,20 @@ test('phase 2 is told not to translate on the way out', () => {
   assert.ok(readDiscipline().includes('Keep the language it was captured in'));
 });
 
-test('the injected capture rule is lifted verbatim from the skill', () => {
+test('the injected capture rule is the whole of the file it comes from', () => {
   const delivered = buildContext(3);
-  assert.ok(delivered.includes(alwaysSection()));
-  assert.ok(readDiscipline().includes(alwaysSection()));
+  const file = fs.readFileSync(CAPTURE_PATH, 'utf8');
+  assert.ok(delivered.includes(captureRule()));
+  assert.strictEqual(file.trimEnd(), captureRule(), 'nothing in that file goes uninjected');
+});
+
+test('no other file restates the capture rule', () => {
+  const root = path.join(__dirname, '..');
+  const opener = captureRule().split('\n')[0];
+  for (const rel of TEMPLATE_FILES) {
+    const text = fs.readFileSync(path.join(root, rel), 'utf8');
+    assert.ok(!text.includes(opener), `${rel} carries a second copy of the capture rule`);
+  }
 });
 
 test('session start carries the capture rule only, not the filter machinery', () => {
@@ -266,14 +278,10 @@ test('session start carries the capture rule only, not the filter machinery', ()
   assert.ok(delivered.includes('invoke `/pp`'), 'phase 2 is pointed at, not inlined');
   assert.ok(!TABLE_RE.test(delivered), 'the kind table is not injected');
   assert.ok(!delivered.includes('rejected-alternatives'), 'no kind names leak in');
-  assert.ok(
-    delivered.length * 3 < readDiscipline().length,
-    `injected ${delivered.length} chars against a ${readDiscipline().length} char skill`,
-  );
 });
 
 test('capture is told to split before writing the row, not after', () => {
-  const rule = alwaysSection();
+  const rule = captureRule();
   assert.ok(rule.includes('One note per line, one thing per note'));
   assert.ok(rule.includes(',,"'), 'the kind is left empty at capture');
   assert.ok(!rule.includes('→'), 'one timestamp, not two');
@@ -316,7 +324,7 @@ test('every format template that ships is a row the hook counts as the template 
 });
 
 test('the injected capture template leaves the kind for phase 2 to fill', () => {
-  const [template, ...rest] = templatesIn(alwaysSection());
+  const [template, ...rest] = templatesIn(captureRule());
   assert.deepStrictEqual(rest, [], 'capture states the format once');
   assert.strictEqual(fill(template).match(ROW_RE)[1], '');
 });
@@ -355,7 +363,7 @@ test('a directory that is not a repository gets the workspace but no .gitignore'
 });
 
 test('the shipped table holds exactly the kinds the hook knows destinations for', () => {
-  const table = readDiscipline().match(TABLE_RE)[0];
+  const table = readKinds().match(TABLE_RE)[0];
   for (const name of Object.keys(DEFAULT_CRITERIA)) {
     assert.ok(new RegExp(`\\| \`${name}\` \\|`).test(table), `${name} is missing from the table`);
   }

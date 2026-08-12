@@ -14,9 +14,9 @@ The same discipline pointed at code that already exists. `/pp` captures notes
 that do not exist yet; this cuts comments that do. Classification and delivery
 are `/pp-classify` and `/pp-resolve` unchanged.
 
-The kinds, the split rule, and the destinations are defined in
-`skills/pp/SKILL.md` and are not restated here. If the two ever disagree, `/pp`
-is right.
+The kinds and the order they are read in are defined in
+`skills/pp-classify/SKILL.md` and are not restated here. Where a kind goes is
+`.periplus/config.json`, which `/pp-resolve` reads.
 
 ## Scope first
 
