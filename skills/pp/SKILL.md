@@ -175,8 +175,14 @@ than a guess that the ADRs probably cover this.
 
 Read the documents this repository keeps, then the code. `/pp` can also settle it
 from the session it is running in, since the code and the notes were made there
-and who chose the value is not in question. `/pp-refactor` has no such session,
-so 4 and 5 will rarely be shown and most reasons will land in 6.
+and who chose the value is not in question. `/pp-refactor` reads the design
+documents in its place, named at its scope step.
+
+**What the design documents do not settle, the implementation settled** — 5, not
+6. 4 is what they settle and record no reason for.
+
+3 searches every document this repository keeps. Only the design documents answer
+4 and 5.
 
 ## Keep the language it was captured in
 

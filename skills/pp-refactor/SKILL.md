@@ -29,6 +29,9 @@ in a diff. Never take the whole repository on your own initiative. A comment swe
 touches every file it reaches, and the review burden lands on someone who only
 asked about one module.
 
+Ask which documents are the design, in the same breath. **"There are none" is an
+answer, not a missing one.**
+
 Say how many files and how many comments are in scope before starting. If that
 number is large, propose a smaller first pass — one file is enough to find out
 whether the user agrees with your judgement, and disagreeing after fifty files
@@ -86,10 +89,12 @@ exception:
   would make its output indistinguishable from its input, so `/pp` letting
   something through would stop being visible.
 
-`unspecified-choices` has no session to read here, so decide it from the
-documents this repository keeps and from the code. That is an inference and it
-will be wrong sometimes; `/pp-discuss` is where a wrong one gets corrected. A log
-that fills up after a sweep is the finding, not a fault.
+4 and 5 are decided from the design documents named at the scope step. What they
+do not settle, the implementation settled: 5.
+
+That is an inference and it will be wrong sometimes; `/pp-discuss` is where a
+wrong one gets corrected. A log that fills up after a sweep is the finding, not a
+fault.
 
 Comments routed to `code` are written back rewritten, not restored. Shortening a
 comment to the fact it carries is the work this command exists to do. Keep the
