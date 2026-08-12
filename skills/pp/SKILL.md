@@ -1,16 +1,11 @@
 ---
 name: pp
 description: >
-  Keep implementation-time notes out of the source until the code is finished.
-  Comments are captured to `.periplus/pre.csv` while you work, then filtered once
-  at the end into the source, into `.periplus/log.csv`, or nowhere. Invoke as /pp,
-  which runs /pp-capture, then /pp-classify, then /pp-resolve. Use it on any coding task where
-  you would otherwise be writing comments — and whenever the user says "periplus",
-  "stop commenting everything", "the code is turning into documentation", "keep a
-  logbook", or complains about tautological comments, back-references to ADRs, or
-  design rationale buried in the source. The plugin's session hook normally
-  applies this automatically; invoke it explicitly when the hook is not active, in
-  a subagent that did not inherit it, or when the user asks for it by name.
+  Filter the notes captured in `.periplus/pre.csv` into the source, the log, or
+  nowhere. Run at the end of any coding task where you would otherwise have
+  written comments, and whenever the user says "periplus", "stop commenting
+  everything", "keep a logbook", or complains that the code is turning into
+  documentation.
 ---
 
 # Periplus

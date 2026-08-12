@@ -1,9 +1,8 @@
 ---
 name: pp-capture
 description: >
-  Phase 1 of periplus, and the first step of /pp: capture comments to
-  `.periplus/pre.csv` instead of writing them into the source. The session hook
-  injects this at session start.
+  Capture comments to `.periplus/pre.csv` instead of writing
+  them into the source. Run by /pp.
 ---
 
 ACTIVE EVERY RESPONSE, in every file, including tests and configuration. Still

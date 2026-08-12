@@ -1,13 +1,9 @@
 ---
 name: pp-refactor
 description: >
-  Point the periplus discipline at comments that already exist. Cuts the comments
-  out of a named file or directory into `.periplus/pre.csv`, then runs
-  /pp-classify and /pp-resolve over them, so what survives is written back and the
-  rest becomes log entries or nothing. Invoked as /pp-refactor. Use it when the
-  user asks to clean up comments in existing code, points at a file that has
-  turned into documentation, or adopts periplus in a codebase that predates it.
-  Destructive: it removes comments from the source before deciding where they go.
+  Cut the comments already in a named file or directory into `.periplus/pre.csv`,
+  then filter them. Use when the user asks to clean up comments in existing code,
+  or adopts periplus in a codebase that predates it.
 ---
 
 The same discipline pointed at code that already exists. `/pp` captures notes

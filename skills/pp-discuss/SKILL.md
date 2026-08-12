@@ -1,12 +1,9 @@
 ---
 name: pp-discuss
 description: >
-  Work through the pending periplus entries one at a time and send each to its
-  destination — a comment in the source, a document the repository keeps, back to
-  the log, or nowhere. Invoked as /pp-discuss. Changes files, one entry at a
-  time, each with the user's agreement. Also use it when the user asks what is
-  sitting in `.periplus/`, or asks what the implementation has been left to decide
-  on its own.
+  Send each entry in `.periplus/log.csv` to its destination, one at a time. Use
+  when the user asks what is sitting in `.periplus/`, or what the implementation
+  has been left to decide on its own.
 ---
 
 Every entry taken up here reaches one of four destinations, and the log shrinks by

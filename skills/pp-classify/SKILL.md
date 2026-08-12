@@ -1,11 +1,8 @@
 ---
 name: pp-classify
 description: >
-  Give every captured pre-comment exactly one kind, splitting the rows that hold
-  more than one. Invoked as /pp-classify, and the first half of /pp. Writes only
-  `.periplus/pre.csv` — no source file, no log, no ADR. Use it when the kinds are
-  worth reviewing before anything is delivered; otherwise run /pp, which does this
-  and then /pp-resolve.
+  Give every row in `.periplus/pre.csv` exactly one kind. Run by /pp, or alone to
+  review the kinds before anything is delivered.
 ---
 
 The first half of phase 2. Every row in `.periplus/pre.csv` comes out of this
