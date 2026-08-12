@@ -125,8 +125,8 @@ any of them can be moved per repository (see Configuration).
 | `history` | the story of how the code got here, or what it used to be | `used to be synchronous; timeouts made it async` | **drop** |
 | `test-intent` | what a test is checking — `describe`/`it` already says it | `checks that an empty cart returns zero` | **drop** |
 
-`skills/pp/SKILL.md` holds the operative table — the one `/pp-classify` reads, and
-the one `/pp-classify` reads. It names the kinds and nothing else — the
+`skills/pp/SKILL.md` holds the operative table — the one `/pp-classify` reads. It
+names the kinds and nothing else — the
 destinations belong to `config.json`, and the hook appends them when it prints the
 resolved table. The table above is a rendering with examples and the shipped
 destinations added, and a test keeps the two from drifting on which kinds exist.
