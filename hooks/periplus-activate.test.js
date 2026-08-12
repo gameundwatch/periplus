@@ -258,9 +258,9 @@ test('phase 2 is told not to translate on the way out', () => {
 
 test('the injected capture rule is the whole of the file it comes from', () => {
   const delivered = buildContext(3);
-  const file = fs.readFileSync(CAPTURE_PATH, 'utf8');
+  const file = fs.readFileSync(CAPTURE_PATH, 'utf8').replace(/^---[\s\S]*?---\s*/, '');
   assert.ok(delivered.includes(captureRule()));
-  assert.strictEqual(file.trimEnd(), captureRule(), 'nothing in that file goes uninjected');
+  assert.strictEqual(file.trimEnd(), captureRule(), 'nothing below the frontmatter goes uninjected');
 });
 
 test('no other file restates the capture rule', () => {

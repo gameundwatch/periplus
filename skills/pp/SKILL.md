@@ -4,7 +4,7 @@ description: >
   Keep implementation-time notes out of the source until the code is finished.
   Comments are captured to `.periplus/pre.csv` while you work, then filtered once
   at the end into the source, into `.periplus/log.csv`, or nowhere. Invoke as /pp,
-  which runs /pp-classify and then /pp-resolve. Use it on any coding task where
+  which runs /pp-capture, then /pp-classify, then /pp-resolve. Use it on any coding task where
   you would otherwise be writing comments — and whenever the user says "periplus",
   "stop commenting everything", "the code is turning into documentation", "keep a
   logbook", or complains about tautological comments, back-references to ADRs, or
@@ -18,21 +18,17 @@ description: >
 Two phases. While the code is being written you only capture. When the code is
 finished you filter, once, with the finished thing in front of you.
 
-Phase 1 is `skills/pp/CAPTURE.md`, which the session hook injects. This command
-is phase 2.
+## Three commands, in order
 
-## Phase 2 — filter
-
-Two commands, in order:
-
-1. **`/pp-classify`** — split what is not yet atomic, and give each row exactly
+1. **`/pp-capture`** — phase 1, the capture rule. The session hook injects it at
+   session start; running it here re-arms it for the code written next.
+2. **`/pp-classify`** — split what is not yet atomic, and give each row exactly
    one kind. Writes nothing outside `pre.csv`.
-2. **`/pp-resolve`** — look the destination up from the kind, deliver each row,
+3. **`/pp-resolve`** — look the destination up from the kind, deliver each row,
    and drain `pre.csv`.
 
-`/pp` is both, run back to back, and is what to reach for by default. Splitting
-the run and stopping after the first half leaves the source with no comments at
-all.
+`/pp` is all three, run back to back, and is what to reach for by default.
+Stopping after `/pp-classify` leaves the source with no comments at all.
 
 The kinds, and the order they are read in, are in
 `skills/pp-classify/SKILL.md`. Where a kind goes is `.periplus/config.json`,
