@@ -39,17 +39,17 @@ This table names the kinds. It does not say where any of them goes: that is
 | kind | which is |
 | --- | --- |
 | `external-facts` | a fact about the world outside the code that the code depends on — a browser quirk, the target device, the expected user, an external API limit |
-| `contracts` | an obligation on the caller that the signature and the types do not express |
+| `contracts` | a constraint the implementer settled that something on the other side has to keep — a caller, or another file in this repository |
 | `current-limits` | what this implementation does not do or cannot do yet, which reads as an oversight without it |
-| `block-headings` | a heading that labels the block of code below it |
+| `label` | a label rather than a sentence — it names the block of code below it |
 | `undocumented-design` | the reasoning behind a design the design settled |
 | `unspecified-choices` | a value or a shape the design did not specify, chosen at the implementer's discretion |
 | `why` | the reasoning behind a design or an approach |
 | `rejected-alternatives` | an option that was considered and turned down |
 | `upgrade-triggers` | the condition under which this implementation should be revisited |
+| `default` | none of the three — not a rule, not readable from anywhere else, not a reason |
 | `tautology` | a restatement of what the code already shows — including a docstring summary naming what the function does |
 | `doc-restatement` | a claim one of this repository's existing documents already makes |
-| `history` | the story of how the code got here, or what it used to be |
 | `test-intent` | what a test is checking — describe/it already says it |
 <!-- criteria-table:end -->
 
@@ -58,50 +58,73 @@ a property of the code as it stands; the intention to lift it some day is a plan
 Split on that line — what is true of the code now, against what is to be done
 later.
 
-## The order the kinds are read in
+## The tree
 
-The table alone will not separate the reason-shaped kinds. Read from the top and
-stop at the first that holds.
+The table names the kinds; it does not separate them. This tree does. Follow it,
+and take the kind it lands on.
 
+```mermaid
+flowchart TD
+    S([a captured row]) --> Q0{a sentence, or a label}
+    Q0 -->|label| kLabel[label]
+    Q0 -->|sentence| Q1{clauses joined as coordinates}
+    Q1 -->|yes| SPLIT[split into two rows]
+    SPLIT --> S
+    Q1 -->|no| R{a rule}
+
+    R -->|yes| R1{whoever edits this line cannot overturn it}
+    R1 -->|yes| R2{the implementer settled it}
+    R2 -->|yes| kContracts[contracts]
+    R2 -->|no| kExternal[external-facts]
+    R1 -->|no| R3{the change is already planned}
+    R3 -->|yes| kUpgrade[upgrade-triggers]
+    R3 -->|no| kLimits[current-limits]
+
+    R -->|no| D{readable from somewhere else}
+    D -->|yes| D1{from where}
+    D1 -->|the code| kTautology[tautology]
+    D1 -->|the test name| kTestIntent[test-intent]
+    D1 -->|a document and a line| kDocRestatement[doc-restatement]
+
+    D -->|no| W{a reason}
+    W -->|yes| W1{the design settled it and no document records it}
+    W1 -->|yes| kUndocumented[undocumented-design]
+    W1 -->|no| W2{the design demonstrably did not settle it}
+    W2 -->|yes| W3{the option was implemented}
+    W3 -->|yes| kUnspecified[unspecified-choices]
+    W3 -->|no| kRejected[rejected-alternatives]
+    W2 -->|no| kWhy[why]
+
+    W -->|no| kDefault[default]
 ```
-1. it would let the next reader break the code if it went missing
-                       → external-facts / contracts / current-limits
-2. the code in front of you already shows it        → tautology
-3. a document and a line in it can be named         → doc-restatement
-4. the design settled it and no document records it → undocumented-design
-5. the design demonstrably did not settle it        → unspecified-choices
-6. a reason, and neither 4 nor 5 can be shown       → why
-```
 
-1 comes before 3 whatever the documents say. `why` is the residual.
-
-### What counts as a document, for 3
+### What counts as a document
 
 Only what this repository keeps in a durable form. **The session does not count.**
-A reason someone gave in conversation is a reason no document records, which is 4.
+A reason someone gave in conversation is a reason no document records: it goes
+down the reason branch, not the readable-from-somewhere-else one.
 
 Name the document and the line. Then check that the line makes the same claim —
 **a line that says something else is not a restatement**, and a note that
-contradicts a stale document belongs at 4 or 6.
+contradicts a stale document is a reason.
 
-### What counts as settled, for 4 and 5
+### What counts as settled
 
 Read the documents this repository keeps, then the code. `/pp` can also settle it
 from the session it is running in. `/pp-refactor` reads the design documents in
 its place, named at its scope step.
 
-**What the design documents do not settle, the implementation settled** — 5, not
-6. 4 is what they settle and record no reason for.
+**What the design documents do not settle, the implementation settled.**
 
-3 searches every document this repository keeps. Only the design documents answer
-4 and 5.
+`readable from somewhere else` searches every document this repository keeps. Only
+the design documents answer the two questions in the reason branch.
 
 ## Split unless there is a reason not to
 
 Before naming anything, read each row with its subject filled in — the one the
 sentence left out because the clause beside it had already supplied it. Some rows
 arrive with no subject at all: write one for them. A row that can take no
-predicate is not a sentence but a label, and a label is `block-headings`.
+predicate is not a sentence but a label, and a label is `label`.
 
 Then assume the row is two. Wherever clauses are joined, split; if you do not,
 say why in the report.
@@ -127,9 +150,9 @@ a rewrite — the subject supplied above is the one exception.
 
 ## Search the documents, one row at a time
 
-A row that reads as a reason gets step 3 of the order run on it: is this
-something one of this repository's documents already says? Search when such a row
-comes up, for that row. **Do not read the document tree first.**
+`readable from somewhere else` asks whether one of this repository's documents
+already says it. Search when a row reaches that question, for that row. **Do not
+read the document tree first.**
 
 File names are usually index enough to know where to look. Open the ones that
 could hold it, and **read the line before claiming it**. If nothing turns up, the
@@ -158,7 +181,7 @@ the line on a `doc-restatement` row.
 
 ```
 <file>:<line> [<kind>] — <the note in a few words>
-hooks/x.js:88 [history] — 以前は同期だった (split 1/2)
+hooks/x.js:88 [default] — 以前は同期だった (split 1/2)
 hooks/x.js:88 [why] — タイムアウトが多発したため非同期にした (kept whole: cause)
 hooks/x.js:88 [doc-restatement] — 種別の集合は閉じている (docs/adr/0014-...md:17)
 ```
