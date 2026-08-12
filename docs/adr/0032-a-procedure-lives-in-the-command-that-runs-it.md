@@ -68,9 +68,14 @@ ADR 0031 は手順書から理由を落とした。落とし切った後も残�
 `skills/pp/SKILL.md`、`readKinds` は `skills/pp-classify/SKILL.md`、`captureRule` は
 `skills/pp/CAPTURE.md`。`ALWAYS_RE` と `always` マーカーは消えた。
 
-**README がこの版で古くなる。** `:73` は「`skills/pp/SKILL.md` が規律の単一の出所」と書いており
-捕捉規則の移動で偽になる。`:128` は「表は `skills/pp/SKILL.md` にある」と書いており kind 表の移動
-で偽になる。**この版では直さない。**README には元から `:89` の「rows whose kind sent them to
-periplus」— ADR 0031 が①として名指しした言い方そのもの — が残っており、三箇所をまとめて扱う版を
-別に切る。0031 が README を範囲外と決めたのは理由の削除についてだったが、この版もその線を越えず、
-古くなったことを記録して次に渡す。
+**README の三箇所を直した。** `:73` の「`skills/pp/SKILL.md` が規律の単一の出所」は捕捉規則の
+移動で偽になり、`:128` の「表は `skills/pp/SKILL.md` にある」は kind 表の移動で偽になる。この二つは
+**この版が壊した記述**であり、直さなければ README が存在しない構成を説明することになる。
+
+三つ目の `:89`「rows whose kind sent them to periplus」は元からあった。ADR 0031 が①として名指し
+した言い方そのもので、この版の移動とは無関係である。**同じ表の中で直すほうが安いので一緒に
+直した** — 「rows sent to the `periplus` destination」。kind が送るのではなく、kind から引かれた
+行き先が `periplus` だという言い方に変わる。
+
+0031 が README を範囲外と決めたのは理由の削除についてであって、移動が壊した記述の後始末は
+この版に属する。
