@@ -149,9 +149,12 @@ Nothing else in `pre.csv` moves, and nothing outside it is touched.
 
 ## Output
 
-One line per row, in file order — `(split N/M)` on a row out of a split, the
-reason on a row left whole where clauses were joined, the document and the line
-on a `doc-restatement` row.
+Run by `/pp`, print nothing here — `/pp-resolve` reports these same rows. Hand it
+the marks below: they are in no file, and nothing else can recover them.
+
+Run alone, one line per row, in file order — `(split N/M)` on a row out of a
+split, the reason on a row left whole where clauses were joined, the document and
+the line on a `doc-restatement` row.
 
 ```
 <file>:<line> [<kind>] — <the note in a few words>

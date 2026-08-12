@@ -62,8 +62,10 @@ Drain row by row, not at the end.
 ## Output
 
 ```
-<file>:<line> [<kind>] → <code|periplus|drop>
+<file>:<line> [<kind>] → <code|periplus|drop> — <the note in a few words>
 ```
+
+When `/pp-classify` ran in the same pass, carry the marks it made onto the row.
 
 End with `<N> to code, <M> to periplus, <K> dropped. pre.csv empty.` If it is not
 empty, that is the report instead: `<R> rows still in pre.csv` — and the work is
