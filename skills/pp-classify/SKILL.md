@@ -96,10 +96,15 @@ its place, named at its scope step.
 3 searches every document this repository keeps. Only the design documents answer
 4 and 5.
 
-## Give every row a subject
+## Split unless there is a reason not to
 
 Before naming anything, read each row with its subject filled in — the one the
-sentence left out because the clause beside it had already supplied it.
+sentence left out because the clause beside it had already supplied it. Some rows
+arrive with no subject at all: write one for them. A row that can take no
+predicate is not a sentence but a label, and a label is `block-headings`.
+
+Then assume the row is two. Wherever clauses are joined, split; if you do not,
+say why in the report.
 
 ```
 「update_all はモデルを更新しないので a.floor_layer_index は古い。割り当てた値をそのまま返す」
@@ -107,35 +112,12 @@ sentence left out because the clause beside it had already supplied it.
   → このアクションは割り当てた値をそのまま返す      [tautology]
 ```
 
-Some rows arrive with no subject at all — write one for them.
-
-A row with no predicate is not a sentence but a label, and a label is
-`block-headings`.
-
-## Split unless there is a reason not to
-
-Assume a row is two. Wherever clauses are joined, split; if you do not, say why
-in the report.
-
-```
-each row
-  ├ subject can be supplied (it has a predicate)  → name the kind
-  └ no predicate (a bare noun phrase)             → block-headings
-```
-
 A subordinating join — `〜ため`, `〜ので`, *because* — is one claim and stays
 whole. Coordinated main clauses — contrast, plain conjunction, a full stop — are
 two. It is the join that decides, never the number of sentences.
 
-The split is recursive — a half can hold two kinds of its own, or two claims of
-the same kind:
-
-```
-// parseConfig() からリネーム。旧名は1リリースだけ alias で残す
-  → parseConfig() からリネーム        [history]
-  → 旧名は alias で残してある          [contracts]
-  → 次のリリースで消す                 [upgrade-triggers]
-```
+The split is recursive: a half can hold two kinds of its own, or two claims of
+the same kind.
 
 Splitting a row replaces it with the rows it became, at the same `file:line`,
 carrying the same timestamp.
@@ -167,28 +149,17 @@ Nothing else in `pre.csv` moves, and nothing outside it is touched.
 
 ## Output
 
-One line per row, in file order:
+Run by `/pp`, print nothing here — `/pp-resolve` reports these same rows. Hand it
+the marks below: they are in no file, and nothing else can recover them.
+
+Run alone, one line per row, in file order — `(split N/M)` on a row out of a
+split, the reason on a row left whole where clauses were joined, the document and
+the line on a `doc-restatement` row.
 
 ```
 <file>:<line> [<kind>] — <the note in a few words>
-```
-
-Mark the rows that came out of a split:
-
-```
 hooks/x.js:88 [history] — 以前は同期だった (split 1/2)
-hooks/x.js:88 [why] — タイムアウトが多発したため非同期にした (split 2/2)
-```
-
-A row left whole where clauses were joined carries the reason instead:
-
-```
 hooks/x.js:88 [why] — タイムアウトが多発したため非同期にした (kept whole: cause)
-```
-
-A `doc-restatement` row carries the document and the line it was found at:
-
-```
 hooks/x.js:88 [doc-restatement] — 種別の集合は閉じている (docs/adr/0014-...md:17)
 ```
 
