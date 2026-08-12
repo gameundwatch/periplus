@@ -1,10 +1,8 @@
 ---
 name: pp-resolve
 description: >
-  Deliver every classified pre-comment to the destination its kind resolves to,
-  and drain `.periplus/pre.csv`. Invoked as /pp-resolve, and the second half of
-  /pp. Writes source files, `.periplus/log.csv`, and the archive. Use it after
-  /pp-classify; /pp runs both.
+  Deliver every classified row to the destination its kind resolves to, and drain
+  `.periplus/pre.csv`. Run by /pp, or after /pp-classify.
 ---
 
 The second half of phase 2. Every row carrying a kind leaves `pre.csv` here, and
