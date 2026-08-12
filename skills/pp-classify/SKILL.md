@@ -27,16 +27,77 @@ Rows with an empty fourth field are yours. Rows that already carry a kind were
 classified in an earlier run — leave them exactly as they are. No file, or no
 empty rows: report `Nothing to classify.` and stop.
 
-The kinds and what each one means are in `skills/pp/SKILL.md`, in the table
-between the `criteria-table` markers. Read the section below that table too: it
-holds the order the kinds are read in, and the table alone will not separate
-them.
-
 **Do not read `.periplus/config.json`.** Where a kind goes is `/pp-resolve`'s
 business.
 
-The repository's own documents are a different matter: step 3 of that order sends
-you to them, and you are expected to go.
+## Kinds
+
+Exactly one per row. The set is closed: a note that seems to need a fourteenth
+kind is a note that has not been split far enough.
+
+This table names the kinds. It does not say where any of them goes: that is
+`.periplus/config.json`, which `/pp-resolve` reads and this file never restates.
+
+<!-- criteria-table:start -->
+| kind | which is |
+| --- | --- |
+| `external-facts` | a fact about the world outside the code that the code depends on — a browser quirk, the target device, the expected user, an external API limit |
+| `contracts` | an obligation on the caller that the signature and the types do not express |
+| `current-limits` | what this implementation does not do or cannot do yet, which reads as an oversight without it |
+| `block-headings` | a heading that labels the block of code below it |
+| `undocumented-design` | the reasoning behind a design the design settled, which none of this repository's documents records |
+| `unspecified-choices` | a value or a shape the design did not specify, chosen at the implementer's discretion — the reason for it is in neither the code nor the design |
+| `why` | the reasoning behind a design or an approach |
+| `rejected-alternatives` | an option that was considered and turned down |
+| `upgrade-triggers` | the condition under which this implementation should be revisited |
+| `tautology` | a restatement of what the code already shows — including a docstring summary naming what the function does |
+| `doc-restatement` | a claim one of this repository's existing documents already makes — a pointer to that document included |
+| `history` | the story of how the code got here, or what it used to be |
+| `test-intent` | what a test is checking — describe/it already says it |
+<!-- criteria-table:end -->
+
+`current-limits` and `upgrade-triggers` most often arrive as one note. A limit is
+a property of the code as it stands; the intention to lift it some day is a plan.
+Split on that line — what is true of the code now, against what is to be done
+later.
+
+## The order the kinds are read in
+
+The table alone will not separate the reason-shaped kinds. Read from the top and
+stop at the first that holds.
+
+```
+1. it would let the next reader break the code if it went missing
+                       → external-facts / contracts / current-limits
+2. the code in front of you already shows it        → tautology
+3. a document and a line in it can be named         → doc-restatement
+4. the design settled it and no document records it → undocumented-design
+5. the design demonstrably did not settle it        → unspecified-choices
+6. a reason, and neither 4 nor 5 can be shown       → why
+```
+
+1 comes before 3 whatever the documents say. `why` is the residual.
+
+### What counts as a document, for 3
+
+Only what this repository keeps in a durable form. **The session does not count.**
+A reason someone gave in conversation is a reason no document records, which is 4.
+
+Name the document and the line. Then check that the line makes the same claim —
+**a line that says something else is not a restatement**, and a note that
+contradicts a stale document belongs at 4 or 6.
+
+### What counts as settled, for 4 and 5
+
+Read the documents this repository keeps, then the code. `/pp` can also settle it
+from the session it is running in. `/pp-refactor` reads the design documents in
+its place, named at its scope step.
+
+**What the design documents do not settle, the implementation settled** — 5, not
+6. 4 is what they settle and record no reason for.
+
+3 searches every document this repository keeps. Only the design documents answer
+4 and 5.
 
 ## Give every row a subject
 

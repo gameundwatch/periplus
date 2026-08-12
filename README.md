@@ -70,9 +70,9 @@ Reach for `/pp`. Running `/pp-classify` alone and stopping leaves the source wit
 no comments at all, which is the failure the discipline exists to prevent — the
 session-start line reports rows left in that state.
 
-`skills/pp/SKILL.md` is the single source of the discipline. The hook reads that
-file at runtime rather than restating it, so `/pp` and the session hook cannot
-drift apart — a test asserts they stay identical.
+`skills/pp/CAPTURE.md` is the capture rule and nothing else. The hook injects that
+file whole at session start, and no other file restates it, so there is no second
+copy to drift from — a test asserts both.
 
 ## The files
 
@@ -87,7 +87,7 @@ doubled to `""` and it never contains a newline.
 | file | what is in it | how a row leaves |
 | --- | --- | --- |
 | `.periplus/pre.csv` | rows that have not been delivered | `/pp-resolve` |
-| `.periplus/log.csv` | rows whose kind sent them to periplus | docs, code, trash — or it stays |
+| `.periplus/log.csv` | rows sent to the `periplus` destination | docs, code, trash — or it stays |
 | `.periplus/all.csv` | every row captured while writing code | it does not leave |
 | `.periplus/swept.csv` | every row `/pp-refactor` cut out of existing code | it does not leave |
 
@@ -125,11 +125,11 @@ any of them can be moved per repository (see Configuration).
 | `history` | the story of how the code got here, or what it used to be | `used to be synchronous; timeouts made it async` | **drop** |
 | `test-intent` | what a test is checking — `describe`/`it` already says it | `checks that an empty cart returns zero` | **drop** |
 
-`skills/pp/SKILL.md` holds the operative table — the one `/pp-classify` reads. It
-names the kinds and nothing else — the
-destinations belong to `config.json`, and the hook appends them when it prints the
-resolved table. The table above is a rendering with examples and the shipped
-destinations added, and a test keeps the two from drifting on which kinds exist.
+`skills/pp-classify/SKILL.md` holds the operative table, in the command that reads
+it. It names the kinds and nothing else — the destinations belong to
+`config.json`, and the hook appends them when it prints the resolved table. The
+table above is a rendering with examples and the shipped destinations added, and a
+test keeps the two from drifting on which kinds exist.
 
 ## Configuration
 
