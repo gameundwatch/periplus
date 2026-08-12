@@ -116,13 +116,13 @@ any of them can be moved per repository (see Configuration).
 | `contracts` | an obligation on the caller that the signature and the types do not express | `the caller closes the file` | **code** |
 | `current-limits` | what this implementation does not do or cannot do yet, which reads as an oversight without it | `only parses the seconds form of Retry-After` | **code** |
 | `block-headings` | a heading that labels the block of code below it | `--- helpers ---` | **code** |
-| `undocumented-design` | the reasoning behind a design the design settled, which none of this repository's documents records | `sorted before grouping so the output is stable` | **periplus** |
-| `unspecified-choices` | a value or a shape the design did not specify, chosen at the implementer's discretion — the reason for it is in neither the code nor the design | `300 ms, because it felt responsive enough` | **periplus** |
+| `undocumented-design` | the reasoning behind a design the design settled | `sorted before grouping so the output is stable` | **periplus** |
+| `unspecified-choices` | a value or a shape the design did not specify, chosen at the implementer's discretion | `300 ms, because it felt responsive enough` | **periplus** |
 | `why` | the reasoning behind a design or an approach | `the retry is here rather than in the caller` | **periplus** |
 | `rejected-alternatives` | an option that was considered and turned down | `considered a queue, chose the direct write` | **periplus** |
 | `upgrade-triggers` | the condition under which this implementation should be revisited | `move to per-account locks if throughput becomes a problem` | **periplus** |
 | `tautology` | a restatement of what the code already shows, including a docstring summary naming what the function does | `increment the counter` | **drop** |
-| `doc-restatement` | a claim one of this repository's existing documents already makes, a pointer to that document included | `see ADR 0007` | **drop** |
+| `doc-restatement` | a claim one of this repository's existing documents already makes | `see ADR 0007` | **drop** |
 | `history` | the story of how the code got here, or what it used to be | `used to be synchronous; timeouts made it async` | **drop** |
 | `test-intent` | what a test is checking — `describe`/`it` already says it | `checks that an empty cart returns zero` | **drop** |
 

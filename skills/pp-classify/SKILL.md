@@ -42,13 +42,13 @@ This table names the kinds. It does not say where any of them goes: that is
 | `contracts` | an obligation on the caller that the signature and the types do not express |
 | `current-limits` | what this implementation does not do or cannot do yet, which reads as an oversight without it |
 | `block-headings` | a heading that labels the block of code below it |
-| `undocumented-design` | the reasoning behind a design the design settled, which none of this repository's documents records |
-| `unspecified-choices` | a value or a shape the design did not specify, chosen at the implementer's discretion — the reason for it is in neither the code nor the design |
+| `undocumented-design` | the reasoning behind a design the design settled |
+| `unspecified-choices` | a value or a shape the design did not specify, chosen at the implementer's discretion |
 | `why` | the reasoning behind a design or an approach |
 | `rejected-alternatives` | an option that was considered and turned down |
 | `upgrade-triggers` | the condition under which this implementation should be revisited |
 | `tautology` | a restatement of what the code already shows — including a docstring summary naming what the function does |
-| `doc-restatement` | a claim one of this repository's existing documents already makes — a pointer to that document included |
+| `doc-restatement` | a claim one of this repository's existing documents already makes |
 | `history` | the story of how the code got here, or what it used to be |
 | `test-intent` | what a test is checking — describe/it already says it |
 <!-- criteria-table:end -->
