@@ -205,11 +205,11 @@ test('the shipped table names kinds and never their destinations', () => {
 
 test('the resolved table carries the repository\'s destinations, not the shipped ones', () => {
   const root = repo({
-    '.periplus/config.json': JSON.stringify({ criteria: { why: 'code', history: 'code' } }),
+    '.periplus/config.json': JSON.stringify({ criteria: { why: 'code', tautology: 'code' } }),
   });
   const table = criteriaTable(root);
   assert.match(table, /\| `why` \|[^|]*\| \*\*code\*\* \|/);
-  assert.match(table, /\| `history` \|[^|]*\| \*\*code\*\* \|/);
+  assert.match(table, /\| `tautology` \|[^|]*\| \*\*code\*\* \|/);
   assert.match(table, /\| `contracts` \|[^|]*\| \*\*code\*\* \|/, 'untouched kinds keep the default');
   assert.ok(!table.includes('<!--'), 'the markers are not part of the output');
 });

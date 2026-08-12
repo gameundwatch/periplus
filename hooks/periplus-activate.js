@@ -8,15 +8,15 @@ const DEFAULT_CRITERIA = {
   'external-facts': 'code',
   'contracts': 'code',
   'current-limits': 'code',
-  'block-headings': 'code',
+  'label': 'code',
   'undocumented-design': 'periplus',
   'unspecified-choices': 'periplus',
   'why': 'periplus',
   'rejected-alternatives': 'periplus',
   'upgrade-triggers': 'periplus',
+  'default': 'periplus',
   'tautology': 'drop',
   'doc-restatement': 'drop',
-  'history': 'drop',
   'test-intent': 'drop',
 };
 
