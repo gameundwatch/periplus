@@ -5,6 +5,6 @@
 - Work with me. 先回るな。ユーザーに先手をとるな。
 - Step by step. 段階的なコミット。100行を超える変更は、分割の時だ。
 - Make it confirmable. 外から見て、認知できないものを作るな。
-- Give only one truth. 元本を示せ。参照は複製に勝る。
+- Link only one truth. 元本へのリンク、参照は複製に勝る。
 - Say in existing words. 存在する言葉で喋ろう。ない言葉は、簡潔に説明しろ。
 <!-- always:end -->
