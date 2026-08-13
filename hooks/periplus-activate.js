@@ -8,15 +8,15 @@ const DEFAULT_CRITERIA = {
   'external-facts': 'code',
   'contracts': 'code',
   'current-limits': 'code',
-  'block-headings': 'code',
+  'label': 'code',
   'undocumented-design': 'periplus',
   'unspecified-choices': 'periplus',
   'why': 'periplus',
   'rejected-alternatives': 'periplus',
   'upgrade-triggers': 'periplus',
+  'default': 'periplus',
   'tautology': 'drop',
   'doc-restatement': 'drop',
-  'history': 'drop',
   'test-intent': 'drop',
 };
 
@@ -31,7 +31,7 @@ const TS = String.raw`\d{4}-\d{2}-\d{2}T\d{2}:\d{2}`;
 // Quoting is not checked: a miswritten row drops out of the count unseen.
 const ROW_RE = new RegExp(String.raw`^${TS},[^,]*,\d*,([^,]*),`);
 const SKILL_PATH = path.join(__dirname, '..', 'skills', 'pp', 'SKILL.md');
-const KINDS_PATH = path.join(__dirname, '..', 'skills', 'pp-classify', 'SKILL.md');
+const KINDS_PATH = path.join(__dirname, '..', 'README.md');
 const CAPTURE_PATH = path.join(__dirname, '..', 'skills', 'pp-capture', 'SKILL.md');
 const TABLE_RE = /<!-- criteria-table:start -->[\s\S]*?<!-- criteria-table:end -->/;
 // The shipped table has two columns, and the destination is not one of them.
@@ -144,12 +144,14 @@ function criteriaTable(root) {
     .split('\n')
     .filter((line) => !line.startsWith('<!--'))
     .map((line) => {
-      // A test holds SKILL.md and DEFAULT_CRITERIA to the same set of kinds.
+      // A test holds README.md and DEFAULT_CRITERIA to the same set of kinds.
       const m = line.match(TABLE_ROW_RE);
-      if (m) return `${line} **${criteria[m[1]]}** |`;
-      if (line.startsWith('| ---')) return `${line} --- |`;
-      if (line.startsWith('|')) return `${line} it goes to |`;
-      return line;
+      if (!m) return line;
+      // The shipped column is replaced, not appended: two destination columns
+      // would put a stale one next to the resolved one.
+      const cells = line.split('|');
+      cells[cells.length - 2] = ` **${criteria[m[1]]}** `;
+      return cells.join('|');
     });
   return [...table, ...problems.map((p) => `config.json: ${p}`)].join('\n');
 }
