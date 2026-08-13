@@ -28,6 +28,9 @@ const {
 
 const TABLE_RE = /<!-- criteria-table:start -->[\s\S]*?<!-- criteria-table:end -->/;
 
+const readClassifier = () =>
+  fs.readFileSync(path.join(__dirname, '..', 'skills', 'pp-classify', 'SKILL.md'), 'utf8');
+
 function repo(files) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'periplus-'));
   for (const [rel, body] of Object.entries(files)) {
@@ -195,11 +198,11 @@ test('a repository with a config is not told about it at session start', () => {
   assert.ok(!context.includes('config.json'), 'phase 1 never reads a destination');
 });
 
-test('the shipped table names kinds and never their destinations', () => {
-  const table = readKinds().match(TABLE_RE)[0];
-  assert.ok(readKinds().includes("It does not say where any of them goes"));
+test('the classifier holds the tree and never a destination', () => {
+  const skill = readClassifier();
+  assert.ok(!TABLE_RE.test(skill), 'the kind table is still in the classifier');
   for (const to of ['**code**', '**periplus**', '**drop**']) {
-    assert.ok(!table.includes(to), `the table still ships a ${to} column`);
+    assert.ok(!skill.includes(to), `the classifier still names ${to}`);
   }
 });
 
@@ -208,9 +211,10 @@ test('the resolved table carries the repository\'s destinations, not the shipped
     '.periplus/config.json': JSON.stringify({ criteria: { why: 'code', tautology: 'code' } }),
   });
   const table = criteriaTable(root);
-  assert.match(table, /\| `why` \|[^|]*\| \*\*code\*\* \|/);
-  assert.match(table, /\| `tautology` \|[^|]*\| \*\*code\*\* \|/);
-  assert.match(table, /\| `contracts` \|[^|]*\| \*\*code\*\* \|/, 'untouched kinds keep the default');
+  assert.match(table, /\| `why` \|.*\| \*\*code\*\* \|/);
+  assert.match(table, /\| `tautology` \|.*\| \*\*code\*\* \|/);
+  assert.match(table, /\| `contracts` \|.*\| \*\*code\*\* \|/, 'untouched kinds keep the default');
+  assert.ok(!/\*\*periplus\*\* \| \*\*/.test(table), 'the shipped column is replaced, not doubled');
   assert.ok(!table.includes('<!--'), 'the markers are not part of the output');
 });
 
@@ -229,10 +233,10 @@ test('a file that could not be parsed says the whole of it was ignored', () => {
   assert.match(criteriaTable(root), /none of it was applied/);
 });
 
-test('the kinds the table cannot separate are separated somewhere', () => {
-  const after = readKinds().split(TABLE_RE)[1];
-  for (const kind of ['doc-restatement', 'undocumented-design', 'unspecified-choices', 'why']) {
-    assert.ok(after.includes(kind), `nothing after the table says when a row is ${kind}`);
+test('every kind is a leaf of the tree', () => {
+  const tree = readClassifier().match(/```mermaid[\s\S]*?```/)[0];
+  for (const name of Object.keys(DEFAULT_CRITERIA)) {
+    assert.ok(tree.includes(`[${name}]`), `${name} is on no branch`);
   }
 });
 

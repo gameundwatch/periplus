@@ -110,6 +110,7 @@ Thirteen, and the set is closed — a note that seems to need a fourteenth is a 
 that has not been split far enough. The destinations below are the shipped defaults;
 any of them can be moved per repository (see Configuration).
 
+<!-- criteria-table:start -->
 | kind | which is | example | goes to |
 | --- | --- | --- | --- |
 | `external-facts` | a fact about the world outside the code that the code depends on — a browser quirk, the target device, the expected user, an external API limit | `Safari 15 has no flex gap` | **code** |
@@ -125,12 +126,13 @@ any of them can be moved per repository (see Configuration).
 | `tautology` | a restatement of what the code already shows, including a docstring summary naming what the function does | `increment the counter` | **drop** |
 | `doc-restatement` | a claim one of this repository's existing documents already makes | `see ADR 0007` | **drop** |
 | `test-intent` | what a test is checking — `describe`/`it` already says it | `checks that an empty cart returns zero` | **drop** |
+<!-- criteria-table:end -->
 
-`skills/pp-classify/SKILL.md` holds the operative table, in the command that reads
-it. It names the kinds and nothing else — the destinations belong to
-`config.json`, and the hook appends them when it prints the resolved table. The
-table above is a rendering with examples and the shipped destinations added, and a
-test keeps the two from drifting on which kinds exist.
+This table is the only prose description of the kinds. `/pp-classify` does not
+read it — it classifies from the tree in `skills/pp-classify/SKILL.md`, which
+names every kind and nothing about where it goes. The **goes to** column above is
+the shipped default; the hook substitutes this repository's own when
+`/pp-resolve` prints the resolved table.
 
 ## Configuration
 

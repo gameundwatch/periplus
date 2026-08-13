@@ -32,26 +32,8 @@ business.
 Exactly one per row. The set is closed: a note that seems to need a fourteenth
 kind is a note that has not been split far enough.
 
-This table names the kinds. It does not say where any of them goes: that is
-`.periplus/config.json`, which `/pp-resolve` reads and this file never restates.
-
-<!-- criteria-table:start -->
-| kind | which is |
-| --- | --- |
-| `external-facts` | a fact about the world outside the code that the code depends on — a browser quirk, the target device, the expected user, an external API limit |
-| `contracts` | a constraint the implementer settled that something on the other side has to keep — a caller, or another file in this repository |
-| `current-limits` | what this implementation does not do or cannot do yet, which reads as an oversight without it |
-| `label` | a label rather than a sentence — it names the block of code below it |
-| `undocumented-design` | the reasoning behind a design the design settled |
-| `unspecified-choices` | a value or a shape the design did not specify, chosen at the implementer's discretion |
-| `why` | the reasoning behind a design or an approach |
-| `rejected-alternatives` | an option that was considered and turned down |
-| `upgrade-triggers` | the condition under which this implementation should be revisited |
-| `default` | none of the three — not a rule, not readable from anywhere else, not a reason |
-| `tautology` | a restatement of what the code already shows — including a docstring summary naming what the function does |
-| `doc-restatement` | a claim one of this repository's existing documents already makes |
-| `test-intent` | what a test is checking — describe/it already says it |
-<!-- criteria-table:end -->
+The tree below is what names them. What each kind is, in prose, is in `README.md`
+— read it if a leaf is unfamiliar, not to classify with.
 
 `current-limits` and `upgrade-triggers` most often arrive as one note. A limit is
 a property of the code as it stands; the intention to lift it some day is a plan.
