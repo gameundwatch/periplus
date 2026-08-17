@@ -10,11 +10,13 @@ description: >
 
 # Periplus
 
-Run three commands, in order. What each one does is in its own file.
+Phase 1 is the session hook's — it injects the capture rule, and the rule is in
+force while the code is being written. This is phase 2.
 
-1. `/pp-capture`
-2. `/pp-classify`
-3. `/pp-resolve`
+Run two commands, in order. What each one does is in its own file.
 
-All three, back to back. Stopping after `/pp-classify` leaves the source with no
+1. `/pp-classify`
+2. `/pp-resolve`
+
+Both, back to back. Stopping after `/pp-classify` leaves the source with no
 comments at all.
