@@ -68,7 +68,7 @@ Reach for `/pp`. Running `/pp-classify` alone and stopping leaves the source wit
 no comments at all, which is the failure the discipline exists to prevent — the
 session-start line reports rows left in that state.
 
-`skills/pp-capture/SKILL.md` is the capture rule and nothing else. The hook
+`hooks/capture.md` is the capture rule and nothing else. The hook
 injects that file whole at session start, and no other file restates it, so there
 is no second copy to drift from — a test asserts both.
 
