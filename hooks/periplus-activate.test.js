@@ -31,6 +31,9 @@ const TABLE_RE = /<!-- criteria-table:start -->[\s\S]*?<!-- criteria-table:end -
 const readClassifier = () =>
   fs.readFileSync(path.join(__dirname, '..', 'skills', 'pp-classify', 'SKILL.md'), 'utf8');
 
+const readResolver = () =>
+  fs.readFileSync(path.join(__dirname, '..', 'skills', 'pp-resolve', 'SKILL.md'), 'utf8');
+
 function repo(files) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'periplus-'));
   for (const [rel, body] of Object.entries(files)) {
@@ -257,7 +260,7 @@ test('the README renders every kind, pointed where it ships pointed', () => {
 });
 
 test('phase 2 is told not to translate on the way out', () => {
-  assert.ok(readDiscipline().includes('Keep the language it was captured in'));
+  assert.ok(readResolver().includes('do not translate it'));
 });
 
 test('/pp names phase 2 and nothing else', () => {
@@ -278,7 +281,7 @@ test('the injected capture rule is the whole of the file it comes from', () => {
 test('no other file restates the capture rule', () => {
   const root = path.join(__dirname, '..');
   const opener = captureRule().split('\n')[0];
-  for (const rel of TEMPLATE_FILES) {
+  for (const rel of NO_CAPTURE_COPY) {
     const text = fs.readFileSync(path.join(root, rel), 'utf8');
     assert.ok(!text.includes(opener), `${rel} carries a second copy of the capture rule`);
   }
@@ -301,11 +304,12 @@ test('capture is told to split before writing the row, not after', () => {
 
 const TEMPLATE_FILES = [
   'README.md',
-  'skills/pp/SKILL.md',
   'skills/pp-classify/SKILL.md',
   'skills/pp-resolve/SKILL.md',
   'skills/pp-refactor/SKILL.md',
 ];
+
+const NO_CAPTURE_COPY = [...TEMPLATE_FILES, 'skills/pp/SKILL.md'];
 
 const fill = (template) => template
   .replace('<timestamp>', '2026-07-31T14:22')
