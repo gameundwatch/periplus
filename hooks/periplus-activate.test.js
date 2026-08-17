@@ -260,6 +260,14 @@ test('phase 2 is told not to translate on the way out', () => {
   assert.ok(readDiscipline().includes('Keep the language it was captured in'));
 });
 
+test('/pp names phase 2 and nothing else', () => {
+  const stages = readDiscipline()
+    .split('\n')
+    .filter((line) => /^\d+\.\s/.test(line))
+    .map((line) => line.replace(/^\d+\.\s*/, '').trim());
+  assert.deepStrictEqual(stages, ['`/pp-classify`', '`/pp-resolve`']);
+});
+
 test('the injected capture rule is the whole of the file it comes from', () => {
   const delivered = buildContext(3);
   const file = fs.readFileSync(CAPTURE_PATH, 'utf8').replace(/^---[\s\S]*?---\s*/, '');
