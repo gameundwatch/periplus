@@ -32,7 +32,7 @@ const TS = String.raw`\d{4}-\d{2}-\d{2}T\d{2}:\d{2}`;
 const ROW_RE = new RegExp(String.raw`^${TS},[^,]*,\d*,([^,]*),`);
 const SKILL_PATH = path.join(__dirname, '..', 'skills', 'pp', 'SKILL.md');
 const KINDS_PATH = path.join(__dirname, '..', 'README.md');
-const CAPTURE_PATH = path.join(__dirname, '..', 'skills', 'pp-capture', 'SKILL.md');
+const CAPTURE_PATH = path.join(__dirname, 'capture.md');
 const TABLE_RE = /<!-- criteria-table:start -->[\s\S]*?<!-- criteria-table:end -->/;
 // The shipped table has two columns, and the destination is not one of them.
 const TABLE_ROW_RE = /^\| `([^`]+)` \|(.*)\|$/;

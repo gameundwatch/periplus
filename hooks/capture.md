@@ -1,10 +1,3 @@
----
-name: pp-capture
-description: >
-  Capture comments to `.periplus/pre.csv` instead of writing
-  them into the source. Run by /pp.
----
-
 ACTIVE EVERY RESPONSE, in every file, including tests and configuration. Still
 active if you are unsure — an uncertain note is captured like any other and
 decided at the end. Off only when the user says so.

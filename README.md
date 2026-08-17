@@ -49,12 +49,9 @@ it. The files inside are created lazily, on the first note and the first entry.
 
 ## Commands
 
-- `/pp` — the discipline itself: `/pp-capture`, then `/pp-classify`, then
-  `/pp-resolve`. The session hook normally handles phase 1 for you; invoke `/pp`
-  when the hook is not active, in a subagent that did not inherit it, or to
-  re-anchor mid-session.
-- `/pp-capture` — phase 1 on its own. `/pp` runs it first, and that is what it is
-  for; calling it alone only re-states the capture rule.
+- `/pp` — phase 2: `/pp-classify`, then `/pp-resolve`. Phase 1 belongs to the
+  session hook, which injects the capture rule and keeps it in force while you
+  write; `/pp` does not re-state it.
 - `/pp-classify` — split each captured note until one kind fits, and record it.
   Writes only `pre.csv`, so the kinds can be reviewed before anything is delivered.
 - `/pp-resolve` — deliver each note to what its kind resolves to, and drain
@@ -71,7 +68,7 @@ Reach for `/pp`. Running `/pp-classify` alone and stopping leaves the source wit
 no comments at all, which is the failure the discipline exists to prevent — the
 session-start line reports rows left in that state.
 
-`skills/pp-capture/SKILL.md` is the capture rule and nothing else. The hook
+`hooks/capture.md` is the capture rule and nothing else. The hook
 injects that file whole at session start, and no other file restates it, so there
 is no second copy to drift from — a test asserts both.
 
