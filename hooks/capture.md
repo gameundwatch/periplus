@@ -1,3 +1,5 @@
+None of this applies unless a document stands behind the work.
+
 ACTIVE EVERY RESPONSE, in every file, including tests and configuration. Still
 active if you are unsure — an uncertain note is captured like any other and
 decided at the end. Off only when the user says so.
@@ -32,5 +34,6 @@ Nothing is written into the source in this phase. Not one line.
 calling any piece of work done, invoke `/pp` and run phase 2 over what you
 captured.
 
-When you call a coding task done, say which of the two it was —
-`periplus: 3 filtered`, or `periplus: nothing captured`.
+When you call a coding task done, say which of the three it was —
+`periplus: 3 filtered`, `periplus: nothing captured`, or
+`periplus: no document, not run`.
