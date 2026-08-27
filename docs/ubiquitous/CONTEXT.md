@@ -2,6 +2,7 @@
 
 このプロジェクトの共通言語。実装の詳細は書かない。用語集のみ。
 
+
 <a id="periplus"></a>
 ## periplus(航海日誌)
 
@@ -26,6 +27,7 @@ periplus に入る記述は文書の材料である。既定でここに来る�
 
 決定: [ADR 0003](../adr/0003-periplus-is-a-state-not-a-category.md)、[ADR 0023#no-exit-required](../adr/0023-the-log-is-evidence-for-writing-a-document.md#no-exit-required)
 
+
 <a id="code"></a>
 ## code
 
@@ -42,6 +44,7 @@ periplus に残る。
 
 決定: [ADR 0026](../adr/0026-only-outside-facts-stay-in-the-source.md)
 
+
 <a id="docs"></a>
 ## docs
 
@@ -57,6 +60,7 @@ periplus の記述を、そのリポジトリが既に持っている文書に�
 
 決定: [ADR 0020#per-repository](../adr/0020-the-log-drains-into-whatever-documents-the-repository-keeps.md#per-repository)
 
+
 <a id="here"></a>
 ## here
 
@@ -71,6 +75,7 @@ periplus の記述を、そのリポジトリが既に持っている文書に�
 
 決定: [ADR 0020#here](../adr/0020-the-log-drains-into-whatever-documents-the-repository-keeps.md#here)、[ADR 0023#here-vs-docs](../adr/0023-the-log-is-evidence-for-writing-a-document.md#here-vs-docs)
 
+
 <a id="trash"></a>
 ## trash
 
@@ -78,6 +83,7 @@ periplus の記述を、どこにも残さず捨てること。コード・git l
 いずれかから復元できる記述がこれにあたる。
 
 決定: [ADR 0029](../adr/0029-a-reason-is-sorted-by-who-decided-it-and-what-records-it.md)
+
 
 <a id="external-facts"></a>
 ## 外部世界の事実
@@ -88,6 +94,7 @@ periplus の記述を、どこにも残さず捨てること。コード・git l
 
 決定: [ADR 0026](../adr/0026-only-outside-facts-stay-in-the-source.md)
 
+
 <a id="contracts"></a>
 ## 契約
 
@@ -95,6 +102,7 @@ periplus の記述を、どこにも残さず捨てること。コード・git l
 もの。
 
 決定: [ADR 0035#contracts](../adr/0035-the-tree-classifies-and-the-table-only-names.md#contracts)
+
 
 <a id="current-limits"></a>
 ## 現在の限界
@@ -108,6 +116,7 @@ periplus の記述を、どこにも残さず捨てること。コード・git l
 前者はコードに、後者は periplus に行く。
 
 決定: [ADR 0026](../adr/0026-only-outside-facts-stay-in-the-source.md)
+
 
 <a id="pre-comment"></a>
 ## pre-comment
@@ -131,6 +140,7 @@ pre-comment が残ったままタスクが完了することは、コメント�
 
 決定: [ADR 0006](../adr/0006-capture-first-filter-last.md)、[ADR 0013](../adr/0013-split-to-one-kind-at-capture.md)
 
+
 <a id="language"></a>
 ## 記述の言語
 
@@ -141,6 +151,8 @@ pre-comment は、コードがその問いを立てた瞬間に考えていた�
 原文を手元から離した後の書き換えにあたり、一度書かれてしまえば二次情報であることが
 判別できない。周囲のコードのコメントと言語が食い違う場合、それは報告すべき不一致で
 あって、黙って訳す根拠にはならない。
+
+決定: [agreement 0001](../agreements/0001-a-note-keeps-the-language-it-was-written-in.md)
 
 <a id="reason-split"></a>
 ## 理由の三分割
@@ -161,6 +173,7 @@ pre-comment は、コードがその問いを立てた瞬間に考えていた�
 
 決定: [ADR 0029#why-residual](../adr/0029-a-reason-is-sorted-by-who-decided-it-and-what-records-it.md#why-residual)
 
+
 <a id="kind"></a>
 ## 種別(kind)
 
@@ -179,6 +192,7 @@ pre-comment 一件が持つ、ちょうど一つの分類。閉じた集合で�
 
 決定: [ADR 0014#closed-set](../adr/0014-the-set-of-kinds-is-closed.md#closed-set)
 
+
 <a id="criterion"></a>
 ## 判断基準(criterion)
 
@@ -194,8 +208,11 @@ pre-comment 一件が持つ、ちょうど一つの分類。閉じた集合で�
 
 決定: [ADR 0002](../adr/0002-configurable-criteria.md)、[ADR 0027](../adr/0027-config-json-is-the-authority-for-destinations.md)
 
+
 <a id="command-name"></a>
 ## コマンド名
 
 コマンドは何をするかを動詞で名乗る。名詞の名前は、それが状態を指すのか操作を指すのか
 を読み手に決めさせる。
+
+決定: [agreement 0002](../agreements/0002-commands-name-themselves-with-a-verb.md)
