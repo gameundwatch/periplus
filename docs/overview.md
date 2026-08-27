@@ -37,8 +37,8 @@ flowchart TD
         test[test: test/*]
     end
 
-    L1 --> L2
-    L2 --> L3
+    milestone --> feature
+    feature --> L3
     L3 --> L4
     L4 --> L5
     L5 --> L6
