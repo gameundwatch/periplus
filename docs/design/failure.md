@@ -15,6 +15,10 @@
 最後の一つだけ、他と性質が違う。**壊れた行は静かに消える**ので、数が合わないことに
 気づく手掛かりが無い。他の失敗はすべて画面に出る。
 
+## Meaning
+- [CONTEXT.md#criterion](../ubiquitous/CONTEXT.md#criterion) — 判断基準(criterion)
+- [CONTEXT.md#kind](../ubiquitous/CONTEXT.md#kind) — 種別(kind)
+
 ## Structures
 - [config.json](../structures/config.md)
 - [row](../structures/row.md)

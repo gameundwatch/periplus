@@ -19,6 +19,10 @@
   途中で止まっても配送済みの行が二度届かない
 - 保管は追記のみで、編集も排出もされない
 
+## Meaning
+- [CONTEXT.md#pre-comment](../ubiquitous/CONTEXT.md#pre-comment) — pre-comment
+- [CONTEXT.md#kind](../ubiquitous/CONTEXT.md#kind) — 種別(kind)
+
 ## Structures
 - [row](../structures/row.md)
 - [保管](../structures/archive.md)

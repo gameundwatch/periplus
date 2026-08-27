@@ -23,6 +23,10 @@ phase 1 の規律は `hooks/capture.md` という文であり、phase 2 の手�
 この構えの帰結として、文面の設計が実装の設計そのものになる。命令に理由を添えると
 反論の足場ができ、規律が弱くなる。
 
+## Meaning
+- [CONTEXT.md#pre-comment](../ubiquitous/CONTEXT.md#pre-comment) — pre-comment
+- [CONTEXT.md#periplus](../ubiquitous/CONTEXT.md#periplus) — periplus
+
 ## Structures
 - [注入](../structures/injection.md)
 - [捕獲から行き先まで](../structures/flow.md)

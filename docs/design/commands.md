@@ -23,6 +23,12 @@
 どの文書に足すかはリポジトリごとに違い、機械には引けない。だから別のコマンドになり、
 一件ずつ止まる。
 
+## Meaning
+- [CONTEXT.md#kind](../ubiquitous/CONTEXT.md#kind) — 種別(kind)
+- [CONTEXT.md#criterion](../ubiquitous/CONTEXT.md#criterion) — 判断基準(criterion)
+- [CONTEXT.md#periplus](../ubiquitous/CONTEXT.md#periplus) — periplus
+- [CONTEXT.md#docs](../ubiquitous/CONTEXT.md#docs) — docs
+
 ## Structures
 - [構成](../structures/architecture.md)
 - [二つの行き先語彙](../structures/vocabularies.md)
