@@ -37,24 +37,15 @@ flowchart TD
         test[test: test/*]
     end
 
-    milestone --> feature
-    feature --> design
-    feature --> contract
+    L1 --> L2
+    L2 --> L3
+    L3 --> L4
+    L4 --> L5
+    L5 --> L6
+
     contract --> design
-    design --> ubiquitous
-    design --> structure
-    contract --> ubiquitous
-    contract --> structure
     structure --> ubiquitous
-    ubiquitous --> adr
-    structure --> adr
-    ubiquitous --> agreement
-    structure --> agreement
     adr --> agreement
-    adr --> code
-    adr --> test
-    agreement --> code
-    agreement --> test
 
 ```
 
