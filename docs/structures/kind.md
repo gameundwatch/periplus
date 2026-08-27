@@ -10,7 +10,7 @@ kind = "contracts" | "external-facts" | "current-limits"
 
 ## 判別
 
-一行から `kind` 一つを決める木。表は名前を並べるだけで、分けるのはこの木だけである。
+一行から [`kind`](../ubiquitous/CONTEXT.md#kind) 一つを決める木。表は名前を並べるだけで、分けるのはこの木だけである。
 
 ```mermaid
 flowchart TD

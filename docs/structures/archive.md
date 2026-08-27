@@ -12,7 +12,7 @@ flowchart LR
 ```
 
 保管は一箇所で、編集も排出もされない。`/pp-refactor` だけが別の保管を指す。既存の
-コメントを切り出した行が `all.csv` に混ざると、捕獲された記述と区別できなくなるため。
+コメントを切り出した行が `all.csv` に混ざると、捕獲された[記述](../ubiquitous/CONTEXT.md#pre-comment)と区別できなくなるため。
 
 ## Decisions
 - [ADR 0015](../adr/0015-one-archive-in-the-workspace.md) — 作業場の保管は一つ

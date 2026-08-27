@@ -26,11 +26,11 @@ flowchart LR
 | 決め方 | `config.json` から機械が引く | 提案し、同意を待つ |
 | 行き先 | `code` `periplus` `drop` | `code` `docs` `here` `trash` |
 
-`code` は両方にある。criteria の `code` は kind ごと送る。`/pp-discuss` の `code` は
+`code` は両方にある。criteria の `code` は kind ごと送る。`/pp-discuss` の [`code`](../ubiquitous/CONTEXT.md#code) は
 一件から該当部分だけを切り出す救済路で、主経路ではない。
 
-`drop` と `trash` は同じ行為で、段が違う。`periplus` は criteria の行き先であり、
-`/pp-discuss` の入口である。`here` はそこに留まること。
+`drop` と [`trash`](../ubiquitous/CONTEXT.md#trash) は同じ行為で、段が違う。[`periplus`](../ubiquitous/CONTEXT.md#periplus) は criteria の行き先であり、
+`/pp-discuss` の入口である。[`here`](../ubiquitous/CONTEXT.md#here) はそこに留まること。
 
 ## Meaning
 - [CONTEXT.md#criterion](../ubiquitous/CONTEXT.md#criterion)

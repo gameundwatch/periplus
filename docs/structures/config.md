@@ -1,6 +1,6 @@
 # config.json
 
-`.periplus/config.json` が保証するキーは `criteria` 一つ。
+`.periplus/config.json` が保証するキーは [`criteria`](../ubiquitous/CONTEXT.md#criterion) 一つ。
 
 ```json
 {

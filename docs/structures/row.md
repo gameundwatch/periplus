@@ -12,9 +12,9 @@ note      = '"' { character | '""' } '"' ;
 ```
 
 `timestamp` は ISO 8601 を分まで。`note` は中身に関わらず常に引用し、内側の `"` は
-`""` に倍化する。`kind` は捕獲の時点では空で、`/pp-classify` が埋める。
+`""` に倍化する。[`kind`](../ubiquitous/CONTEXT.md#kind) は捕獲の時点では空で、`/pp-classify` が埋める。
 
-一行は一つのことだけを述べる。二つ述べる記述は二行になる。
+一行は一つのことだけを述べる。二つ述べる[記述](../ubiquitous/CONTEXT.md#pre-comment)は二行になる。
 
 ## Meaning
 - [CONTEXT.md#pre-comment](../ubiquitous/CONTEXT.md#pre-comment)

@@ -1,6 +1,6 @@
 # 行き先の権威
 
-行き先の値は三箇所に現れる。実行時に効くのは `config.json` だけ。
+[行き先](destination.md)の値は三箇所に現れる。実行時に効くのは `config.json` だけ。
 
 ```mermaid
 flowchart TD
