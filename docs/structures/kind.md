@@ -1,20 +1,21 @@
 # kind
 
-pre-comment 一件が持つ、ちょうど一つの分類。閉じた集合であり、十三個で全てになる。
+```ebnf
+kind = "contracts" | "external-facts" | "current-limits"
+     | "upgrade-triggers" | "tautology" | "test-intent"
+     | "doc-restatement" | "undocumented-design"
+     | "unspecified-choices" | "rejected-alternatives" | "why"
+     | "label" | "default" ;
+```
 
-## 集合
+## Meaning
+- [CONTEXT.md#kind](../ubiquitous/CONTEXT.md#kind)
 
-`external-facts` / `contracts` / `current-limits` / `label` /
-`undocumented-design` / `unspecified-choices` / `why` / `rejected-alternatives` /
-`upgrade-triggers` / `default` / `tautology` / `doc-restatement` / `test-intent`
-
-各語の意味は [ubiquitous/CONTEXT.md](../ubiquitous/CONTEXT.md) にある。
-どの kind に落ちるかを決める木は `skills/pp-classify/SKILL.md` が持つ。
-
-## 行き先
-
-行き先は `code`・`periplus`・`drop` の三つ。kind から行き先への対応は多対一で、
-リポジトリごとに `.periplus/config.json` が差し替える。
-
-現在の対応表は `README.md` が持つ。既定値の原本は
-`hooks/periplus-activate.js` の `DEFAULT_CRITERIA` で、README の表はそこから生成される。
+## Decisions
+- [ADR 0014#closed-set](../adr/0014-the-set-of-kinds-is-closed.md#closed-set) — 集合を閉じる
+- [ADR 0004](../adr/0004-deliberate-deviation-is-not-a-criterion.md) — `deliberate-deviation` を外す
+- [ADR 0022](../adr/0022-a-kind-for-choices-the-design-did-not-specify.md) — `unspecified-choices` を足す
+- [ADR 0029#doc-restatement](../adr/0029-a-reason-is-sorted-by-who-decided-it-and-what-records-it.md#doc-restatement) — `doc-references` を `doc-restatement` に改名
+- [ADR 0029#why-residual](../adr/0029-a-reason-is-sorted-by-who-decided-it-and-what-records-it.md#why-residual) — `undocumented-design` を足し、`why` を残余にする
+- [ADR 0035#default](../adr/0035-the-tree-classifies-and-the-table-only-names.md#default) — `history` を落とし、`default` を足す
+- [ADR 0035#label](../adr/0035-the-tree-classifies-and-the-table-only-names.md#label) — `block-headings` を `label` に改名

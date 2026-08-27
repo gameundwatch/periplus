@@ -40,6 +40,7 @@ drop : tautology, doc-references, history, test-intent  ← 他所から復元�
 `tautology` はコードから、`history` は git log から、`test-intent` は describe/it から復元できる。
 四つは**復元元**で組織されている。`doc-references` だけが軸が違い、その一つだけが発火していない。
 
+<a id="doc-restatement"></a>
 ## `doc-references` → `doc-restatement`
 
 定義を「このリポジトリの既存の文書が既に書いている記述」に広げ、改名する。字面のポインタ
@@ -53,6 +54,7 @@ drop : tautology, doc-references, history, test-intent  ← 他所から復元�
 いる。未知のキーは `config.json: unknown kind "..."` として報告される。種別キーの改名はもう静かでは
 ない。
 
+<a id="why-residual"></a>
 ## `undocumented-design` を足し、`why` を残余にする
 
 `why` が抱えていた残りは、**誰が決めたか**で割れる。

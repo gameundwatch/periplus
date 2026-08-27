@@ -44,6 +44,7 @@ ADR 0004 が防いだ「次の読み手が善意で壊す」が戻る。0029 は
 SKILL.md と `DEFAULT_CRITERIA` の一致を保証している」—— が `contracts` に入る。いま
 `external-facts` に着いている行の一部が動く。
 
+<a id="default"></a>
 ## `history` を落とし、`default` を足す
 
 `history` に固有の領域が無い。文書化された変更は「他所から読めるか」が拾って `doc-restatement`
@@ -75,6 +76,7 @@ hook が読む先を `README.md` に変える。README の表は kind・内容�
 
 `/pp-classify` の本文は 8,155 字から 6,732 字になる。
 
+<a id="label"></a>
 ## `block-headings` を `label` に改名する
 
 木の第一問は「文か、ラベルか」で、そこで取れるのは**ラベルであるという事実だけ**である。見出しか
