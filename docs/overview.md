@@ -29,6 +29,7 @@ flowchart TD
 
     subgraph L5[decisions]
         adr[adr: adr/*]
+        agreement[agreement: agreements/*]
     end
 
     subgraph L6[sources]
@@ -47,8 +48,13 @@ flowchart TD
     structure --> ubiquitous
     ubiquitous --> adr
     structure --> adr
+    ubiquitous --> agreement
+    structure --> agreement
+    adr --> agreement
     adr --> code
     adr --> test
+    agreement --> code
+    agreement --> test
 
 ```
 
@@ -60,7 +66,8 @@ flowchart TD
 - **design** — 要件に対する how。実装の中身
 - **structure** — 型や schema、コンポーネントの関係など、構造そのもの
 - **ubiquitous** — 語の辞書。語の意味を一項目ずつ説明する
-- **adr** — 決定とその理由
+- **adr** — トレードオフの結果として決めたこと。覆しにくい
+- **agreement** — 揃えるための取り決め。別の選択肢でも動くが、揃っていることに価値がある
 - **code** / **test** — 実装と検証
 
 ## リポジトリごとの適用
