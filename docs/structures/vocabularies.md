@@ -23,7 +23,7 @@ flowchart LR
 | | criteria | /pp-discuss |
 | --- | --- | --- |
 | 決めるもの | kind | 記述一件 |
-| 決め方 | `config.json` から機械が引く | 提案し、同意を待つ |
+| 決め方 | [`config.json` から機械が引く](../adr/0027-config-json-is-the-authority-for-destinations.md) | 提案し、同意を待つ |
 | 行き先 | `code` `periplus` `drop` | `code` `docs` `here` `trash` |
 
 `code` は両方にある。criteria の `code` は kind ごと送る。`/pp-discuss` の [`code`](../ubiquitous/CONTEXT.md#code) は

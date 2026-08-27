@@ -11,7 +11,7 @@ flowchart LR
     resolve -->|一行ずつ消す| pre
 ```
 
-保管は一箇所で、編集も排出もされない。`/pp-refactor` だけが別の保管を指す。既存の
+保管は一箇所で、編集も排出もされない。`/pp-refactor` だけが[別の保管を指す](../adr/0018-sweeps-archive-separately.md)。既存の
 コメントを切り出した行が `all.csv` に混ざると、捕獲された[記述](../ubiquitous/CONTEXT.md#pre-comment)と区別できなくなるため。
 
 ## Decisions

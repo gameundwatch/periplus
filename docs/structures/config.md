@@ -15,9 +15,9 @@
 - 無ければ作られる。既にあれば、欠けている `kind` だけが既定値で追記される
 - `criteria` 以外のキーは触られずに残る
 - 知らない `kind` と、行き先でない値は、そのキーだけが無視される。ファイル全体は適用される
-- 追跡しない。チームで揃えたい場合は手で配る
+- [追跡しない](../adr/0009-the-workspace-is-untracked-in-full.md)。チームで揃えたい場合は手で配る
 
-`warnThreshold` と `updated` は廃止済みで、書いても効かない。
+[`warnThreshold`](../adr/0023-the-log-is-evidence-for-writing-a-document.md#no-warn-threshold) と [`updated`](../adr/0023-the-log-is-evidence-for-writing-a-document.md#no-updated-column) は廃止済みで、書いても効かない。
 
 ## Meaning
 - [CONTEXT.md#criterion](../ubiquitous/CONTEXT.md#criterion)

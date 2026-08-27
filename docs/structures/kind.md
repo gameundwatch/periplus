@@ -10,7 +10,7 @@ kind = "contracts" | "external-facts" | "current-limits"
 
 ## 判別
 
-一行から [`kind`](../ubiquitous/CONTEXT.md#kind) 一つを決める木。表は名前を並べるだけで、分けるのはこの木だけである。
+一行から [`kind`](../ubiquitous/CONTEXT.md#kind) 一つを決める木。表は名前を並べるだけで、分けるのは[この木だけ](../adr/0035-the-tree-classifies-and-the-table-only-names.md#three-questions)である。
 
 ```mermaid
 flowchart TD
@@ -48,7 +48,7 @@ flowchart TD
 ```
 
 割る操作は名前を付ける前に来る。割った結果がさらに二つを含むことがあるため、木は
-自分自身に戻る。文書として数えるのはこのリポジトリが持続的に保つものだけで、会話は
+自分自身に戻る。[文書として数える](../adr/0030-the-design-documents-stand-in-for-the-session.md)のはこのリポジトリが持続的に保つものだけで、会話は
 数えない。
 
 ## Meaning

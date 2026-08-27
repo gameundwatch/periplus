@@ -18,7 +18,7 @@ flowchart TD
     gone --> drain
 ```
 
-[`here`](../ubiquitous/CONTEXT.md#here) だけが log に残る。残ることは失敗ではなく、決着していない[記述](../ubiquitous/CONTEXT.md#pre-comment)の既定の姿である。
+[`here`](../ubiquitous/CONTEXT.md#here) だけが log に残る。[残ることは失敗ではなく](../adr/0023-the-log-is-evidence-for-writing-a-document.md#no-exit-required)、決着していない[記述](../ubiquitous/CONTEXT.md#pre-comment)の既定の姿である。
 
 ## Meaning
 - [CONTEXT.md#code](../ubiquitous/CONTEXT.md#code)
