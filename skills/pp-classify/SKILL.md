@@ -165,7 +165,7 @@ the line on a `doc-restatement` row.
 <file>:<line> [<kind>] — <the note in a few words>
 hooks/x.js:88 [default] — 以前は同期だった (split 1/2)
 hooks/x.js:88 [why] — タイムアウトが多発したため非同期にした (kept whole: cause)
-hooks/x.js:88 [doc-restatement] — 種別の集合は閉じている (docs/adr/0014-...md:17)
+hooks/x.js:88 [doc-restatement] — 種別の集合は閉じている (docs/L5_adr/0014-...md:17)
 ```
 
 End with `<N> rows classified, <M> from splits. Run /pp-resolve to deliver them.`

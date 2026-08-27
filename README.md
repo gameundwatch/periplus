@@ -231,10 +231,11 @@ command runs in it. The tag appears on the next session, and on Windows the
 
 ## Files
 
-- `CONTEXT.md` — the vocabulary: pre-comment, kind, criterion, and the four
+- `docs/L4_ubiquitous/CONTEXT.md` — the vocabulary: pre-comment, kind, criterion, and the four
   destinations code, docs, here, trash.
 - `docs/motivation.md` — the problem this was written for, as originally stated.
-- `docs/adr/` — why the plugin is shaped this way, including two decisions that
+- `docs/overview.md` — how the documents refer to each other, layer by layer.
+- `docs/L5_adr/` — why the plugin is shaped this way, including two decisions that
   were measured and reversed.
 
 ## Cost
