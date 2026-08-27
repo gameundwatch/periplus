@@ -1,6 +1,6 @@
-# 通しのフロー
+# 捕獲から行き先まで
 
-捕獲から行き先までの全体。各コマンドが何をするかは `skills/*/SKILL.md` が持つ。
+コードを書いている間の捕獲と、書き終えた後の濾過。
 
 ```mermaid
 flowchart TD
@@ -14,14 +14,22 @@ flowchart TD
 
     resolve -->|code| src[ソースのコメント]
     resolve -->|periplus| log[(.periplus/log.csv)]
-    resolve -->|drop| nowhere[どこにも書かない]
+    resolve -->|drop| gone[どこにも書かない]
     resolve -->|全行| archive[(.periplus/all.csv)]
-
-    log --> discuss["/pp-discuss: 一件ずつ"]
-    discuss --> docs[リポジトリの既存文書]
-    discuss --> src
-    discuss --> here[log に留まる]
-    discuss --> nowhere
 ```
 
-`/pp` は `/pp-classify` と `/pp-resolve` をこの順で続けて呼ぶ一つのコマンドである。
+`/pp` は `/pp-classify` と `/pp-resolve` をこの順で続けて呼ぶ。
+`log.csv` から先は [log の行き先](discuss.md)。
+
+## Meaning
+- [CONTEXT.md#pre-comment](../ubiquitous/CONTEXT.md#pre-comment)
+- [CONTEXT.md#periplus](../ubiquitous/CONTEXT.md#periplus)
+
+## Decisions
+- [ADR 0036](../adr/0036-phase-1-belongs-to-the-hook.md) — phase 1 はフックが持つ
+- [ADR 0006](../adr/0006-capture-first-filter-last.md) — 先に捕獲し、最後に濾す
+- [ADR 0016](../adr/0016-classify-and-resolve-are-separate-commands.md) — classify と resolve を分ける
+- [ADR 0033](../adr/0033-pp-runs-all-three-and-the-capture-rule-is-a-skill.md) — `/pp` が続けて呼ぶ
+- [ADR 0015](../adr/0015-one-archive-in-the-workspace.md) — 保管は一つ
+- [ADR 0018](../adr/0018-sweeps-archive-separately.md) — sweep は別に保管する
+- [ADR 0017](../adr/0017-refactor-cuts-instead-of-copying.md) — `/pp-refactor` は複製ではなく切り出す
