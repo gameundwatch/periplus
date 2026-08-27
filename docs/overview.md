@@ -3,6 +3,9 @@
 リポジトリにおける、情報参照の順序を決める。
 矢印は参照の方向。
 
+層は、一つ下の層の要素が消えたときに一緒に消えるかどうかで分かれる。
+土台は下にあり、影響は下層から上層へ波及する。
+
 ```mermaid
 flowchart TD
 
@@ -21,7 +24,7 @@ flowchart TD
 
     subgraph L4[domains]
         ubiquitous[ubiquitous: ubiquitous/*]
-        model[model: model/*]
+        structure[structure: structures/*]
     end
 
     subgraph L5[decisions]
@@ -38,12 +41,12 @@ flowchart TD
     feature --> contract
     contract --> design
     design --> ubiquitous
-    design --> model
+    design --> structure
     contract --> ubiquitous
-    contract --> model
-    model --> ubiquitous
+    contract --> structure
+    structure --> ubiquitous
     ubiquitous --> adr
-    model --> adr
+    structure --> adr
     adr --> code
     adr --> test
 
@@ -55,7 +58,7 @@ flowchart TD
 - **feature** — 機能の単位。利用者が名指しできるものを一つとする
 - **contract** — 要件を満たす what。外から観測できる約束と、その検証
 - **design** — 要件に対する how。実装の中身
-- **model** — 型や schema など、構造そのもの
+- **structure** — 型や schema、コンポーネントの関係など、構造そのもの
 - **ubiquitous** — 語の辞書。語の意味を一項目ずつ説明する
 - **adr** — 決定とその理由
 - **code** / **test** — 実装と検証
@@ -65,5 +68,5 @@ flowchart TD
 この図は一般構造であり、使う層はリポジトリが選ぶ。periplus 自身では次の通り。
 
 - **code** — `skills/*` と `hooks/*`
-- **model** — kind の構造。名前の一覧と ubiquitous への参照を持つ
+- **structure** — kind の構造と、フックから `/pp` を経て `pre.csv`・`log.csv` に至る通しのフロー図
 - **test** — 工程はあるが、ファイルとして残していない
