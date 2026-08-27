@@ -60,6 +60,7 @@ SKILL.md と `DEFAULT_CRITERIA` の一致を保証している」—— が `con
 種別は 13 のまま。集合を動かすので ADR 0014 に当たるが、0014 が閉じたのは利用者が設定で足せない
 ことであって項目数ではない。
 
+<a id="table-in-readme"></a>
 ## 表は README にだけ置く
 
 木が分類するなら、`skills/pp-classify/SKILL.md` に表を置く理由が無い。ADR 0032 が表をそこに置いた
