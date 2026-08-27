@@ -17,6 +17,10 @@ README の `goes to` 列は出荷時の既定であり、表を出すときに�
 `config.json` に問題があった行は、表の後ろに `config.json: …` として並ぶ。そのキーだけが
 無視され、残りは適用される。
 
+## Meaning
+- [CONTEXT.md#criterion](../ubiquitous/CONTEXT.md#criterion) — 判断基準(criterion)
+- [CONTEXT.md#kind](../ubiquitous/CONTEXT.md#kind) — 種別(kind)
+
 ## Decisions
 - [ADR 0027](../adr/0027-config-json-is-the-authority-for-destinations.md) — `config.json` が唯一の権威
 - [ADR 0035#table-in-readme](../adr/0035-the-tree-classifies-and-the-table-only-names.md#table-in-readme) — 表は README にだけ置く

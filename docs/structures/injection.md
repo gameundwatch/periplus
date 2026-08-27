@@ -25,6 +25,10 @@ flowchart TD
 
 `install` と `criteria` は `.periplus/` に触れない。作業場の用意が失敗しても規律は注入される。
 
+## Meaning
+- [CONTEXT.md#pre-comment](../ubiquitous/CONTEXT.md#pre-comment) — pre-comment
+- [CONTEXT.md#periplus](../ubiquitous/CONTEXT.md#periplus) — periplus
+
 ## Decisions
 - [ADR 0036](../adr/0036-phase-1-belongs-to-the-hook.md) — phase 1 はフックが持つ
 - [ADR 0007](../adr/0007-inject-only-the-capture-rule.md) — 注入するのは捕獲の規律だけ

@@ -56,6 +56,10 @@ flowchart LR
 `config.json` を読むのは `/pp-resolve`・`/pp-discuss`・`/pp-refactor` で、
 `/pp-classify` は読まない。
 
+## Meaning
+- [CONTEXT.md#periplus](../ubiquitous/CONTEXT.md#periplus) — periplus
+- [CONTEXT.md#pre-comment](../ubiquitous/CONTEXT.md#pre-comment) — pre-comment
+
 ## Decisions
 - [ADR 0001](../adr/0001-plugin-with-sessionstart-hook.md) — プラグインと SessionStart フックで配る
 - [ADR 0036](../adr/0036-phase-1-belongs-to-the-hook.md) — phase 1 はフックが持つ

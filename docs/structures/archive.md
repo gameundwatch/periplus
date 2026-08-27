@@ -14,6 +14,9 @@ flowchart LR
 保管は一箇所で、編集も排出もされない。`/pp-refactor` だけが[別の保管を指す](../adr/0018-sweeps-archive-separately.md)。既存の
 コメントを切り出した行が `all.csv` に混ざると、捕獲された[記述](../ubiquitous/CONTEXT.md#pre-comment)と区別できなくなるため。
 
+## Meaning
+- [CONTEXT.md#pre-comment](../ubiquitous/CONTEXT.md#pre-comment) — pre-comment
+
 ## Decisions
 - [ADR 0015](../adr/0015-one-archive-in-the-workspace.md) — 作業場の保管は一つ
 - [ADR 0018](../adr/0018-sweeps-archive-separately.md) — sweep は別に保管する
