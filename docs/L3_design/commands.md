@@ -4,7 +4,7 @@
 
 - `/pp` — 自分では何もせず、`/pp-classify` と `/pp-resolve` を順に呼ぶだけ。
   ファイルに触らない
-- `/pp-classify` — 読むのは `pre.csv` だけ。行き先を知らないまま [kind](../ubiquitous/CONTEXT.md#kind) を決める
+- `/pp-classify` — 読むのは `pre.csv` だけ。行き先を知らないまま [kind](../L4_ubiquitous/CONTEXT.md#kind) を決める
 - `/pp-resolve` — kind を行き先に解決し、配送し、`pre.csv` を空にする
 - `/pp-discuss` — log の一件ごとに提案し、同意を待つ。一括の承認は次の一件に効かない
 - `/pp-refactor` — 既存のコメントを切り出して同じ経路に乗せる。保管だけ別
@@ -12,7 +12,7 @@
 ## 分類は行き先を見ない
 
 `/pp-classify` が `config.json` を読まないことは、この構えの要である。行き先を知って
-いると、行き先の都合で kind が選ばれる。kind は[記述](../ubiquitous/CONTEXT.md#pre-comment)が何についてかを指す語であって、
+いると、行き先の都合で kind が選ばれる。kind は[記述](../L4_ubiquitous/CONTEXT.md#pre-comment)が何についてかを指す語であって、
 それをどう扱うかの語ではない。
 
 同じ理由で、二つの行き先語彙が同じ文脈に同居することを避けている。
@@ -20,16 +20,16 @@
 ## 合意の要る操作だけを分ける
 
 `/pp-resolve` は機械的に解決するので確認を求めない。`/pp-discuss` は文書を書く作業で、
-どの[文書](../ubiquitous/CONTEXT.md#docs)に足すかはリポジトリごとに違い、機械には引けない。だから別のコマンドになり、
+どの[文書](../L4_ubiquitous/CONTEXT.md#docs)に足すかはリポジトリごとに違い、機械には引けない。だから別のコマンドになり、
 一件ずつ止まる。
 
 ## Meaning
-- [CONTEXT.md#kind](../ubiquitous/CONTEXT.md#kind) — 種別(kind)
-- [CONTEXT.md#criterion](../ubiquitous/CONTEXT.md#criterion) — 判断基準(criterion)
-- [CONTEXT.md#periplus](../ubiquitous/CONTEXT.md#periplus) — periplus
-- [CONTEXT.md#docs](../ubiquitous/CONTEXT.md#docs) — docs
+- [CONTEXT.md#kind](../L4_ubiquitous/CONTEXT.md#kind) — 種別(kind)
+- [CONTEXT.md#criterion](../L4_ubiquitous/CONTEXT.md#criterion) — 判断基準(criterion)
+- [CONTEXT.md#periplus](../L4_ubiquitous/CONTEXT.md#periplus) — periplus
+- [CONTEXT.md#docs](../L4_ubiquitous/CONTEXT.md#docs) — docs
 
 ## Structures
-- [構成](../structures/architecture.md)
-- [二つの行き先語彙](../structures/vocabularies.md)
-- [log の行き先](../structures/discuss.md)
+- [構成](../L4_structures/architecture.md)
+- [二つの行き先語彙](../L4_structures/vocabularies.md)
+- [log の行き先](../L4_structures/discuss.md)

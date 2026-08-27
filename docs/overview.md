@@ -12,26 +12,26 @@
 flowchart TD
 
     subgraph L1[version-and-milestones]
-        milestone[milestone: milestones/*]
+        milestone[milestone: L1_milestones/*]
     end
 
     subgraph L2[features]
-        feature[features: features/*]
+        feature[features: L2_features/*]
     end
 
     subgraph L3[solutions]
-        design[design: design/*]
-        contract[contract: spec/*]
+        design[design: L3_design/*]
+        contract[contract: L3_spec/*]
     end
 
     subgraph L4[domains]
-        ubiquitous[ubiquitous: ubiquitous/*]
-        structure[structure: structures/*]
+        ubiquitous[ubiquitous: L4_ubiquitous/*]
+        structure[structure: L4_structures/*]
     end
 
     subgraph L5[decisions]
-        adr[adr: adr/*]
-        agreement[agreement: agreements/*]
+        adr[adr: L5_adr/*]
+        agreement[agreement: L5_agreements/*]
     end
 
     subgraph L6[sources]
@@ -85,7 +85,7 @@ flowchart TD
 参照する側は、相対パスとアンカー名で指す。
 
 ```markdown
-[CONTEXT.md#kind](../ubiquitous/CONTEXT.md#kind)
+[CONTEXT.md#kind](../L4_ubiquitous/CONTEXT.md#kind)
 ```
 
 id は文書内で一意にする。語を指すなら語そのもの、決定を指すなら主題を短く。

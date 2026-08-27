@@ -26,11 +26,11 @@ flowchart TD
 `install` と `criteria` は `.periplus/` に触れない。作業場の用意が失敗しても規律は注入される。
 
 ## Meaning
-- [CONTEXT.md#pre-comment](../ubiquitous/CONTEXT.md#pre-comment) — pre-comment
-- [CONTEXT.md#periplus](../ubiquitous/CONTEXT.md#periplus) — periplus
+- [CONTEXT.md#pre-comment](../L4_ubiquitous/CONTEXT.md#pre-comment) — pre-comment
+- [CONTEXT.md#periplus](../L4_ubiquitous/CONTEXT.md#periplus) — periplus
 
 ## Decisions
-- [ADR 0036](../adr/0036-phase-1-belongs-to-the-hook.md) — phase 1 はフックが持つ
-- [ADR 0007](../adr/0007-inject-only-the-capture-rule.md) — 注入するのは捕獲の規律だけ
-- [ADR 0028](../adr/0028-subagents-get-the-discipline-not-the-parents-backlog.md) — サブエージェントに親の未処理は渡さない
-- [ADR 0011](../adr/0011-ask-for-the-status-line-never-install-it-unasked.md) — ステータスラインは頼まれない限り入れない
+- [ADR 0036](../L5_adr/0036-phase-1-belongs-to-the-hook.md) — phase 1 はフックが持つ
+- [ADR 0007](../L5_adr/0007-inject-only-the-capture-rule.md) — 注入するのは捕獲の規律だけ
+- [ADR 0028](../L5_adr/0028-subagents-get-the-discipline-not-the-parents-backlog.md) — サブエージェントに親の未処理は渡さない
+- [ADR 0011](../L5_adr/0011-ask-for-the-status-line-never-install-it-unasked.md) — ステータスラインは頼まれない限り入れない
