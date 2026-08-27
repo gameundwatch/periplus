@@ -24,6 +24,8 @@ periplus に入る記述は文書の材料である。既定でここに来る�
 `upgrade-triggers` の五つで、いずれもコードが依存する事実ではない。docs が目指す先
 だが、四つの行き先は序列ではない。
 
+決定: [ADR 0003](../adr/0003-periplus-is-a-state-not-a-category.md)、[ADR 0023#no-exit-required](../adr/0023-the-log-is-evidence-for-writing-a-document.md#no-exit-required)
+
 <a id="code"></a>
 ## code
 
@@ -38,6 +40,8 @@ periplus に残る。
 コードに残るべき部分がここに現れたということは、捕獲の段階で割り切れていなかった
 ということを意味する。
 
+決定: [ADR 0026](../adr/0026-only-outside-facts-stay-in-the-source.md)
+
 <a id="docs"></a>
 ## docs
 
@@ -51,6 +55,8 @@ periplus の記述を、そのリポジトリが既に持っている文書に�
 トレードオフの結果、の三つ。ロードマップなら実際に着手する意思。用語集なら
 プロジェクト横断で使われる語。行き先を広げたことは、通る記述を広げる根拠にはならない。
 
+決定: [ADR 0020#per-repository](../adr/0020-the-log-drains-into-whatever-documents-the-repository-keeps.md#per-repository)
+
 <a id="here"></a>
 ## here
 
@@ -63,11 +69,15 @@ periplus の記述を、そのリポジトリが既に持っている文書に�
 同じ主題が二度目に落ちたとき、それが文書を書く根拠になる。記述一件は文書を作る理由に
 ならないが、一つの主題に二件はなる。periplus はその証拠が溜まる場所である。
 
+決定: [ADR 0020#here](../adr/0020-the-log-drains-into-whatever-documents-the-repository-keeps.md#here)、[ADR 0023#here-vs-docs](../adr/0023-the-log-is-evidence-for-writing-a-document.md#here-vs-docs)
+
 <a id="trash"></a>
 ## trash
 
 periplus の記述を、どこにも残さず捨てること。コード・git log・既存の文書の
 いずれかから復元できる記述がこれにあたる。
+
+決定: [ADR 0029](../adr/0029-a-reason-is-sorted-by-who-decided-it-and-what-records-it.md)
 
 <a id="external-facts"></a>
 ## 外部世界の事実
@@ -76,11 +86,15 @@ periplus の記述を、どこにも残さず捨てること。コード・git l
 利用される端末、想定される利用者、外部 API の制約などがこれにあたる。
 コードを読んでも導出できず、消すとコードが壊れうる。
 
+決定: [ADR 0026](../adr/0026-only-outside-facts-stay-in-the-source.md)
+
 <a id="contracts"></a>
 ## 契約
 
 呼び出し側が守らなければならない約束のうち、シグネチャや型から読み取れない
 もの。
+
+決定: [ADR 0035#contracts](../adr/0035-the-tree-classifies-and-the-table-only-names.md#contracts)
 
 <a id="current-limits"></a>
 ## 現在の限界
@@ -92,6 +106,8 @@ periplus の記述を、どこにも残さず捨てること。コード・git l
 見直し条件と対になって一つの pre-comment に現れることが多い。「秒形式しか解釈
 しない」は現在の限界であり、「日付形式が来たら対応する」は後でやることにあたる。
 前者はコードに、後者は periplus に行く。
+
+決定: [ADR 0026](../adr/0026-only-outside-facts-stay-in-the-source.md)
 
 <a id="pre-comment"></a>
 ## pre-comment
@@ -112,6 +128,8 @@ code・periplus・drop のいずれかに送られ、送られた先で初めて
 
 pre-comment が残ったままタスクが完了することは、コメントが多すぎる状態よりも悪い。
 ソースにコメントが一つも入らないことを意味するためである。
+
+決定: [ADR 0006](../adr/0006-capture-first-filter-last.md)、[ADR 0013](../adr/0013-split-to-one-kind-at-capture.md)
 
 <a id="language"></a>
 ## 記述の言語
@@ -141,6 +159,8 @@ pre-comment は、コードがその問いを立てた瞬間に考えていた�
 セッションはこの判定の材料にならない。会話で言われた理由はどの文書も記録していない理由で
 あって、後から読み返せる場所には無い。
 
+決定: [ADR 0029#why-residual](../adr/0029-a-reason-is-sorted-by-who-decided-it-and-what-records-it.md#why-residual)
+
 <a id="kind"></a>
 ## 種別(kind)
 
@@ -157,6 +177,8 @@ pre-comment 一件が持つ、ちょうど一つの分類。閉じた集合で�
 種別は理論から作らず、実際に発生した pre-comment から起こす。発生しない種別は規律を
 膨らませるだけで、逆に種別を持たない記述は行き場を失って別の種別に吸われる。
 
+決定: [ADR 0014#closed-set](../adr/0014-the-set-of-kinds-is-closed.md#closed-set)
+
 <a id="criterion"></a>
 ## 判断基準(criterion)
 
@@ -169,6 +191,8 @@ pre-comment 一件が持つ、ちょうど一つの分類。閉じた集合で�
 
 固定ではなくリポジトリごとに切り替えられる。既定では設計・方針・why はコードに残す
 側に倒す。切り替えられるのは行き先だけであり、種別の集合は閉じたままである。
+
+決定: [ADR 0002](../adr/0002-configurable-criteria.md)、[ADR 0027](../adr/0027-config-json-is-the-authority-for-destinations.md)
 
 <a id="command-name"></a>
 ## コマンド名
