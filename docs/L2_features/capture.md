@@ -10,6 +10,8 @@
 - ソースがコメントで埋まらない
 
 ## Contract
+- [_completion-unit](../L3_spec/_completion-unit.md)
+    - 何を書き終えたら濾すか。**未実装**
 - [capture](../L3_spec/capture.md)
     - phase 1 が何を書き、何を書かないか
 - [hook](../L3_spec/hook.md)
