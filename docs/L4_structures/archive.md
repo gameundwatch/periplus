@@ -15,9 +15,13 @@ flowchart LR
 コメントを切り出した行が `all.csv` に混ざると、捕獲された[記述](../L4_ubiquitous/CONTEXT.md#pre-comment)と区別できなくなるため。
 
 ## Meaning
-- [CONTEXT.md#pre-comment](../L4_ubiquitous/CONTEXT.md#pre-comment) — pre-comment
+- [CONTEXT.md#pre-comment](../L4_ubiquitous/CONTEXT.md#pre-comment)
+    - pre-comment
 
 ## Decisions
-- [ADR 0015](../L5_adr/0015-one-archive-in-the-workspace.md) — 作業場の保管は一つ
-- [ADR 0018](../L5_adr/0018-sweeps-archive-separately.md) — sweep は別に保管する
-- [ADR 0017](../L5_adr/0017-refactor-cuts-instead-of-copying.md) — `/pp-refactor` は複製ではなく切り出す
+- [ADR 0015](../L5_adr/0015-one-archive-in-the-workspace.md)
+    - 作業場の保管は一つ
+- [ADR 0018](../L5_adr/0018-sweeps-archive-separately.md)
+    - sweep は別に保管する
+- [ADR 0017](../L5_adr/0017-refactor-cuts-instead-of-copying.md)
+    - `/pp-refactor` は複製ではなく切り出す

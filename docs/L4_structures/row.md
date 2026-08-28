@@ -21,6 +21,9 @@ note      = '"' { character | '""' } '"' ;
 - [CONTEXT.md#kind](../L4_ubiquitous/CONTEXT.md#kind)
 
 ## Decisions
-- [ADR 0024](../L5_adr/0024-the-working-files-are-csv.md) — 作業ファイルは CSV
-- [ADR 0013](../L5_adr/0013-split-to-one-kind-at-capture.md) — 捕獲の時点で kind 一つまで割る
-- [ADR 0025](../L5_adr/0025-splitting-presumes-two.md) — 分割は推定有罪、すべての行が主語を持つ
+- [ADR 0024](../L5_adr/0024-the-working-files-are-csv.md)
+    - 作業ファイルは CSV
+- [ADR 0013](../L5_adr/0013-split-to-one-kind-at-capture.md)
+    - 捕獲の時点で kind 一つまで割る
+- [ADR 0025](../L5_adr/0025-splitting-presumes-two.md)
+    - 分割は推定有罪、すべての行が主語を持つ

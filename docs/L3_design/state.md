@@ -20,8 +20,10 @@
 - 保管は追記のみで、編集も排出もされない
 
 ## Meaning
-- [CONTEXT.md#pre-comment](../L4_ubiquitous/CONTEXT.md#pre-comment) — pre-comment
-- [CONTEXT.md#kind](../L4_ubiquitous/CONTEXT.md#kind) — 種別(kind)
+- [CONTEXT.md#pre-comment](../L4_ubiquitous/CONTEXT.md#pre-comment)
+    - pre-comment
+- [CONTEXT.md#kind](../L4_ubiquitous/CONTEXT.md#kind)
+    - 種別(kind)
 
 ## Structures
 - [row](../L4_structures/row.md)

@@ -23,8 +23,13 @@
 - [CONTEXT.md#criterion](../L4_ubiquitous/CONTEXT.md#criterion)
 
 ## Decisions
-- [ADR 0027](../L5_adr/0027-config-json-is-the-authority-for-destinations.md) — 行き先の唯一の権威であり、無ければ作られる
-- [ADR 0014#mechanised-resolution](../L5_adr/0014-the-set-of-kinds-is-closed.md#mechanised-resolution) — 解決は機械が行う
-- [ADR 0009](../L5_adr/0009-the-workspace-is-untracked-in-full.md) — config も含めて追跡しない
-- [ADR 0023#no-warn-threshold](../L5_adr/0023-the-log-is-evidence-for-writing-a-document.md#no-warn-threshold) — `warnThreshold` を廃止
-- [ADR 0023#no-updated-column](../L5_adr/0023-the-log-is-evidence-for-writing-a-document.md#no-updated-column) — `updated` を廃止
+- [ADR 0027](../L5_adr/0027-config-json-is-the-authority-for-destinations.md)
+    - 行き先の唯一の権威であり、無ければ作られる
+- [ADR 0014#mechanised-resolution](../L5_adr/0014-the-set-of-kinds-is-closed.md#mechanised-resolution)
+    - 解決は機械が行う
+- [ADR 0009](../L5_adr/0009-the-workspace-is-untracked-in-full.md)
+    - config も含めて追跡しない
+- [ADR 0023#no-warn-threshold](../L5_adr/0023-the-log-is-evidence-for-writing-a-document.md#no-warn-threshold)
+    - `warnThreshold` を廃止
+- [ADR 0023#no-updated-column](../L5_adr/0023-the-log-is-evidence-for-writing-a-document.md#no-updated-column)
+    - `updated` を廃止

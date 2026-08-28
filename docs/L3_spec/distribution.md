@@ -2,14 +2,19 @@
 
 ## 観測できること
 
-- **`.claude-plugin/plugin.json`** — `name` は `periplus`、`version`、`description`。
-  利用者が入れたものの名前と版がここに出る
-- **`.claude-plugin/marketplace.json`** — 配布元の名乗り。`owner`、`category`、
-  `source` は `./`
-- **コマンド** — `skills/*/SKILL.md` が一つずつコマンドになる。ディレクトリ名が
-  コマンド名になる
-- **フック** — `hooks/hooks.json` が登録する二イベント
-- **持ち込まないもの** — 依存パッケージを持たない。実行に要るのは `node` だけ
+- **`.claude-plugin/plugin.json`**
+    - `name` は `periplus`、`version`、`description`。
+      利用者が入れたものの名前と版がここに出る
+- **`.claude-plugin/marketplace.json`**
+    - 配布元の名乗り。`owner`、`category`、
+      `source` は `./`
+- **コマンド**
+    - `skills/*/SKILL.md` が一つずつコマンドになる。ディレクトリ名が
+      コマンド名になる
+- **フック**
+    - `hooks/hooks.json` が登録する二イベント
+- **持ち込まないもの**
+    - 依存パッケージを持たない。実行に要るのは `node` だけ
 
 ## 版
 

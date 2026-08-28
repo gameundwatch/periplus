@@ -6,13 +6,18 @@ node <plugin>/hooks/periplus-activate.js install
 
 ## 観測できること
 
-- **書く先** — `$CLAUDE_CONFIG_DIR/settings.json`、無ければ `~/.claude/settings.json`。
-  親ディレクトリが無ければ作る
-- **控え** — 書く前に、既存のファイルを `settings.json.periplus-bak` へ写す
-- **既にある status line** — 消さない。前に置いたまま `; printf ' '; …` を挟んで後ろに足す
-- **結果** — 三通りを一行で言う。`already`（既に繋がっている・何も変えない）/
-  `appended`（既存の後ろに足した）/ `wired`（新しく繋いだ）
-- **触らないもの** — `statusLine` 以外の設定は変えない
+- **書く先**
+    - `$CLAUDE_CONFIG_DIR/settings.json`、無ければ `~/.claude/settings.json`。
+      親ディレクトリが無ければ作る
+- **控え**
+    - 書く前に、既存のファイルを `settings.json.periplus-bak` へ写す
+- **既にある status line**
+    - 消さない。前に置いたまま `; printf ' '; …` を挟んで後ろに足す
+- **結果**
+    - 三通りを一行で言う。`already`（既に繋がっている・何も変えない）/
+      `appended`（既存の後ろに足した）/ `wired`（新しく繋いだ）
+- **触らないもの**
+    - `statusLine` 以外の設定は変えない
 
 ## 入れない条件
 

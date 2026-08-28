@@ -2,12 +2,17 @@
 
 五つのコマンドは、**合意が要るかどうか**と**中断できるかどうか**で割れている。
 
-- `/pp` — 自分では何もせず、`/pp-classify` と `/pp-resolve` を順に呼ぶだけ。
-  ファイルに触らない
-- `/pp-classify` — 読むのは `pre.csv` だけ。行き先を知らないまま [kind](../L4_ubiquitous/CONTEXT.md#kind) を決める
-- `/pp-resolve` — kind を行き先に解決し、配送し、`pre.csv` を空にする
-- `/pp-discuss` — log の一件ごとに提案し、同意を待つ。一括の承認は次の一件に効かない
-- `/pp-refactor` — 既存のコメントを切り出して同じ経路に乗せる。保管だけ別
+- `/pp`
+    - 自分では何もせず、`/pp-classify` と `/pp-resolve` を順に呼ぶだけ。
+      ファイルに触らない
+- `/pp-classify`
+    - 読むのは `pre.csv` だけ。行き先を知らないまま [kind](../L4_ubiquitous/CONTEXT.md#kind) を決める
+- `/pp-resolve`
+    - kind を行き先に解決し、配送し、`pre.csv` を空にする
+- `/pp-discuss`
+    - log の一件ごとに提案し、同意を待つ。一括の承認は次の一件に効かない
+- `/pp-refactor`
+    - 既存のコメントを切り出して同じ経路に乗せる。保管だけ別
 
 ## 分類は行き先を見ない
 
@@ -24,10 +29,14 @@
 一件ずつ止まる。
 
 ## Meaning
-- [CONTEXT.md#kind](../L4_ubiquitous/CONTEXT.md#kind) — 種別(kind)
-- [CONTEXT.md#criterion](../L4_ubiquitous/CONTEXT.md#criterion) — 判断基準(criterion)
-- [CONTEXT.md#periplus](../L4_ubiquitous/CONTEXT.md#periplus) — periplus
-- [CONTEXT.md#docs](../L4_ubiquitous/CONTEXT.md#docs) — docs
+- [CONTEXT.md#kind](../L4_ubiquitous/CONTEXT.md#kind)
+    - 種別(kind)
+- [CONTEXT.md#criterion](../L4_ubiquitous/CONTEXT.md#criterion)
+    - 判断基準(criterion)
+- [CONTEXT.md#periplus](../L4_ubiquitous/CONTEXT.md#periplus)
+    - periplus
+- [CONTEXT.md#docs](../L4_ubiquitous/CONTEXT.md#docs)
+    - docs
 
 ## Structures
 - [構成](../L4_structures/architecture.md)

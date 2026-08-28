@@ -8,13 +8,17 @@ node <plugin>/hooks/periplus-activate.js criteria
 
 ## 観測できること
 
-- **読む** — `CLAUDE_PROJECT_DIR`（無ければカレント）配下の `.periplus/config.json` と、
-  プラグインの README.md
-- **出す** — [criteria-table](criteria-table.md) の区画に、そのリポジトリの行き先を
-  当てた表。続けて、無視したキーを `config.json: <理由>` の形で並べる
-- **作らない** — `.periplus/` も `config.json` も、この入口では作らない。
-  無ければ既定の表が出る
-- **終了** — 標準出力に書いて終わる。ファイルは一つも変えない
+- **読む**
+    - `CLAUDE_PROJECT_DIR`（無ければカレント）配下の `.periplus/config.json` と、
+      プラグインの README.md
+- **出す**
+    - [criteria-table](criteria-table.md) の区画に、そのリポジトリの行き先を
+      当てた表。続けて、無視したキーを `config.json: <理由>` の形で並べる
+- **作らない**
+    - `.periplus/` も `config.json` も、この入口では作らない。
+      無ければ既定の表が出る
+- **終了**
+    - 標準出力に書いて終わる。ファイルは一つも変えない
 
 ## 呼べなかったとき
 
@@ -27,7 +31,8 @@ node <plugin>/hooks/periplus-activate.js criteria
 - 実行前後で `.periplus/` の中身が変わらない
 
 ## Meaning
-- [CONTEXT.md#criterion](../L4_ubiquitous/CONTEXT.md#criterion) — 判断基準(criterion)
+- [CONTEXT.md#criterion](../L4_ubiquitous/CONTEXT.md#criterion)
+    - 判断基準(criterion)
 
 ## Structures
 - [行き先の権威](../L4_structures/authority.md)

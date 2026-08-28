@@ -2,17 +2,24 @@
 
 ## 観測できること
 
-- **登録** — `SessionStart`（`startup` / `resume` / `clear` / `compact`）と
-  `SubagentStart` の二イベント。いずれも制限時間 5 秒
-- **場所** — 対象は `CLAUDE_PROJECT_DIR`、無ければ実行時のカレントディレクトリ
-- **作業場** — `.periplus/` が無ければ作る。既にあれば何もしない
-- **無視行** — 作業場を初めて作ったときだけ、リポジトリの `.gitignore` に `/.periplus/`
-  を足す。git 管理下でなければ足さない。既に同じ行があれば足さない
-- **設定** — `.periplus/config.json` が無ければ作る。あれば欠けた kind だけ足し、
-  他のキーは触らない
-- **注入** — 規律と `log.csv` の件数。`SessionStart` にはさらに `pre.csv` の未配送件数と
-  ステータスラインの案内が付く
-- **node が無い環境** — Windows では `node` が見つからなければ何もしない
+- **登録**
+    - `SessionStart`（`startup` / `resume` / `clear` / `compact`）と
+      `SubagentStart` の二イベント。いずれも制限時間 5 秒
+- **場所**
+    - 対象は `CLAUDE_PROJECT_DIR`、無ければ実行時のカレントディレクトリ
+- **作業場**
+    - `.periplus/` が無ければ作る。既にあれば何もしない
+- **無視行**
+    - 作業場を初めて作ったときだけ、リポジトリの `.gitignore` に `/.periplus/`
+      を足す。git 管理下でなければ足さない。既に同じ行があれば足さない
+- **設定**
+    - `.periplus/config.json` が無ければ作る。あれば欠けた kind だけ足し、
+      他のキーは触らない
+- **注入**
+    - 規律と `log.csv` の件数。`SessionStart` にはさらに `pre.csv` の未配送件数と
+      ステータスラインの案内が付く
+- **node が無い環境**
+    - Windows では `node` が見つからなければ何もしない
 
 ## 失敗しても続くこと
 
@@ -25,7 +32,8 @@
 - サブエージェントには未配送件数が出ない
 
 ## Meaning
-- [CONTEXT.md#periplus](../L4_ubiquitous/CONTEXT.md#periplus) — periplus
+- [CONTEXT.md#periplus](../L4_ubiquitous/CONTEXT.md#periplus)
+    - periplus
 
 ## Structures
 - [注入](../L4_structures/injection.md)

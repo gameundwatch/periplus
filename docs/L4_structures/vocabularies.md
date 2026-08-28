@@ -38,7 +38,11 @@ flowchart LR
 - [CONTEXT.md#here](../L4_ubiquitous/CONTEXT.md#here)
 
 ## Decisions
-- [ADR 0003](../L5_adr/0003-periplus-is-a-state-not-a-category.md) — periplus を状態として立てる
-- [ADR 0020#per-repository](../L5_adr/0020-the-log-drains-into-whatever-documents-the-repository-keeps.md#per-repository) — `/pp-discuss` の行き先はリポジトリごとに違う
-- [ADR 0027](../L5_adr/0027-config-json-is-the-authority-for-destinations.md) — criteria の行き先は `config.json` が決める
-- [ADR 0031](../L5_adr/0031-the-skills-hold-instructions-and-the-adrs-hold-the-reasons.md) — 二語彙の同居が誤読を生んだ記録
+- [ADR 0003](../L5_adr/0003-periplus-is-a-state-not-a-category.md)
+    - periplus を状態として立てる
+- [ADR 0020#per-repository](../L5_adr/0020-the-log-drains-into-whatever-documents-the-repository-keeps.md#per-repository)
+    - `/pp-discuss` の行き先はリポジトリごとに違う
+- [ADR 0027](../L5_adr/0027-config-json-is-the-authority-for-destinations.md)
+    - criteria の行き先は `config.json` が決める
+- [ADR 0031](../L5_adr/0031-the-skills-hold-instructions-and-the-adrs-hold-the-reasons.md)
+    - 二語彙の同居が誤読を生んだ記録
