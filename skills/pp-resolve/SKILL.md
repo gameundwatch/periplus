@@ -39,8 +39,12 @@ A row with an empty fourth field was never classified. Do not guess it — run
 
 ## Deliver
 
+Take the rows in descending `file:line` order.
+
 **code** — write it into the source at the row's `file:line`, as the shortest
 statement of the fact rather than an account of how the code works.
+
+Two or more rows at one `file:line` become consecutive lines. Do not join them.
 
 Shorten it; do not translate it. **This holds even when the comments already in
 the file are in another language.** A row arriving in a different language from
