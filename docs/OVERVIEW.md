@@ -1,7 +1,9 @@
 # Overview
 
 リポジトリにおける、情報参照の順序を決める。
-矢印は参照の方向。
+
+矢印は[二種類ある](L5_adr/0041-the-ground-is-drawn-as-a-dashed-line.md#two-line-types)。実線は参照の方向。破線は拠り所 — 変更を書くときに読む先で、
+`design` から `code` へ、`contract` から `test` へ引く。[既に動いている `L6` には掛からない](L5_adr/0041-the-ground-is-drawn-as-a-dashed-line.md#not-on-the-existing-l6)。
 
 層は、一つ下の層の要素が消えたときに一緒に消えるかどうかで分かれる。
 土台は下にあり、影響は下層から上層へ波及する。
@@ -39,12 +41,14 @@ flowchart TD
         test[test: test/*]
     end
 
-    milestone --> feature
-    feature --> L3 --> L4 --> L5 --> L6
+    L1 --> L2 --> L3 --> L4 --> L5 --> L6
 
     contract --> design
     structure --> ubiquitous
     adr --> agreement
+
+    design -.-> code
+    contract -.-> test
 
 ```
 
@@ -53,8 +57,8 @@ flowchart TD
 - **milestone** — 版の単位。その版に入る feature の集合を持つ。何が変わるかも、
   完了をどう確かめるかも、feature から下流を辿れば読める。まだ出荷していない版は `_` を付ける
 - **feature** — 機能の単位。利用者が名指しできるものを一つとする
-- **contract** — 要件を満たす what。外から観測できる約束と、その検証
-- **design** — 要件に対する how。実装の中身
+- **contract** — 要件を満たす what。外から観測できる約束と、その検証。`test` の拠り所
+- **design** — 要件に対する how。実装の中身。`code` の拠り所。[L4 だけを見て書き、決定を見ない](L5_adr/0040-design-reads-the-structures-not-the-decisions.md#closed-on-l4)
 - **structure** — 型や schema、コンポーネントの関係など、構造そのもの
 - **ubiquitous** — 語の辞書。語の意味を一項目ずつ説明する
 - **adr** — トレードオフの結果として決めたこと。覆しにくい
@@ -67,7 +71,7 @@ flowchart TD
 
 - **code** — `skills/*` と `hooks/*`
 - **structure** — kind の構造と、フックから `/pp` を経て `pre.csv`・`log.csv` に至る通しのフロー図
-- **test** — 工程はあるが、ファイルとして残していない
+- **test** — 工程はあるが、ファイルとして残していない。`contract` からの破線は、自リポジトリでは空を指す
 
 ## 参照の書き方
 
@@ -105,6 +109,9 @@ id は文書内で一意にする。主題を短く名乗る。
 L2 で機能を、L1 で版を書く。features も spec も無いまま ADR が先に立つのは、順序の
 誤りではなく、この順序そのものである。
 
+**版を書いたら、破線を辿って `L6` へ降りる。**design を見て `code` を、contract を見て
+`test` を書く。降り口はこの二本だけで、実線を逆流して降りることはしない。
+
 ## L6 は動かせない
 
 `L6` は現に動いている実装である。既にある話について文書と実装が食い違ったなら、
@@ -115,10 +122,12 @@ L2 で機能を、L1 で版を書く。features も spec も無いまま ADR が
 
 ## 出荷の条件
 
-その話が触れた層の文書が揃い、リンクが下から上へ全て張られていること。
+その話が触れた層の要素が揃い、リンクが下から上へ全て張られていること。
 
 - 触れなかった層には何も足さない。層を飛ばさないことと、全ての層に一枚ずつ作ることは別である
 - 既にある文書で足りるなら、指すだけでよい
+- `L6` に触れたなら、design から `code` を、contract から `test` を書く。書けたら、その話を
+  指している文書の `_` を外す
 - 揃ったら、その版の `_` を外す
 
 ## 未実装の印
