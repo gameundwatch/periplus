@@ -2,10 +2,9 @@
 name: pp
 description: >
   Filter the notes captured in `.periplus/pre.csv` into the source, the log, or
-  nowhere. Run at the end of any coding task where you would otherwise have
-  written comments, and whenever the user says "periplus", "stop commenting
-  everything", "keep a logbook", or complains that the code is turning into
-  documentation.
+  nowhere. Run when a change is finished, not at the end of the task it belongs
+  to, and whenever the user says "periplus", "stop commenting everything",
+  "keep a logbook", or complains that the code is turning into documentation.
 ---
 
 # Periplus

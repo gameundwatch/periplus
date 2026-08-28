@@ -30,10 +30,9 @@ here too.
 
 Nothing is written into the source in this phase. Not one line.
 
-**The task is not finished while `.periplus/pre.csv` has rows in it.** Before
-calling any piece of work done, invoke `/pp` and run phase 2 over what you
-captured.
+**The unit is the code you just finished, not the task it belongs to.** When a
+change is done, invoke `/pp` and run phase 2 over what you captured, before
+starting the next one.
 
-When you call a coding task done, say which of the three it was —
-`periplus: 3 filtered`, `periplus: nothing captured`, or
-`periplus: no document, not run`.
+Say which of the three it was, once per change — `periplus: 3 filtered`,
+`periplus: nothing captured`, or `periplus: no document, not run`.
