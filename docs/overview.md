@@ -13,7 +13,6 @@ flowchart TD
 
     subgraph L1[versions]
         milestone[milestone: L1_milestones/*]
-        roadmap[roadmap: L1_roadmap/*]
     end
 
     subgraph L2[features]
@@ -40,9 +39,9 @@ flowchart TD
         test[test: test/*]
     end
 
-    L1 --> L2 --> L3 --> L4 --> L5 --> L6
+    milestone --> feature
+    feature --> L3 --> L4 --> L5 --> L6
 
-    roadmap --> milestone
     contract --> design
     structure --> ubiquitous
     adr --> agreement
@@ -51,9 +50,8 @@ flowchart TD
 
 ## 各ノード
 
-- **milestone** — 実装済みの版の単位。その版が触れた L2 を指す
-- **roadmap** — 将来版の単位。その版に入る feature の集合を持つ。
-  何が変わるかも、完了をどう確かめるかも、feature から下流を辿れば読める
+- **milestone** — 版の単位。その版に入る feature の集合を持つ。何が変わるかも、
+  完了をどう確かめるかも、feature から下流を辿れば読める。まだ出荷していない版は `_` を付ける
 - **feature** — 機能の単位。利用者が名指しできるものを一つとする
 - **contract** — 要件を満たす what。外から観測できる約束と、その検証
 - **design** — 要件に対する how。実装の中身
@@ -118,7 +116,7 @@ L2 で機能を、L1 で版を書く。features も spec も無いまま ADR が
 
 - 触れなかった層には何も足さない。層を飛ばさないことと、全ての層に一枚ずつ作ることは別である
 - 既にある文書で足りるなら、指すだけでよい
-- 揃ったら、roadmap の一枚を `L1_milestones/` へ移す
+- 揃ったら、その版の `_` を外す
 
 ## 未実装の印
 
