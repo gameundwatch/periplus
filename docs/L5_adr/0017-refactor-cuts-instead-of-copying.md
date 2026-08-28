@@ -71,3 +71,7 @@
 skill の中身は薄くなった(範囲の確認と、ファイルごとの `cut → /pp`)。それでも独立した
 コマンドとして残すのは、発火のトリガーが違い、既存コードを破壊するという危険も違う
 ためである。
+
+## Agreements
+- [agreement 0001](../L5_agreements/0001-a-note-keeps-the-language-it-was-written-in.md)
+    - 書き直しは翻訳ではない、の拠り所

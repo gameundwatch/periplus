@@ -68,3 +68,7 @@ logbook"、code turning into documentation）と、各コマンドの呼ばれ�
 
 同じ盲点が三度目である。ADR 0033 は `/pp` が三段を名指ししていることを見るテストが無いと書き、
 v0.7.1 の変更はそのために通った。ここでも、削りすぎたことは何かが起きるまで分からない。
+
+## Agreements
+- [agreement 0003](../L5_agreements/0003-a-description-holds-the-trigger-and-nothing-else.md)
+    - この決定が定めた書き方。以後の運用はこちらを見る

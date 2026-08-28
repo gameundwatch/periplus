@@ -55,3 +55,7 @@
 `/pp-list` が出していた集計(`<N> entries, <M> with no trigger, <H> held over.`)は失われた。
 一覧が見たい場合は `.periplus/.log.md` を直接読む。行の形は一定であり、そのために形を
 一つにしてある。
+
+## Agreements
+- [agreement 0002](../L5_agreements/0002-commands-name-themselves-with-a-verb.md)
+    - 名詞の `/pp-list` を廃し、動詞の側に寄せた
