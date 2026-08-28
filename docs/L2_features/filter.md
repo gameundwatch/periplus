@@ -9,6 +9,8 @@
 - 分類だけで止めて、行き先を見る前に種別を直せる
 
 ## Contract
+- [_completion-unit](../L3_spec/_completion-unit.md)
+    - 何を書き終えたら濾すか。**未実装**
 - [pp](../L3_spec/pp.md)
     - 二つを続けて呼ぶこと
 - [pp-classify](../L3_spec/pp-classify.md)
