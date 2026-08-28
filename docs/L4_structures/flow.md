@@ -38,5 +38,7 @@ flowchart TD
     - 保管は一つ
 - [ADR 0018](../L5_adr/0018-sweeps-archive-separately.md)
     - sweep は別に保管する
+- [ADR 0039](../L5_adr/0039-rows-at-one-anchor-become-consecutive-lines.md)
+    - 同じ位置に届く行は連続した行に書き、配送は後ろから前へ
 - [ADR 0017](../L5_adr/0017-refactor-cuts-instead-of-copying.md)
     - `/pp-refactor` は複製ではなく切り出す
