@@ -1,38 +1,47 @@
 # 二相の構え
 
-periplus は二つの相に分かれる。相の境目は、**判断をどこに集めるか**で引かれている。
+[捕獲から行き先まで](../L4_structures/flow.md)の矢印は同じ太さで描かれているが、左右で走る回数が違う。
 
-- **phase 1（捕獲）**
-    - コードを書いている間ずっと有効。[記述](../L4_ubiquitous/pre-comment.md)を `pre.csv` に足すだけで、
-      行き先を決めない
-- **phase 2（濾過）**
-    - コードが完成した後に一度だけ。溜まった全行に対して行き先を決める
+```mermaid
+flowchart LR
+    subgraph P1["phase 1 — 書いている間ずっと"]
+        inj[注入] --> add["pre.csv に追記<br/>4 番目の欄は空"]
+    end
+    subgraph P2["phase 2 — 書き終えて一度"]
+        cls["4 番目の欄を埋める"] --> res["引いて配送し、消す"]
+    end
+    add --> cls
+```
 
-判断を phase 2 に集めることが構えの中心である。phase 1 は判断しないので、迷った記述も
-そのまま捕獲でき、捕獲を止める条件が要らない。
+## 相の境目は行の 4 番目の欄
 
-## 実行コードは二本しかない
+[row](../L4_structures/row.md) の `kind` は捕獲の時点で空である。**空のまま増える区間が phase 1 で、埋めてから
+減らす区間が phase 2 になる。**どちらの相に居るかは、この一欄だけで分かる。
 
-periplus の本体はほぼ全てが散文である。
+phase 1 に属する処理が 4 番目の欄に触ることは無い。書くのは 5 番目までである。
 
-- `hooks/periplus-activate.js`
-    - 規律と件数を注入し、作業場を用意する
-- `hooks/periplus-statusline.js`
-    - 件数を表示する
+## phase 1 を実行するコードは無い
 
-phase 1 の規律は `hooks/capture.md` という文であり、phase 2 の手順は `skills/*/SKILL.md`
-という文である。どちらも実行するのはモデルであって、コードではない。したがって
-**規律が働かない場合の失敗は例外ではなく、読まれなかったという形で現れる。**
+[構成](../L4_structures/architecture.md)の plugin は `.js` を二本、`.md` を七枚持つ。捕獲へ向かう矢印には `.js` が
+一本も掛かっていない。`periplus-activate.js` がするのは注入までで、追記そのものは session の
+側で起きる。
 
-この構えの帰結として、文面の設計が実装の設計そのものになる。命令に理由を添えると
-反論の足場ができ、規律が弱くなる。
+**振る舞いを足すとき、それが `.js` の側か `.md` の側かで性質が変わる。**前者は決定的に動き、
+後者は読まれなければ動かない。
+
+## 入口のうち二つだけが相に属する
+
+[注入](../L4_structures/injection.md)の四つの入口のうち、phase 1 に効くのは `SessionStart` と `SubagentStart` である。
+`install` と `criteria` は `.periplus/` に触れず、相の外にある。
 
 ## Meaning
 - [pre-comment](../L4_ubiquitous/pre-comment.md)
     - pre-comment
-- [periplus](../L4_ubiquitous/periplus.md)
-    - periplus
+- [kind](../L4_ubiquitous/kind.md)
+    - 種別(kind)
 
 ## Structures
-- [注入](../L4_structures/injection.md)
 - [捕獲から行き先まで](../L4_structures/flow.md)
+- [row](../L4_structures/row.md)
+- [構成](../L4_structures/architecture.md)
+- [注入](../L4_structures/injection.md)

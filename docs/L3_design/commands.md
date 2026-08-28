@@ -1,40 +1,43 @@
 # コマンドの割り方
 
-五つのコマンドは、**合意が要るかどうか**と**中断できるかどうか**で割れている。
+五つのコマンドは、**持つ道具**で割れている。
 
-- `/pp`
-    - 自分では何もせず、`/pp-classify` と `/pp-resolve` を順に呼ぶだけ。
-      ファイルに触らない
-- `/pp-classify`
-    - 読むのは `pre.csv` だけ。行き先を知らないまま [kind](../L4_ubiquitous/kind.md) を決める
-- `/pp-resolve`
-    - kind を行き先に解決し、配送し、`pre.csv` を空にする
-- `/pp-discuss`
-    - log の一件ごとに提案し、同意を待つ。一括の承認は次の一件に効かない
-- `/pp-refactor`
-    - 既存のコメントを切り出して同じ経路に乗せる。保管だけ別
+「道具」は語の辞書に項目を持たない。
 
-## 分類は行き先を見ない
+| コマンド | 読む道具 | 触るファイル |
+| --- | --- | --- |
+| `/pp` | 無し | 無し |
+| `/pp-classify` | [判別木](../L4_structures/kind.md) | `pre.csv` |
+| `/pp-resolve` | [config.json](../L4_structures/config.md) | `pre.csv` `log.csv` `all.csv` ソース |
+| `/pp-discuss` | [四つの行き先](../L4_structures/discuss.md) | `log.csv` 文書 ソース |
+| `/pp-refactor` | 上の三つ | `pre.csv` `swept.csv` ソース |
 
-`/pp-classify` が `config.json` を読まないことは、この構えの要である。行き先を知って
-いると、行き先の都合で kind が選ばれる。kind は[記述](../L4_ubiquitous/pre-comment.md)が何についてかを指す語であって、
-それをどう扱うかの語ではない。
+## 道具が別なので、ファイルも別になる
 
-同じ理由で、二つの行き先語彙が同じ文脈に同居することを避けている。
+[構成](../L4_structures/architecture.md)で `config.json` へ矢印が伸びているのは三つで、`/pp-classify` には伸びていない。
+[二つの行き先語彙](../L4_structures/vocabularies.md)は、行き先の語が二組あることを示す。重ねると、**`/pp-classify` の文脈には
+どちらの行き先語彙も入らない**ことになる。
 
-## 合意の要る操作だけを分ける
+`/pp-classify` が読むファイルに `code` `periplus` `drop` の語を置かない。判別木は [kind](../L4_ubiquitous/kind.md) の
+名前だけで閉じている。
 
-`/pp-resolve` は機械的に解決するので確認を求めない。`/pp-discuss` は文書を書く作業で、
-どの[文書](../L4_ubiquitous/docs.md)に足すかはリポジトリごとに違い、機械には引けない。だから別のコマンドになり、
-一件ずつ止まる。
+## 止まるのは一箇所だけ
+
+L4 の図のうち、応答を待つノードを持つのは [log の行き先](../L4_structures/discuss.md)の「行き先を一つ提案し、同意を
+待つ」だけである。[捕獲から行き先まで](../L4_structures/flow.md)も[保管](../L4_structures/archive.md)も[注入](../L4_structures/injection.md)も、分岐は値だけで決まる。
+
+**待つ実装が要るのは `/pp-discuss` の一箇所に限られる。**残りは入力が揃った時点で最後まで走る。
+
+## `/pp` はファイルを持たない
+
+`/pp` から出る矢印は `/pp-classify` と `/pp-resolve` の二本で、workspace へは一本も伸びて
+いない。読むものも書くものも無い。
 
 ## Meaning
 - [kind](../L4_ubiquitous/kind.md)
     - 種別(kind)
 - [criterion](../L4_ubiquitous/criterion.md)
     - 判断基準(criterion)
-- [periplus](../L4_ubiquitous/periplus.md)
-    - periplus
 - [docs](../L4_ubiquitous/docs.md)
     - docs
 
@@ -42,3 +45,4 @@
 - [構成](../L4_structures/architecture.md)
 - [二つの行き先語彙](../L4_structures/vocabularies.md)
 - [log の行き先](../L4_structures/discuss.md)
+- [kind](../L4_structures/kind.md)

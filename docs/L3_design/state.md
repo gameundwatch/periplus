@@ -1,23 +1,36 @@
 # 状態の置き方
 
-コマンドは状態を持たない。状態は全て `.periplus/` のファイルにある。
+[構成](../L4_structures/architecture.md)の workspace には五つのファイルがある。四つは [row](../L4_structures/row.md) の同じ形を共有し、
+`config.json` だけが行を持たない。
 
-## 中断点を表に出す
+```mermaid
+flowchart LR
+    subgraph same["同じ row の形"]
+        pre[(pre.csv)]
+        log[(log.csv)]
+        all[(all.csv)]
+        swept[(swept.csv)]
+    end
+    cfg[(config.json)]
+```
 
-`/pp-classify` と `/pp-resolve` が別のコマンドであることで、途中の状態がファイルの形で
-残る。**[kind](../L4_ubiquitous/kind.md) を持ちながら `pre.csv` に居る行**がそれで、分類は済んだが配送されていない
-ことを意味する。
+行の読み書きは一つで足り、`config.json` にだけ別の読み手が要る。
 
-この中断点は数えられる。`pre.csv` の行数が未配送、そのうち四番目の欄が空のものが未分類で、
-差が「分類済みだが置き去り」である。セッション開始時の注入とステータスラインが、
-この二つの数をそのまま出す。
+## コマンドは値を運ばない
 
-## 再実行で壊れない
+コマンド同士を直接結ぶ矢印は `/pp` から出る二本だけで、どちらにも中身が乗っていない。残りは
+すべて workspace のファイルへ向かう。**受け渡しはファイルだけで行われる。**
 
-- `/pp-classify` は、既に kind を持つ行に触らない
-- `/pp-resolve` は一行ずつ配送して一行ずつ消す。最後にまとめて消さないので、
-  途中で止まっても配送済みの行が二度届かない
-- 保管は追記のみで、編集も排出もされない
+## 中断できる粒度は一行
+
+[保管](../L4_structures/archive.md)は追記と削除を一行ずつ行う。[row](../L4_structures/row.md) は一行が一つのことだけを述べると定める。
+二つを重ねると、**どこで止めても行の意味が壊れない**ことが言える。まとめて消す実装は、この
+性質を失う。
+
+## 途中の状態は欄で数えられる
+
+`pre.csv` に残る行数が未配送で、そのうち [row](../L4_structures/row.md) の 4 番目が空のものが未分類である。差が
+「分類は済んだが配送されていない」にあたる。**状態を別に持たなくても、行を数えれば出る。**
 
 ## Meaning
 - [pre-comment](../L4_ubiquitous/pre-comment.md)
@@ -26,6 +39,7 @@
     - 種別(kind)
 
 ## Structures
+- [構成](../L4_structures/architecture.md)
 - [row](../L4_structures/row.md)
 - [保管](../L4_structures/archive.md)
-- [捕獲から行き先まで](../L4_structures/flow.md)
+- [config.json](../L4_structures/config.md)
