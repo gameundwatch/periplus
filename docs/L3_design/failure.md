@@ -6,7 +6,7 @@
     - 読み取り専用のチェックアウトでも規律は注入される。置き場が
       無いだけで、捕獲の規則自体は届く
 - **`config.json` が壊れている**
-    - 壊れた[判断基準](../L4_ubiquitous/CONTEXT.md#criterion)のキーだけが無視され、残りは適用される。無視した
+    - 壊れた[判断基準](../L4_ubiquitous/criterion.md)のキーだけが無視され、残りは適用される。無視した
       ことは表の後ろに並ぶので、黙って既定に戻ることは無い
 - **`config.json` が無い**
     - 問題として報告しない。既定で動く
@@ -21,9 +21,9 @@
 気づく手掛かりが無い。他の失敗はすべて画面に出る。
 
 ## Meaning
-- [CONTEXT.md#criterion](../L4_ubiquitous/CONTEXT.md#criterion)
+- [criterion](../L4_ubiquitous/criterion.md)
     - 判断基準(criterion)
-- [CONTEXT.md#kind](../L4_ubiquitous/CONTEXT.md#kind)
+- [kind](../L4_ubiquitous/kind.md)
     - 種別(kind)
 
 ## Structures

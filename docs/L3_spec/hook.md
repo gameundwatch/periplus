@@ -36,7 +36,7 @@
     - 規律は文であり、実行コードは二本しかない
 
 ## Meaning
-- [CONTEXT.md#periplus](../L4_ubiquitous/CONTEXT.md#periplus)
+- [periplus](../L4_ubiquitous/periplus.md)
     - periplus
 
 ## Structures

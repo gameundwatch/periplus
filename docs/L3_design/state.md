@@ -5,7 +5,7 @@
 ## 中断点を表に出す
 
 `/pp-classify` と `/pp-resolve` が別のコマンドであることで、途中の状態がファイルの形で
-残る。**[kind](../L4_ubiquitous/CONTEXT.md#kind) を持ちながら `pre.csv` に居る行**がそれで、分類は済んだが配送されていない
+残る。**[kind](../L4_ubiquitous/kind.md) を持ちながら `pre.csv` に居る行**がそれで、分類は済んだが配送されていない
 ことを意味する。
 
 この中断点は数えられる。`pre.csv` の行数が未配送、そのうち四番目の欄が空のものが未分類で、
@@ -20,9 +20,9 @@
 - 保管は追記のみで、編集も排出もされない
 
 ## Meaning
-- [CONTEXT.md#pre-comment](../L4_ubiquitous/CONTEXT.md#pre-comment)
+- [pre-comment](../L4_ubiquitous/pre-comment.md)
     - pre-comment
-- [CONTEXT.md#kind](../L4_ubiquitous/CONTEXT.md#kind)
+- [kind](../L4_ubiquitous/kind.md)
     - 種別(kind)
 
 ## Structures

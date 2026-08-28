@@ -3,7 +3,7 @@
 periplus は二つの相に分かれる。相の境目は、**判断をどこに集めるか**で引かれている。
 
 - **phase 1（捕獲）**
-    - コードを書いている間ずっと有効。[記述](../L4_ubiquitous/CONTEXT.md#pre-comment)を `pre.csv` に足すだけで、
+    - コードを書いている間ずっと有効。[記述](../L4_ubiquitous/pre-comment.md)を `pre.csv` に足すだけで、
       行き先を決めない
 - **phase 2（濾過）**
     - コードが完成した後に一度だけ。溜まった全行に対して行き先を決める
@@ -28,9 +28,9 @@ phase 1 の規律は `hooks/capture.md` という文であり、phase 2 の手�
 反論の足場ができ、規律が弱くなる。
 
 ## Meaning
-- [CONTEXT.md#pre-comment](../L4_ubiquitous/CONTEXT.md#pre-comment)
+- [pre-comment](../L4_ubiquitous/pre-comment.md)
     - pre-comment
-- [CONTEXT.md#periplus](../L4_ubiquitous/CONTEXT.md#periplus)
+- [periplus](../L4_ubiquitous/periplus.md)
     - periplus
 
 ## Structures

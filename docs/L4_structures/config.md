@@ -1,6 +1,6 @@
 # config.json
 
-`.periplus/config.json` が保証するキーは [`criteria`](../L4_ubiquitous/CONTEXT.md#criterion) 一つ。
+`.periplus/config.json` が保証するキーは [`criteria`](../L4_ubiquitous/criterion.md) 一つ。
 
 ```json
 {
@@ -20,7 +20,7 @@
 [`warnThreshold`](../L5_adr/0023-the-log-is-evidence-for-writing-a-document.md#no-warn-threshold) と [`updated`](../L5_adr/0023-the-log-is-evidence-for-writing-a-document.md#no-updated-column) は廃止済みで、書いても効かない。
 
 ## Meaning
-- [CONTEXT.md#criterion](../L4_ubiquitous/CONTEXT.md#criterion)
+- [criterion](../L4_ubiquitous/criterion.md)
 
 ## Decisions
 - [ADR 0027](../L5_adr/0027-config-json-is-the-authority-for-destinations.md)

@@ -35,7 +35,7 @@ node <plugin>/hooks/periplus-activate.js criteria
     - コマンド間で行き先を引く形
 
 ## Meaning
-- [CONTEXT.md#criterion](../L4_ubiquitous/CONTEXT.md#criterion)
+- [criterion](../L4_ubiquitous/criterion.md)
     - 判断基準(criterion)
 
 ## Structures

@@ -57,9 +57,9 @@ flowchart LR
 `/pp-classify` は読まない。
 
 ## Meaning
-- [CONTEXT.md#periplus](../L4_ubiquitous/CONTEXT.md#periplus)
+- [periplus](../L4_ubiquitous/periplus.md)
     - periplus
-- [CONTEXT.md#pre-comment](../L4_ubiquitous/CONTEXT.md#pre-comment)
+- [pre-comment](../L4_ubiquitous/pre-comment.md)
     - pre-comment
 
 ## Decisions

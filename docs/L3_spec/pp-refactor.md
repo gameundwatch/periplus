@@ -37,9 +37,9 @@
     - 同じ経路に合流させる形
 
 ## Meaning
-- [CONTEXT.md#pre-comment](../L4_ubiquitous/CONTEXT.md#pre-comment)
+- [pre-comment](../L4_ubiquitous/pre-comment.md)
     - pre-comment
-- [CONTEXT.md#language](../L4_ubiquitous/CONTEXT.md#language)
+- [language](../L4_ubiquitous/language.md)
     - 記述の言語
 
 ## Structures

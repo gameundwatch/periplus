@@ -10,7 +10,7 @@ kind = "contracts" | "external-facts" | "current-limits"
 
 ## 判別
 
-一行から [`kind`](../L4_ubiquitous/CONTEXT.md#kind) 一つを決める木。表は名前を並べるだけで、分けるのは[この木だけ](../L5_adr/0035-the-tree-classifies-and-the-table-only-names.md#three-questions)である。
+一行から [`kind`](../L4_ubiquitous/kind.md) 一つを決める木。表は名前を並べるだけで、分けるのは[この木だけ](../L5_adr/0035-the-tree-classifies-and-the-table-only-names.md#three-questions)である。
 
 ```mermaid
 flowchart TD
@@ -52,7 +52,7 @@ flowchart TD
 数えない。
 
 ## Meaning
-- [CONTEXT.md#kind](../L4_ubiquitous/CONTEXT.md#kind)
+- [kind](../L4_ubiquitous/kind.md)
 
 ## Decisions
 - [ADR 0014#closed-set](../L5_adr/0014-the-set-of-kinds-is-closed.md#closed-set)

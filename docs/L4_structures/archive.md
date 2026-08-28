@@ -12,10 +12,10 @@ flowchart LR
 ```
 
 保管は一箇所で、編集も排出もされない。`/pp-refactor` だけが[別の保管を指す](../L5_adr/0018-sweeps-archive-separately.md)。既存の
-コメントを切り出した行が `all.csv` に混ざると、捕獲された[記述](../L4_ubiquitous/CONTEXT.md#pre-comment)と区別できなくなるため。
+コメントを切り出した行が `all.csv` に混ざると、捕獲された[記述](../L4_ubiquitous/pre-comment.md)と区別できなくなるため。
 
 ## Meaning
-- [CONTEXT.md#pre-comment](../L4_ubiquitous/CONTEXT.md#pre-comment)
+- [pre-comment](../L4_ubiquitous/pre-comment.md)
     - pre-comment
 
 ## Decisions

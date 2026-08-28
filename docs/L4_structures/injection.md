@@ -26,9 +26,9 @@ flowchart TD
 `install` と `criteria` は `.periplus/` に触れない。作業場の用意が失敗しても規律は注入される。
 
 ## Meaning
-- [CONTEXT.md#pre-comment](../L4_ubiquitous/CONTEXT.md#pre-comment)
+- [pre-comment](../L4_ubiquitous/pre-comment.md)
     - pre-comment
-- [CONTEXT.md#periplus](../L4_ubiquitous/CONTEXT.md#periplus)
+- [periplus](../L4_ubiquitous/periplus.md)
     - periplus
 
 ## Decisions

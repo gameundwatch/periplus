@@ -13,7 +13,7 @@
     - 一件ごとに待つ。一括の承認は次の一件に効かない
 - **行き先**
     - `code` / `docs` / `here` / `trash` の四つ。
-      [`here`](../L4_ubiquitous/CONTEXT.md#here) だけが log に残る
+      [`here`](../L4_ubiquitous/here.md) だけが log に残る
 - **出力**
     - 末尾に `<N> to code, <M> to docs, <K> trashed, <R> held here.`
 - 同じ主題が二度目に落ちていたら、そう言って文書を名前で提案する
@@ -32,11 +32,11 @@
     - 合意の要る操作だけを分ける
 
 ## Meaning
-- [CONTEXT.md#here](../L4_ubiquitous/CONTEXT.md#here)
+- [here](../L4_ubiquitous/here.md)
     - here
-- [CONTEXT.md#docs](../L4_ubiquitous/CONTEXT.md#docs)
+- [docs](../L4_ubiquitous/docs.md)
     - docs
-- [CONTEXT.md#trash](../L4_ubiquitous/CONTEXT.md#trash)
+- [trash](../L4_ubiquitous/trash.md)
     - trash
 
 ## Structures

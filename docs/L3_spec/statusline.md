@@ -27,7 +27,7 @@
     - 繋がっていないときの振る舞い
 
 ## Meaning
-- [CONTEXT.md#periplus](../L4_ubiquitous/CONTEXT.md#periplus)
+- [periplus](../L4_ubiquitous/periplus.md)
     - periplus
 
 ## Structures

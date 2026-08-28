@@ -18,13 +18,13 @@ flowchart TD
     gone --> drain
 ```
 
-[`here`](../L4_ubiquitous/CONTEXT.md#here) だけが log に残る。[残ることは失敗ではなく](../L5_adr/0023-the-log-is-evidence-for-writing-a-document.md#no-exit-required)、決着していない[記述](../L4_ubiquitous/CONTEXT.md#pre-comment)の既定の姿である。
+[`here`](../L4_ubiquitous/here.md) だけが log に残る。[残ることは失敗ではなく](../L5_adr/0023-the-log-is-evidence-for-writing-a-document.md#no-exit-required)、決着していない[記述](../L4_ubiquitous/pre-comment.md)の既定の姿である。
 
 ## Meaning
-- [CONTEXT.md#code](../L4_ubiquitous/CONTEXT.md#code)
-- [CONTEXT.md#docs](../L4_ubiquitous/CONTEXT.md#docs)
-- [CONTEXT.md#here](../L4_ubiquitous/CONTEXT.md#here)
-- [CONTEXT.md#trash](../L4_ubiquitous/CONTEXT.md#trash)
+- [code](../L4_ubiquitous/code.md)
+- [docs](../L4_ubiquitous/docs.md)
+- [here](../L4_ubiquitous/here.md)
+- [trash](../L4_ubiquitous/trash.md)
 
 ## Decisions
 - [ADR 0019](../L5_adr/0019-the-log-has-one-command.md)

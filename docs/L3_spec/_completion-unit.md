@@ -27,7 +27,7 @@
     - 判断の根拠が揃うのは、その差分が完成した時点であること
 
 ## Meaning
-- [CONTEXT.md#pre-comment](../L4_ubiquitous/CONTEXT.md#pre-comment)
+- [pre-comment](../L4_ubiquitous/pre-comment.md)
     - pre-comment
 
 ## Structures

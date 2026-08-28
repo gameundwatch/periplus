@@ -5,7 +5,7 @@ destination = "code" | "periplus" | "drop" ;
 ```
 
 ## Meaning
-- [CONTEXT.md#criterion](../L4_ubiquitous/CONTEXT.md#criterion)
+- [criterion](../L4_ubiquitous/criterion.md)
 
 ## Decisions
 - [ADR 0003](../L5_adr/0003-periplus-is-a-state-not-a-category.md)

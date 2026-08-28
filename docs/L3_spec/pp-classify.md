@@ -7,7 +7,7 @@
 - **書く**
     - 同じファイルの四番目の欄だけ。他の欄も他のファイルも変えない
 - **割る**
-    - [kind](../L4_ubiquitous/CONTEXT.md#kind) が一つに定まる最小単位まで割る。
+    - [kind](../L4_ubiquitous/kind.md) が一つに定まる最小単位まで割る。
       割った行は元の一行を置き換えるので、行数は増えることがある
 - **再実行**
     - 既に kind を持つ行には触らない
@@ -31,9 +31,9 @@
     - 再実行で壊れないこと
 
 ## Meaning
-- [CONTEXT.md#kind](../L4_ubiquitous/CONTEXT.md#kind)
+- [kind](../L4_ubiquitous/kind.md)
     - 種別(kind)
-- [CONTEXT.md#pre-comment](../L4_ubiquitous/CONTEXT.md#pre-comment)
+- [pre-comment](../L4_ubiquitous/pre-comment.md)
     - pre-comment
 
 ## Structures

@@ -34,9 +34,9 @@ kind を持つ行が無いとき。`.periplus/config.json` が無い場合は既
     - 機械的に解決するので確認を求めない
 
 ## Meaning
-- [CONTEXT.md#criterion](../L4_ubiquitous/CONTEXT.md#criterion)
+- [criterion](../L4_ubiquitous/criterion.md)
     - 判断基準(criterion)
-- [CONTEXT.md#code](../L4_ubiquitous/CONTEXT.md#code)
+- [code](../L4_ubiquitous/code.md)
     - code
 
 ## Structures

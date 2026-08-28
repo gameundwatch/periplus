@@ -18,9 +18,9 @@ README の `goes to` 列は出荷時の既定であり、表を出すときに�
 無視され、残りは適用される。
 
 ## Meaning
-- [CONTEXT.md#criterion](../L4_ubiquitous/CONTEXT.md#criterion)
+- [criterion](../L4_ubiquitous/criterion.md)
     - 判断基準(criterion)
-- [CONTEXT.md#kind](../L4_ubiquitous/CONTEXT.md#kind)
+- [kind](../L4_ubiquitous/kind.md)
     - 種別(kind)
 
 ## Decisions

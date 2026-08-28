@@ -1,6 +1,6 @@
 # capture — phase 1 の約束
 
-コードを書いている間、コメントの代わりに[記述](../L4_ubiquitous/CONTEXT.md#pre-comment)を
+コードを書いている間、コメントの代わりに[記述](../L4_ubiquitous/pre-comment.md)を
 溜める。
 
 ## 観測できること
@@ -34,7 +34,7 @@
     - 判断を後段に集めるので、捕獲は判断しない
 
 ## Meaning
-- [CONTEXT.md#pre-comment](../L4_ubiquitous/CONTEXT.md#pre-comment)
+- [pre-comment](../L4_ubiquitous/pre-comment.md)
     - pre-comment
 
 ## Structures

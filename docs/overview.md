@@ -87,7 +87,7 @@ flowchart TD
 参照する側は、相対パスとアンカー名で指す。
 
 ```markdown
-[CONTEXT.md#kind](../L4_ubiquitous/CONTEXT.md#kind)
+[kind](../L4_ubiquitous/kind.md)
 ```
 
 id は文書内で一意にする。語を指すなら語そのもの、決定を指すなら主題を短く。

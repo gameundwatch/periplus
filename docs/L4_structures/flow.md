@@ -22,8 +22,8 @@ flowchart TD
 `log.csv` から先は [log の行き先](discuss.md)。
 
 ## Meaning
-- [CONTEXT.md#pre-comment](../L4_ubiquitous/CONTEXT.md#pre-comment)
-- [CONTEXT.md#periplus](../L4_ubiquitous/CONTEXT.md#periplus)
+- [pre-comment](../L4_ubiquitous/pre-comment.md)
+- [periplus](../L4_ubiquitous/periplus.md)
 
 ## Decisions
 - [ADR 0036](../L5_adr/0036-phase-1-belongs-to-the-hook.md)

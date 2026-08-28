@@ -12,13 +12,13 @@ note      = '"' { character | '""' } '"' ;
 ```
 
 `timestamp` は ISO 8601 を分まで。`note` は中身に関わらず常に引用し、内側の `"` は
-`""` に倍化する。[`kind`](../L4_ubiquitous/CONTEXT.md#kind) は捕獲の時点では空で、`/pp-classify` が埋める。
+`""` に倍化する。[`kind`](../L4_ubiquitous/kind.md) は捕獲の時点では空で、`/pp-classify` が埋める。
 
-[一行は一つのことだけを述べる](../L5_adr/0013-split-to-one-kind-at-capture.md)。二つ述べる[記述](../L4_ubiquitous/CONTEXT.md#pre-comment)は二行になる。
+[一行は一つのことだけを述べる](../L5_adr/0013-split-to-one-kind-at-capture.md)。二つ述べる[記述](../L4_ubiquitous/pre-comment.md)は二行になる。
 
 ## Meaning
-- [CONTEXT.md#pre-comment](../L4_ubiquitous/CONTEXT.md#pre-comment)
-- [CONTEXT.md#kind](../L4_ubiquitous/CONTEXT.md#kind)
+- [pre-comment](../L4_ubiquitous/pre-comment.md)
+- [kind](../L4_ubiquitous/kind.md)
 
 ## Decisions
 - [ADR 0024](../L5_adr/0024-the-working-files-are-csv.md)

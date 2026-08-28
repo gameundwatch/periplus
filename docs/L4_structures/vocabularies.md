@@ -26,16 +26,16 @@ flowchart LR
 | 決め方 | [`config.json` から機械が引く](../L5_adr/0027-config-json-is-the-authority-for-destinations.md) | 提案し、同意を待つ |
 | 行き先 | `code` `periplus` `drop` | `code` `docs` `here` `trash` |
 
-`code` は両方にある。criteria の `code` は kind ごと送る。`/pp-discuss` の [`code`](../L4_ubiquitous/CONTEXT.md#code) は
+`code` は両方にある。criteria の `code` は kind ごと送る。`/pp-discuss` の [`code`](../L4_ubiquitous/code.md) は
 一件から該当部分だけを切り出す救済路で、主経路ではない。
 
-`drop` と [`trash`](../L4_ubiquitous/CONTEXT.md#trash) は同じ行為で、段が違う。[`periplus`](../L4_ubiquitous/CONTEXT.md#periplus) は criteria の行き先であり、
-`/pp-discuss` の入口である。[`here`](../L4_ubiquitous/CONTEXT.md#here) はそこに留まること。
+`drop` と [`trash`](../L4_ubiquitous/trash.md) は同じ行為で、段が違う。[`periplus`](../L4_ubiquitous/periplus.md) は criteria の行き先であり、
+`/pp-discuss` の入口である。[`here`](../L4_ubiquitous/here.md) はそこに留まること。
 
 ## Meaning
-- [CONTEXT.md#criterion](../L4_ubiquitous/CONTEXT.md#criterion)
-- [CONTEXT.md#code](../L4_ubiquitous/CONTEXT.md#code)
-- [CONTEXT.md#here](../L4_ubiquitous/CONTEXT.md#here)
+- [criterion](../L4_ubiquitous/criterion.md)
+- [code](../L4_ubiquitous/code.md)
+- [here](../L4_ubiquitous/here.md)
 
 ## Decisions
 - [ADR 0003](../L5_adr/0003-periplus-is-a-state-not-a-category.md)
