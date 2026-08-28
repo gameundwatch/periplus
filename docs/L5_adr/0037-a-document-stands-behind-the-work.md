@@ -33,7 +33,7 @@ None of this applies unless a document stands behind the work.
 - **迷ったら捕捉しない** — 過剰捕捉が消える。ただし非対称である。単発のつもりが残れば濾されていない
   コメントがソースに直接入り、それは periplus が防ぐはずの失敗そのもの。逆は無駄な `/pp` 一回で
   済む。復旧路も片側にしか無い(ADR 0017・0008)
-- **例を並べる(loadmap・ADR・設計文書)** — `document` の曖昧さが減る。ただしプラグインは任意の
+- **例を並べる(roadmap・ADR・設計文書)** — `document` の曖昧さが減る。ただしプラグインは任意の
   リポジトリに入るので、**列挙が必要条件として読まれる**。README しか持たないリポジトリで発火
   しなくなる
 
@@ -49,7 +49,7 @@ None of this applies unless a document stands behind the work.
 注入は 10 語増える。
 
 テストは足さない。変わるのは注入される散文だけで、書けるのは段落の存在を見る型になる(ADR 0036)。
-確認手段は完了時の三つ目の文言である — 文書の無い作業で `no document, not run` が出て、loadmap を
+確認手段は完了時の三つ目の文言である — 文書の無い作業で `no document, not run` が出て、roadmap を
 根拠に走る作業で `N filtered` が出れば、判定は使えば分かる。
 
 **捕捉しすぎる場合は後続の版で直す。**この版は迷いを捕捉側に倒しており、倒しすぎたかどうかは実際に
