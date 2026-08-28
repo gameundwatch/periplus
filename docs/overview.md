@@ -11,8 +11,9 @@
 ```mermaid
 flowchart TD
 
-    subgraph L1[version-and-milestones]
+    subgraph L1[versions]
         milestone[milestone: L1_milestones/*]
+        roadmap[roadmap: L1_roadmap/*]
     end
 
     subgraph L2[features]
@@ -39,11 +40,7 @@ flowchart TD
         test[test: test/*]
     end
 
-    milestone --> feature
-    feature --> L3
-    L3 --> L4
-    L4 --> L5
-    L5 --> L6
+    L1 --> L2 --> L3 --> L4 --> L5 --> L6
 
     contract --> design
     structure --> ubiquitous
@@ -53,7 +50,8 @@ flowchart TD
 
 ## 各ノード
 
-- **milestone** — 版の単位。その版が触れた feature を指す
+- **milestone** — 版の単位。その版が触れた L2 を指す
+- **roadmap** — 将来版の単位。既存の L2 を基にして、次の版の方針を示す
 - **feature** — 機能の単位。利用者が名指しできるものを一つとする
 - **contract** — 要件を満たす what。外から観測できる約束と、その検証
 - **design** — 要件に対する how。実装の中身
