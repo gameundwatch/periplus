@@ -33,9 +33,9 @@ kind を持つ行が無いとき。`.periplus/config.json` が無い場合は既
 
 ## Design
 - [状態の置き方](../L3_design/state.md)
-    - 一行ずつ配送して一行ずつ消す形
+    - 中断できる粒度が一行であること
 - [コマンドの割り方](../L3_design/commands.md)
-    - 機械的に解決するので確認を求めない
+    - 待つのは `/pp-discuss` の一箇所だけであること
 
 ## Meaning
 - [criterion](../L4_ubiquitous/criterion.md)

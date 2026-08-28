@@ -26,9 +26,9 @@
 
 ## Design
 - [コマンドの割り方](../L3_design/commands.md)
-    - 分類が行き先を見ない理由
+    - 分類の文脈に行き先語彙が入らないこと
 - [状態の置き方](../L3_design/state.md)
-    - 再実行で壊れないこと
+    - 途中の状態が欄で数えられること
 
 ## Meaning
 - [kind](../L4_ubiquitous/kind.md)

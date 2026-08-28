@@ -2,6 +2,8 @@
 
 `pre.csv` / `log.csv` / `all.csv` / `swept.csv` が共有する行の形。ヘッダ行は無い。
 
+形に合わない行がどうなるかは定めていない。
+
 ```ebnf
 row       = timestamp "," file "," line "," [ kind ] "," note ;
 

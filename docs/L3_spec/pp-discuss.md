@@ -29,7 +29,7 @@
 
 ## Design
 - [コマンドの割り方](../L3_design/commands.md)
-    - 合意の要る操作だけを分ける
+    - 待つのはこの一箇所だけであること
 
 ## Meaning
 - [here](../L4_ubiquitous/here.md)

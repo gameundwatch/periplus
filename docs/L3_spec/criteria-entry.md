@@ -32,7 +32,7 @@ node <plugin>/hooks/periplus-activate.js criteria
 
 ## Design
 - [コマンドの割り方](../L3_design/commands.md)
-    - コマンド間で行き先を引く形
+    - `config.json` を読むコマンドと読まないコマンド
 
 ## Meaning
 - [criterion](../L4_ubiquitous/criterion.md)
