@@ -31,7 +31,7 @@
 
 ## Design
 - [二相の構え](../L3_design/phases.md)
-    - 判断を後段に集めるので、捕獲は判断しない
+    - 捕獲は 4 番目の欄に触らないこと
 
 ## Meaning
 - [pre-comment](../L4_ubiquitous/pre-comment.md)

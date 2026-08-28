@@ -34,7 +34,7 @@
 
 ## Design
 - [コマンドの割り方](../L3_design/commands.md)
-    - 同じ経路に合流させる形
+    - 三つの道具を全部持つこと
 
 ## Meaning
 - [pre-comment](../L4_ubiquitous/pre-comment.md)

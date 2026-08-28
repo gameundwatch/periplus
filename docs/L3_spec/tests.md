@@ -28,4 +28,4 @@ node --test hooks/*.test.js
 
 ## Design
 - [二相の構え](../L3_design/phases.md)
-    - 散文で書かれた部分は確かめられないこと
+    - `.js` の側と `.md` の側で性質が違うこと

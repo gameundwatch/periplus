@@ -22,7 +22,7 @@
 
 ## Design
 - [二相の構え](../L3_design/phases.md)
-    - 判断の根拠が揃うのは、その差分が完成した時点であること
+    - 相が切り替わる印が 4 番目の欄であること
 
 ## Meaning
 - [pre-comment](../L4_ubiquitous/pre-comment.md)

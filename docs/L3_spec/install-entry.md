@@ -31,7 +31,7 @@ Windows と、実行ファイルのパスにシェルで扱えない文字が含
 
 ## Design
 - [壊れたときの落ち方](../L3_design/failure.md)
-    - 入れない条件と、控えを取ること
+    - `install` が作業場に触らないこと
 
 ## Structures
 - [構成](../L4_structures/architecture.md)
