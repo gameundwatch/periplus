@@ -27,6 +27,12 @@ kind を持つ行が無いとき。`.periplus/config.json` が無い場合は既
 - 保管の行数が、配送した行数だけ増える
 - 空にならなかった場合、その旨が報告に出る
 
+## Design
+- [状態の置き方](../L3_design/state.md)
+    - 一行ずつ配送して一行ずつ消す形
+- [コマンドの割り方](../L3_design/commands.md)
+    - 機械的に解決するので確認を求めない
+
 ## Meaning
 - [CONTEXT.md#criterion](../L4_ubiquitous/CONTEXT.md#criterion)
     - 判断基準(criterion)

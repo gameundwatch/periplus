@@ -32,6 +32,10 @@
 - `.periplus/swept.csv` の行数が切り出した数だけ増え、`all.csv` は増えない
 - 空にならなければ、残り行数が報告になる
 
+## Design
+- [コマンドの割り方](../L3_design/commands.md)
+    - 同じ経路に合流させる形
+
 ## Meaning
 - [CONTEXT.md#pre-comment](../L4_ubiquitous/CONTEXT.md#pre-comment)
     - pre-comment

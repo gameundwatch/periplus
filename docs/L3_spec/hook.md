@@ -31,6 +31,10 @@
 - 未配送があれば、その件数と内訳が同じ行に続く
 - サブエージェントには未配送件数が出ない
 
+## Design
+- [二相の構え](../L3_design/phases.md)
+    - 規律は文であり、実行コードは二本しかない
+
 ## Meaning
 - [CONTEXT.md#periplus](../L4_ubiquitous/CONTEXT.md#periplus)
     - periplus

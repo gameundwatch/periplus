@@ -30,6 +30,10 @@
 テストが README.md と `DEFAULT_CRITERIA` を同じ kind 集合に縛っている。README に
 kind を足して実装に足さなければ、あるいはその逆でも、テストが落ちる。
 
+## Design
+- [壊れたときの落ち方](../L3_design/failure.md)
+    - 書式が崩れた行がそのまま通ること
+
 ## Structures
 - [行き先の権威](../L4_structures/authority.md)
 - [destination](../L4_structures/destination.md)

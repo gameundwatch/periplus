@@ -25,5 +25,9 @@
 - `skills/` のディレクトリ名と、利用者が打てるコマンド名が一致する
 - `plugin.json` の `version` と、`L1_milestones/` の最新の版が一致する
 
+## Design
+- [二相の構え](../L3_design/phases.md)
+    - 実行コードが二本しかないこと
+
 ## Structures
 - [構成](../L4_structures/architecture.md)

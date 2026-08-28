@@ -25,3 +25,7 @@ node --test hooks/*.test.js
 ## 確認
 
 - 依存を足さずに `node --test hooks/*.test.js` が通る
+
+## Design
+- [二相の構え](../L3_design/phases.md)
+    - 散文で書かれた部分は確かめられないこと

@@ -29,6 +29,10 @@ Windows と、実行ファイルのパスにシェルで扱えない文字が含
 - `settings.json.periplus-bak` が残り、元の内容と一致する
 - `statusLine` 以外のキーが変わっていない
 
+## Design
+- [壊れたときの落ち方](../L3_design/failure.md)
+    - 入れない条件と、控えを取ること
+
 ## Structures
 - [構成](../L4_structures/architecture.md)
 - [注入](../L4_structures/injection.md)

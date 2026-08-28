@@ -16,6 +16,10 @@
 - 実行後、`.periplus/pre.csv` が空
 - 該当があればソースのコメントが増え、`.periplus/log.csv` の件数が増える
 
+## Design
+- [コマンドの割り方](../L3_design/commands.md)
+    - 自分では何もせず二つを呼ぶ形
+
 ## Structures
 - [捕獲から行き先まで](../L4_structures/flow.md)
 - [構成](../L4_structures/architecture.md)

@@ -20,6 +20,12 @@
 - 画面の二つの数が、`.periplus/log.csv` と `.periplus/pre.csv` の行数と一致する
 - 設置しても他の設定が変わらない
 
+## Design
+- [状態の置き方](../L3_design/state.md)
+    - 中断点を数えられる形で出す
+- [壊れたときの落ち方](../L3_design/failure.md)
+    - 繋がっていないときの振る舞い
+
 ## Meaning
 - [CONTEXT.md#periplus](../L4_ubiquitous/CONTEXT.md#periplus)
     - periplus

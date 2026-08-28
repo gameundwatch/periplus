@@ -27,6 +27,10 @@
 **完了は log.csv を端から端まで走査し終えたこと**であって、空になることではない。
 `here` に留まった件数だけ残るのが正常な終わり方である。
 
+## Design
+- [コマンドの割り方](../L3_design/commands.md)
+    - 合意の要る操作だけを分ける
+
 ## Meaning
 - [CONTEXT.md#here](../L4_ubiquitous/CONTEXT.md#here)
     - here

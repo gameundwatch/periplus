@@ -24,6 +24,12 @@
 - 行数は減らない
 - ソースは変わらない
 
+## Design
+- [コマンドの割り方](../L3_design/commands.md)
+    - 分類が行き先を見ない理由
+- [状態の置き方](../L3_design/state.md)
+    - 再実行で壊れないこと
+
 ## Meaning
 - [CONTEXT.md#kind](../L4_ubiquitous/CONTEXT.md#kind)
     - 種別(kind)

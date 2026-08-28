@@ -30,6 +30,10 @@ node <plugin>/hooks/periplus-activate.js criteria
 - 出力の `goes to` 列が `config.json` の値と一致する
 - 実行前後で `.periplus/` の中身が変わらない
 
+## Design
+- [コマンドの割り方](../L3_design/commands.md)
+    - コマンド間で行き先を引く形
+
 ## Meaning
 - [CONTEXT.md#criterion](../L4_ubiquitous/CONTEXT.md#criterion)
     - 判断基準(criterion)

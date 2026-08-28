@@ -29,6 +29,10 @@
 - 同じ作業でソースのコメントが増えない
 - セッション開始時の注入に、未配送の件数が出る
 
+## Design
+- [二相の構え](../L3_design/phases.md)
+    - 判断を後段に集めるので、捕獲は判断しない
+
 ## Meaning
 - [CONTEXT.md#pre-comment](../L4_ubiquitous/CONTEXT.md#pre-comment)
     - pre-comment
