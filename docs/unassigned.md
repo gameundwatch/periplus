@@ -96,7 +96,7 @@ ADR 0029 が `doc-references` を故障と判定したのも件数ではなか�
 リポジトリの `swept.csv` が出てからである。
 
 ## Milestones
-- [v0.6.0](../L1_milestones/v0.6.0.md)
+- [v0.6.0](L1_milestones/v0.6.0.md)
     - 理由を三つに割った版。current-limits の細分化はここから残っている
-- [v0.7.6](../L1_milestones/v0.7.6.md)
+- [v0.7.6](L1_milestones/v0.7.6.md)
     - 分類を一本の木にした版。積み残した論点の出どころ
